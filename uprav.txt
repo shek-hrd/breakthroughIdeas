@@ -1,0 +1,7 @@
+Create a new folder /shek-hrd/breakthroughIdeas/zen
+
+In that folder create a new optimized version of /shek-hrd/breakthroughIdeas/claude_portfolio.html.
+
+Add users stamp and allow them to enter the username when adding a new project. Keep the log of access and changes with the session details in an expandable section on the bottom of the page. When user wishes to send a comment or add another project. Get detailed info about the user, users location, trace pathway, latency, cookies and other sessions details, if available, and log it. Comments: Put a smaller space between the nick and the stamp, both should be aligned top on the line and right next to each other, name right, stamp left, as if the nickname was a prefix to the stamp, but keep the stamps aligned. Use same font for the username as is used for the stamp. When the nickname is empty, show debossed <nickname>. Once the user entered the nickname, show it prefilled, but keep it changable. Use debossed for the Add your comment... If the user doesnt fill nick, keep it blank, no User.
+
+Edit

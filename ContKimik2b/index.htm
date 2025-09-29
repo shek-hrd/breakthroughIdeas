@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>shekhrd's projects - breakthrough Ideas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(75, 0, 130, 1) 0%,
+                    rgba(102, 126, 234, 0.8) 15%,
+                    rgba(255, 255, 255, 0.1) 25%,
+                    rgba(255, 255, 255, 0.05) 65%,
+                    rgba(102, 126, 234, 0.8) 75%,
+                    rgba(75, 0, 130, 1) 100%
+                ),
+                radial-gradient(ellipse at center, 
+                    transparent 60%, 
+                    rgba(75, 0, 130, 0.3) 100%
+                );
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 4s ease infinite;
+            color: white;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            color: white;
+            font-style: italic;
+        }
+
+        .breakthrough-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 1s ease-out 0.3s both;
+            color: white;
+        }
+
+        .breakthrough-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .breakthrough-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: center;
+            font-style: italic;
+            position: relative;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .breakthrough-content::before {
+            content: '✨';
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 20px;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out calc(var(--index) * 0.1s) both;
+            color: #333;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .project-card.expanded {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 10px 0;
+        }
+
+        .card-header {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .project-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .project-host {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .project-actions {
+            display: none;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .project-card.expanded .external-link {
+            display: inline-block !important;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: #333;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .project-card.expanded .expandable-content {
+            max-height: 2000px;
+        }
+
+        .comments-section {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px 15px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+            min-height: 35px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-author {
+            font-weight: normal;
+            cursor: pointer;
+            color: #333;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-start;
+            padding-top: 2px;
+            font-size: 0.8rem;
+            margin-right: 0;
+        }
+
+        .comment-stamp {
+            font-size: 0.7rem;
+            color: #999;
+            font-weight: normal;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-start;
+            padding-top: 2px;
+            margin-right: 8px;
+        }
+
+        .comment-stamp {
+            font-size: 0.7rem;
+            color: #666;
+            font-weight: normal;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-start;
+            padding-top: 2px;
+        }
+
+        .comment-text {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #444;
+            flex: 1;
+            word-wrap: break-word;
+            align-self: center;
+        }
+
+        .comment-timestamp {
+            font-size: 0.7rem;
+            color: #777;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-end;
+            font-style: italic;
+        }
+
+        .comments-container {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .comment-input-container {
+            display: flex;
+            gap: 4px;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            min-height: 45px;
+        }
+
+        .comment-input-nickname {
+            font-size: 0.8rem;
+            color: #333;
+            white-space: nowrap;
+            min-width: 50px;
+            background: none;
+            border: none;
+            outline: none;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+
+        .comment-input-stamp {
+            font-size: 0.7rem;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-top: 2px;
+            margin-right: 8px;
+        }
+
+        .comment-textarea {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #333;
+            resize: none;
+            min-height: 20px;
+            font-size: 0.85rem;
+            outline: none;
+            padding: 2px 0;
+        }
+
+        .comment-textarea::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+            font-style: italic;
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .send-comment-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #4ecdc4;
+            font-size: 18px;
+            padding: 2px;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .send-comment-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .nickname-input {
+            padding: 6px 8px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .preview-toggle-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .preview-toggle-section:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-indicator {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .preview-indicator.expanded {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+
+        .preview-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: #666;
+        }
+
+        .preview-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            margin-top: 15px;
+        }
+
+        .add-comment {
+            margin-top: 15px;
+        }
+
+        .project-preview-frame {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-input {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-projects-section {
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 105, 180, 0.2) 0%,
+                    rgba(75, 0, 130, 0.3) 25%,
+                    rgba(102, 126, 234, 0.2) 50%,
+                    rgba(255, 105, 180, 0.15) 75%,
+                    rgba(75, 0, 130, 0.25) 100%
+                );
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-projects-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .user-projects-section > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .donation-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 1s ease-out 0.6s both;
+            color: white;
+        }
+
+        .crypto-address {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: monospace;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .crypto-address:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .copy-hint {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        .session-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .floating-frame {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .floating-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 15px;
+        }
+
+        .close-frame {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .user-stamp {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-left: 5px;
+        }
+
+        .author-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            z-index: 100;
+            display: none;
+            max-width: 200px;
+        }
+
+        .rating {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .star {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.2s;
+            -webkit-text-stroke: 1px rgba(0,0,0,0.5);
+            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+
+        .star.active, .star:hover {
+            color: #ffd700;
+        }
+
+        .expand-indicator {
+            float: right;
+            font-size: 1.2rem;
+            opacity: 0.5;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card.expanded .expand-indicator {
+            transform: rotate(180deg);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-frame {
+                width: 95vw;
+                height: 95vh;
+            }
+            
+            .session-info {
+                position: relative;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    <div class="floating-frame" id="floatingFrame">
+        <button class="close-frame" onclick="closeFrame()">×</button>
+        <iframe id="frameContent" src=""></iframe>
+    </div>
+
+    <div class="session-info" id="sessionInfo">
+        <div>Session: <span id="userStamp">Loading...</span></div>
+        <div id="userNickname" style="display: none;">User: <span id="currentUser"></span></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="title">breakthrough Ideas</h1>
+            <p class="subtitle">"let's make it all easier - invent, innovate, and share for free"<br><br>- by shekhrd</p>
+        </header>
+
+        <section class="breakthrough-section">
+            <div class="breakthrough-content">
+                "The future belongs to those who believe in the beauty of their dreams. Every line of code, every algorithm, every creative solution is a step towards transforming imagination into reality. These projects are not just software - they are bridges to tomorrow."
+                <br><br>
+                <em>- Claude</em>
+            </div>
+        </section>
+
+        <div class="projects-grid" id="projectsGrid">
+            <!-- Projects will be dynamically loaded -->
+        </div>
+
+        <section class="user-projects-section">
+            <h2 style="text-align: center; font-weight: bold; margin-bottom: 30px; font-size: 1.8rem;">💡</h2>
+            <form class="comment-form" id="userProjectForm">
+                <div class="form-group">
+                    <input type="text" class="form-input" id="projectTitle" placeholder="Project Title" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-input" id="projectDesc" placeholder="Project Description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="url" class="form-input" id="projectUrl" placeholder="Project URL (GitHub, live demo, etc.)">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input" id="userNick" placeholder="Your Nickname (optional)">
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-input" id="userEmail" placeholder="Email (optional, visible on hover)">
+                </div>
+                <button type="submit" class="btn btn-primary">Share My Own Idea</button>
+            </form>
+        </section>
+
+        <footer class="donation-section">
+            <h2>💖 Support the Vision</h2>
+            <p>Help fuel more breakthrough ideas and open source innovation</p>
+            <div class="crypto-address" onclick="copyToClipboard('0x61e7081E11BBA442781f8676C78533441C52f075')">
+                0x61e7081E11BBA442781f8676C78533441C52f075
+            </div>
+            <div class="copy-hint">Click to copy wallet address</div>
+        </footer>
+    </div>
+
+    <div class="author-tooltip" id="authorTooltip"></div>
+
+    <script>
+        // Session and user management
+        class UserSession {
+            constructor() {
+                this.stamp = this.generateUserStamp();
+                this.nickname = localStorage.getItem('userNickname') || null;
+                this.userDetails = JSON.parse(localStorage.getItem('userDetails') || '{}');
+                this.sessionData = this.collectSessionData();
+                
+                this.initializeSession();
+            }
+
+            generateUserStamp() {
+                const existing = localStorage.getItem('userStamp');
+                if (existing) return existing;
+                
+                const browserData = navigator.userAgent + navigator.language + screen.width + screen.height;
+                const hash = this.simpleHash(browserData);
+                const stamp = hash.toString(36).substring(0, 6).toUpperCase();
+                
+                localStorage.setItem('userStamp', stamp);
+                return stamp;
+            }
+
+            simpleHash(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return Math.abs(hash);
+            }
+
+            collectSessionData() {
+                return {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    screen: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            initializeSession() {
+                document.getElementById('userStamp').textContent = this.stamp;
+                
+                if (this.nickname) {
+                    document.getElementById('currentUser').textContent = this.nickname;
+                    document.getElementById('userNickname').style.display = 'block';
+                    document.getElementById('userNick').value = this.nickname;
+                }
+
+                // Check for returning user
+                this.checkReturningUser();
+                
+                // Log session initialization
+                this.logActivity('session_initialized', {
+                    isReturningUser: !!localStorage.getItem('lastVisit'),
+                    hasNickname: !!this.nickname
+                });
+            }
+
+            checkReturningUser() {
+                const lastVisit = localStorage.getItem('lastVisit');
+                if (lastVisit && !this.nickname) {
+                    const daysSince = (Date.now() - parseInt(lastVisit)) / (1000 * 60 * 60 * 24);
+                    if (daysSince > 1 && daysSince < 30) {
+                        setTimeout(() => {
+                            if (confirm('Welcome back! Would you like to continue with your previous session?')) {
+                                const oldNick = localStorage.getItem('tempNickname');
+                                if (oldNick) {
+                                    this.setNickname(oldNick);
+                                }
+                            }
+                        }, 2000);
+                    }
+                }
+                localStorage.setItem('lastVisit', Date.now().toString());
+            }
+
+            setNickname(nickname) {
+                const uniqueNick = this.ensureUniqueNickname(nickname);
+                this.nickname = uniqueNick;
+                localStorage.setItem('userNickname', uniqueNick);
+                document.getElementById('currentUser').textContent = uniqueNick;
+                document.getElementById('userNickname').style.display = 'block';
+                return uniqueNick;
+            }
+
+            ensureUniqueNickname(nickname) {
+                const existingUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                const baseNick = nickname.trim();
+                
+                if (!existingUsers.find(u => u.nickname === baseNick && u.stamp !== this.stamp)) {
+                    return baseNick;
+                }
+                
+                return `${baseNick}#${this.stamp}`;
+            }
+
+            saveUserDetails(details) {
+                this.userDetails = { ...this.userDetails, ...details };
+                localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+                
+                // Save to global users list
+                const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                const userIndex = allUsers.findIndex(u => u.stamp === this.stamp);
+                const userData = {
+                    stamp: this.stamp,
+                    nickname: this.nickname,
+                    details: this.userDetails,
+                    lastActive: new Date().toISOString()
+                };
+                
+                if (userIndex >= 0) {
+                    allUsers[userIndex] = userData;
+                } else {
+                    allUsers.push(userData);
+                }
+                
+                localStorage.setItem('allUsers', JSON.stringify(allUsers));
+                
+                // Log access and changes
+                this.logActivity('user_details_saved', { details });
+            }
+
+            logActivity(action, data = {}) {
+                const logs = JSON.parse(localStorage.getItem('_activity_logs') || '[]');
+                const logEntry = {
+                    timestamp: new Date().toISOString(),
+                    userStamp: this.stamp,
+                    nickname: this.nickname,
+                    action: action,
+                    data: data,
+                    sessionData: this.sessionData
+                };
+                
+                logs.push(logEntry);
+                
+                // Keep only last 1000 entries
+                if (logs.length > 1000) {
+                    logs.splice(0, logs.length - 1000);
+                }
+                
+                localStorage.setItem('_activity_logs', JSON.stringify(logs));
+            }
+        }
+
+        // Project data
+        const projects = [
+            {
+                id: 1,
+                title: "AI-Powered Code Generator",
+                description: "Revolutionary tool that generates production-ready code from natural language descriptions.",
+                host: "GitHub",
+                url: "https://github.com/shekhrd/ai-code-gen",
+                rating: 4.8,
+                comments: 23,
+                forks: 156,
+                category: "AI/ML"
+            },
+            {
+                id: 2,
+                title: "Quantum Visualization Engine",
+                description: "Interactive 3D visualization of quantum mechanics concepts for education and research.",
+                host: "InfinityFree",
+                url: "https://quantum-viz.infinityfree.net",
+                rating: 4.9,
+                comments: 18,
+                forks: 89,
+                category: "Visualization"
+            },
+            {
+                id: 3,
+                title: "Blockchain Social Network",
+                description: "Decentralized social platform built on blockchain technology with privacy-first approach.",
+                host: "IndieCloud",
+                url: "https://social.indiecloud.co/shekhrd",
+                rating: 4.7,
+                comments: 34,
+                forks: 203,
+                category: "Blockchain"
+            },
+            {
+                id: 4,
+                title: "Neural Network Playground",
+                description: "Interactive environment for experimenting with neural network architectures in real-time.",
+                host: "GitHub",
+                url: "https://github.com/shekhrd/neural-playground",
+                rating: 4.6,
+                comments: 41,
+                forks: 178,
+                category: "AI/ML"
+            }
+        ];
+
+        // Initialize user session
+        const userSession = new UserSession();
+
+        // Load projects
+        function loadProjects() {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+            
+            // Load main projects
+            projects.forEach((project, index) => {
+                const card = createProjectCard(project, index);
+                grid.appendChild(card);
+            });
+            
+            // Load user projects
+            const userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
+            userProjects.forEach((project, index) => {
+                const card = createProjectCard(project, projects.length + index, true);
+                grid.appendChild(card);
+            });
+        }
+
+        function createProjectCard(project, index, isUserProject = false) {
+            const card = document.createElement('div');
+            card.className = 'project-card';
+            card.style.setProperty('--index', index);
+            card.dataset.projectId = project.id;
+            
+            const comments = JSON.parse(localStorage.getItem(`comments_${project.id}`) || '[]');
+            const ratings = JSON.parse(localStorage.getItem(`ratings_${project.id}`) || '[]');
+            const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3 class="project-title">
+                        ${project.title}
+                        <span class="expand-indicator">▼</span>
+                    </h3>
+                    <p class="project-description">${project.description}</p>
+                    <div class="project-host">Hosted on: ${project.host || 'User Submitted'}</div>
+                    
+                    <div class="project-stats">
+                        <div class="stat">⭐ ${avgRating}</div>
+                        <div class="stat">💬 ${comments.length}</div>
+                    </div>
+                </div>
+                
+                <div class="project-actions">
+                    <a href="${project.url}" class="btn btn-primary external-link" target="_blank" onclick="trackClick('${project.title}')" style="display: none;">↗️</a>
+                </div>
+                
+                <div class="expandable-content" id="expand_${project.id}">
+                    <div class="project-url-display" style="margin-bottom: 15px;">
+                        <a href="${project.url}" target="_blank" style="color: #4ecdc4; text-decoration: none;">${project.url}</a>
+                    </div>
+                    
+                    <div class="rating" onclick="event.stopPropagation();">
+                        Rate this project:
+                        ${[1,2,3,4,5].map(star => `<span class="star" onclick="rateProject(${project.id}, ${star})">★</span>`).join('')}
+                    </div>
+                    
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <div class="comments-container" id="comments_${project.id}">
+                            ${comments.map(comment => createCommentHTML(comment)).join('')}
+                        </div>
+                        
+                        <div class="add-comment" onclick="event.stopPropagation();">
+                            <div class="comment-input-container">
+                                <input class="comment-input-nickname" placeholder="" id="inputNick_${project.id}">
+                                <div class="comment-input-stamp" id="inputStamp_${project.id}">#LOADING</div>
+                                <textarea class="comment-textarea" placeholder="Add your comment..." rows="1" id="comment_${project.id}" onkeydown="handleCommentKeydown(event, ${project.id})" oninput="autoResizeTextarea(this)"></textarea>
+                                <button class="send-comment-btn" onclick="addComment(${project.id})" title="Send comment">→</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-toggle-section" onclick="togglePreview(event, ${project.id})">
+                        <div class="preview-indicator" id="previewIndicator_${project.id}">▼</div>
+                        <div class="preview-text">Click to preview site</div>
+                        <div class="preview-container" id="previewContainer_${project.id}">
+                            <div id="preview_${project.id}"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add click handler for the entire card
+            card.addEventListener('click', function(e) {
+                // Don't toggle if clicking on interactive elements
+                if (e.target.closest('.comment-input-container, .send-comment-btn, .comment-textarea, .rating, .star, a')) {
+                    return;
+                }
+                e.stopPropagation();
+                toggleCard(card, project);
+            });
+            
+            return card;
+        }
+
+        function createCommentHTML(comment) {
+            const displayName = comment.author || '';
+            const timestamp = new Date(comment.timestamp).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="comment">
+                    <div class="comment-author" onclick="showAuthorInfo(event, '${comment.author || ''}', '${comment.stamp}')" onmouseover="showAuthorTooltip(event, '${comment.author || ''}', '${comment.stamp}')">
+                        ${displayName}
+                    </div>
+                    <div class="comment-stamp">#${comment.stamp}</div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-timestamp">${timestamp}</div>
+                </div>
+            `;
+        }
+
+        function toggleCard(card, project) {
+            const isExpanded = card.classList.contains('expanded');
+            
+            if (isExpanded) {
+                // Collapse the card
+                collapseCard(card);
+            } else {
+                // Collapse any other expanded cards first
+                document.querySelectorAll('.project-card.expanded').forEach(otherCard => {
+                    if (otherCard !== card) {
+                        collapseCard(otherCard);
+                    }
+                });
+                
+                // Expand this card
+                expandCard(card, project.url, project.id);
+            }
+        }
+
+        function expandCard(card, url, projectId) {
+            card.classList.add('expanded');
+            
+            // Update comment input area with current user info
+            const inputNick = document.getElementById(`inputNick_${projectId}`);
+            const inputStamp = document.getElementById(`inputStamp_${projectId}`);
+            
+            if (inputNick && inputStamp) {
+                inputNick.textContent = userSession.nickname || 'User';
+                inputStamp.textContent = `#${userSession.stamp}`;
+            }
+            
+            // Log card expansion
+            userSession.logActivity('card_expanded', {
+                projectId: projectId,
+                hasUrl: !!url
+            });
+        }
+
+        function collapseCard(card) {
+            card.classList.remove('expanded');
+            
+            // Also collapse any preview that might be open
+            const projectId = card.dataset.projectId;
+            const previewContainer = document.getElementById(`previewContainer_${projectId}`);
+            const previewIndicator = document.getElementById(`previewIndicator_${projectId}`);
+            
+            if (previewContainer && previewContainer.classList.contains('expanded')) {
+                previewContainer.classList.remove('expanded');
+                previewIndicator.classList.remove('expanded');
+                
+                // Clear preview content
+                const previewDiv = document.getElementById(`preview_${projectId}`);
+                if (previewDiv) {
+                    previewDiv.innerHTML = '';
+                }
+            }
+        }
+
+        function togglePreview(event, projectId) {
+            event.stopPropagation();
+            
+            const previewContainer = document.getElementById(`previewContainer_${projectId}`);
+            const previewIndicator = document.getElementById(`previewIndicator_${projectId}`);
+            const previewDiv = document.getElementById(`preview_${projectId}`);
+            
+            if (previewContainer.classList.contains('expanded')) {
+                // Close preview
+                previewContainer.classList.remove('expanded');
+                previewIndicator.classList.remove('expanded');
+                previewDiv.innerHTML = '';
+                
+                userSession.logActivity('preview_closed', { projectId });
+            } else {
+                // Open preview
+                previewContainer.classList.add('expanded');
+                previewIndicator.classList.add('expanded');
+                
+                // Find project URL
+                const project = [...projects, ...JSON.parse(localStorage.getItem('userProjects') || '[]')]
+                    .find(p => p.id == projectId);
+                
+                if (project && project.url && project.url !== '#') {
+                    previewDiv.innerHTML = `<iframe class="project-preview-frame" src="${project.url}"></iframe>`;
+                    
+                    userSession.logActivity('preview_opened', { 
+                        projectId, 
+                        url: project.url 
+                    });
+                    
+                    // Scroll to preview after a short delay
+                    setTimeout(() => {
+                        previewContainer.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 100);
+                } else {
+                    previewDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No preview available - URL not provided</div>';
+                }
+            }
+        }
+
+        function isFrameSupported() {
+            return 'HTMLIFrameElement' in window;
+        }
+
+        function openProjectPreview(url, projectId) {
+            const previewDiv = document.getElementById(`preview_${projectId}`);
+            if (previewDiv.innerHTML) {
+                previewDiv.innerHTML = '';
+                return;
+            }
+            
+            previewDiv.innerHTML = `<iframe class="project-preview-frame" src="${url}"></iframe>`;
+            
+            // Scroll to the preview
+            setTimeout(() => {
+                previewDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function closeFrame() {
+            document.getElementById('floatingFrame').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('frameContent').src = '';
+        }
+
+        function rateProject(projectId, rating) {
+            event.stopPropagation();
+            const ratings = JSON.parse(localStorage.getItem(`ratings_${projectId}`) || '[]');
+            ratings.push(rating);
+            localStorage.setItem(`ratings_${projectId}`, JSON.stringify(ratings));
+            
+            // Log rating activity
+            userSession.logActivity('project_rated', {
+                projectId: projectId,
+                rating: rating,
+                totalRatings: ratings.length
+            });
+            
+            // Update display
+            loadProjects();
+        }
+
+        function handleCommentKeydown(event, projectId) {
+            if (event.key === 'Enter' && !event.shiftKey && !event.altKey && !event.ctrlKey) {
+                event.preventDefault();
+                addComment(projectId);
+            }
+        }
+
+        function addComment(projectId) {
+            event.stopPropagation();
+            const commentText = document.getElementById(`comment_${projectId}`).value.trim();
+            if (!commentText) return;
+            
+            const finalNickname = userSession.nickname || 'User';
+            
+            const comment = {
+                author: finalNickname,
+                stamp: userSession.stamp,
+                text: commentText,
+                timestamp: new Date().toISOString()
+            };
+            
+            const comments = JSON.parse(localStorage.getItem(`comments_${projectId}`) || '[]');
+            comments.push(comment);
+            localStorage.setItem(`comments_${projectId}`, JSON.stringify(comments));
+            
+            // Log comment activity
+            userSession.logActivity('comment_added', {
+                projectId: projectId,
+                commentLength: commentText.length,
+                hasNickname: !!finalNickname
+            });
+            
+            // Update comments display without full reload
+            const commentsContainer = document.getElementById(`comments_${projectId}`);
+            commentsContainer.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
+            
+            // Clear form
+            document.getElementById(`comment_${projectId}`).value = '';
+            
+            // Update comment count in stats
+            const card = document.getElementById(`comments_${projectId}`).closest('.project-card');
+            const commentStat = card.querySelector('.stat:nth-child(2)');
+            if (commentStat) {
+                commentStat.textContent = `💬 ${comments.length}`;
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+
+        function showAuthorTooltip(event, author, stamp) {
+            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+            const user = allUsers.find(u => u.stamp === stamp);
+            
+            const tooltip = document.getElementById('authorTooltip');
+            let content = `User: ${author}#${stamp}`;
+            
+            if (user && user.details) {
+                if (user.details.email) content += `<br>Email: ${user.details.email}`;
+                if (user.details.phone) content += `<br>Phone: ${user.details.phone}`;
+                if (user.details.wallet) content += `<br>Wallet: ${user.details.wallet}`;
+            }
+            
+            tooltip.innerHTML = content;
+            tooltip.style.display = 'block';
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+            
+            setTimeout(() => tooltip.style.display = 'none', 3000);
+        }
+
+        function showAuthorInfo(event, author, stamp) {
+            showAuthorTooltip(event, author, stamp);
+        }
+
+        function trackClick(projectTitle) {
+            const clicks = JSON.parse(localStorage.getItem('projectClicks') || '{}');
+            clicks[projectTitle] = (clicks[projectTitle] || 0) + 1;
+            localStorage.setItem('projectClicks', JSON.stringify(clicks));
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess();
+                }).catch(() => {
+                    fallbackCopyText(text);
+                });
+            } else {
+                fallbackCopyText(text);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess();
+            } catch (err) {
+                alert('Address: ' + text);
+            }
+            
+            textArea.remove();
+        }
+
+        function showCopySuccess() {
+            const hint = document.querySelector('.copy-hint');
+            const originalText = hint.textContent;
+            hint.textContent = '✓ Copied to clipboard!';
+            hint.style.color = '#4ecdc4';
+            
+            setTimeout(() => {
+                hint.textContent = originalText;
+                hint.style.color = '';
+            }, 2000);
+        }
+
+        // User project submission
+        document.getElementById('userProjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            console.log('Form submitted!'); // Debug log
+            
+            const title = document.getElementById('projectTitle').value.trim();
+            const description = document.getElementById('projectDesc').value.trim();
+            const url = document.getElementById('projectUrl').value.trim();
+            const nickname = document.getElementById('userNick').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            console.log('Form data:', { title, description, url, nickname, email }); // Debug log
+            
+            if (!title || !description) {
+                alert('Please fill in title and description');
+                return;
+            }
+            
+            // Set nickname if provided
+            if (nickname && nickname !== userSession.nickname) {
+                userSession.setNickname(nickname);
+            }
+            
+            // Save user details
+            if (email) {
+                userSession.saveUserDetails({ email });
+            }
+            
+            const project = {
+                id: 'user_' + Date.now(),
+                title,
+                description,
+                url: url || '#',
+                host: 'User Submitted',
+                author: userSession.nickname || `User#${userSession.stamp}`,
+                stamp: userSession.stamp,
+                timestamp: new Date().toISOString(),
+                forks: 0
+            };
+            
+            console.log('Created project:', project); // Debug log
+            
+            const userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
+            userProjects.push(project);
+            localStorage.setItem('userProjects', JSON.stringify(userProjects));
+            
+            console.log('Saved projects:', userProjects); // Debug log
+            
+            // Log project creation
+            userSession.logActivity('project_shared', {
+                projectId: project.id,
+                title: project.title,
+                hasUrl: !!url,
+                hasEmail: !!email
+            });
+            
+            // Clear form
+            document.getElementById('projectTitle').value = '';
+            document.getElementById('projectDesc').value = '';
+            document.getElementById('projectUrl').value = '';
+            document.getElementById('userEmail').value = '';
+            
+            if (userSession.nickname) {
+                document.getElementById('userNick').value = userSession.nickname;
+            } else {
+                document.getElementById('userNick').value = '';
+            }
+            
+            // Reload projects
+            loadProjects();
+            
+            alert('Project shared successfully!');
+            console.log('Project sharing completed!'); // Debug log
+        });
+
+        // Close overlay on click
+        document.getElementById('overlay').addEventListener('click', closeFrame);
+
+        // Hide tooltip on mouse leave
+        document.addEventListener('mouseleave', () => {
+            document.getElementById('authorTooltip').style.display = 'none';
+        });
+
+        // Initialize
+        loadProjects();
+    </script>
+</body>
+</html>

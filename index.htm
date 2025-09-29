@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio</title>
+    <style>
+        .user-stamp { font-family: monospace; font-size: 10px; color: #666; margin-right: 5px; display: inline-block; vertical-align: top; }
+        .input-debossed { color: #999; }
+        .session-log { margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="text" id="nickname" class="input-debossed" placeholder="&lt;nickname&gt;" oninput="updateNickname(this.value)" />
+        <div class="user-stamp" id="stamp">[TIMESTAMP]</div>
+    </div>
+    <form onsubmit="logProject(event)">
+        <textarea id="comment" placeholder="Add your comment..." class="input-debossed"></textarea>
+        <button type="submit">Add Project</button>
+    </form>
+    
+    <div class="session-log" id="sessionLog">
+        <h3>Session Log</h3>
+        <div id="accessLog"></div>
+    </div>
+
+    <script>
+        function updateNickname(value) {
+            localStorage.setItem('nickname', value);
+        }
+
+        function logProject(event) {
+            event.preventDefault();
+            const nick = document.getElementById('nickname').value.trim() || '&lt;nickname&gt;';
+            const comment = document.getElementById('comment').value;
+            // Add location/trace data collection here
+            console.log(`User ${nick} added project: ${comment}`);
+            document.getElementById('accessLog').innerHTML += 
+                `<div>User ${nick} | ${new Date()}</div>`;
+        }
+    </script>
+</body>
+</html>
