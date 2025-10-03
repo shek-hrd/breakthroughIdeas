@@ -238,36 +238,43 @@
 
         .comment {
             background: rgba(255, 255, 255, 0.5);
-            padding: 12px 15px;
+            padding: 8px 15px;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-size: 0.85rem;
             border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
-            align-items: center;
-            gap: 12px;
-            min-height: 45px;
+            align-items: flex-start;
+            gap: 4px;
+            min-height: 35px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .comment-author {
-            font-weight: bold;
+            font-weight: normal;
             cursor: pointer;
             color: #333;
             white-space: nowrap;
             flex-shrink: 0;
             align-self: flex-start;
             padding-top: 2px;
+            font-size: 0.8rem;
+            margin-right: 0;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 2px;
         }
 
         .comment-stamp {
             font-size: 0.7rem;
-            color: #666;
+            color: #999;
             font-weight: normal;
             white-space: nowrap;
             flex-shrink: 0;
             align-self: flex-start;
             padding-top: 2px;
+            margin-right: 8px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 2px;
         }
 
         .comment-text {
@@ -296,38 +303,125 @@
 
         .comment-input-container {
             display: flex;
-            gap: 8px;
-            align-items: flex-end;
+            gap: 4px;
+            align-items: flex-start;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            min-height: 45px;
+        }
+
+        .comment-input-nickname {
+            font-size: 0.8rem;
+            color: #333;
+            white-space: nowrap;
+            min-width: 50px;
+            background: none;
+            border: none;
+            outline: none;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+
+        .comment-input-nickname:empty::before {
+            content: '<nickname>';
+            color: rgba(0, 0, 0, 0.3);
+            font-style: italic;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+        }
+
+        .comment-input-nickname.placeholder {
+            color: rgba(0, 0, 0, 0.3);
+            font-style: italic;
+        }
+
+        .comment-input-stamp {
+            font-size: 0.7rem;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-top: 2px;
+            margin-right: 8px;
         }
 
         .comment-textarea {
             flex: 1;
-            padding: 8px;
             border: none;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.7);
+            background: transparent;
             color: #333;
-            resize: vertical;
-            min-height: 60px;
+            resize: none;
+            min-height: 20px;
+            font-size: 0.85rem;
+            outline: none;
+            padding: 2px 0;
+        }
+
+        .comment-textarea::placeholder {
+            color: rgba(0, 0, 0, 0.3);
+            font-style: italic;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+        }
+
+        .comment-input-nickname:empty::before {
+            content: '<nickname>';
+            color: rgba(0, 0, 0, 0.3);
+            font-style: italic;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+        }
+
+        .comment-input-nickname {
+            font-size: 0.7rem;
+            color: #333;
+            white-space: nowrap;
+            min-width: 50px;
+            background: none;
+            border: none;
+            outline: none;
+            padding: 2px 0;
+            flex-shrink: 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .comment-group {
+            margin-bottom: 15px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .comment-date-header {
+            font-size: 0.8rem;
+            color: #888;
+            margin: 5px 0;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 3px;
         }
 
         .send-comment-btn {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: none;
             border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
             cursor: pointer;
-            color: white;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #4ecdc4;
+            font-size: 18px;
+            padding: 2px;
             transition: transform 0.2s ease;
+            flex-shrink: 0;
         }
 
         .send-comment-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.2);
         }
 
         .nickname-input {
@@ -556,6 +650,79 @@
             margin-left: 5px;
         }
 
+        .session-log {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 10px;
+            border-top: 2px solid #4ecdc4;
+            max-height: 300px;
+            overflow-y: auto;
+            transform: translateY(calc(100% - 40px));
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .session-log.expanded {
+            transform: translateY(0);
+        }
+
+        .session-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+
+        .session-log-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .session-log.expanded .session-log-toggle {
+            transform: rotate(180deg);
+        }
+
+        .session-log-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .session-log.expanded .session-log-content {
+            max-height: 250px;
+        }
+
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            padding: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .log-timestamp {
+            color: #4ecdc4;
+            white-space: nowrap;
+        }
+
+        .log-action {
+            color: #ff6b6b;
+            margin: 0 10px;
+        }
+
+        .log-details {
+            color: #aaa;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .author-tooltip {
             position: absolute;
             background: rgba(0,0,0,0.9);
@@ -709,6 +876,16 @@
         </footer>
     </div>
 
+    <div class="session-log" id="sessionLog">
+        <div class="session-log-header" onclick="toggleSessionLog()">
+            <div>Session Activity Log</div>
+            <div class="session-log-toggle">▼</div>
+        </div>
+        <div class="session-log-content" id="sessionLogContent">
+            <div id="sessionLogEntries"></div>
+        </div>
+    </div>
+
     <div class="author-tooltip" id="authorTooltip"></div>
 
     <script>
@@ -751,12 +928,853 @@
                     language: navigator.language,
                     screen: `${screen.width}x${screen.height}`,
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    cookies: this.getCookies(),
+                    location: this.getLocation(),
+                    referrer: document.referrer,
+                    url: window.location.href,
+                    performance: this.getPerformanceData(),
+                    connection: this.getConnectionData()
                 };
+            }
+
+            getCookies() {
+                return document.cookie.split(';').reduce((cookies, cookie) => {
+                    const [name, value] = cookie.trim().split('=');
+                    cookies[name] = value;
+                    return cookies;
+                }, {});
+            }
+
+            getLocation() {
+                return new Promise((resolve) => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                resolve({
+                                    lat: position.coords.latitude,
+                                    lon: position.coords.longitude,
+                                    accuracy: position.coords.accuracy
+                                });
+                            },
+                            () => resolve({ error: 'Location permission denied' })
+                        );
+                    } else {
+                        resolve({ error: 'Geolocation not supported' });
+                    }
+                });
+            }
+
+            getPerformanceData() {
+                if (window.performance && window.performance.timing) {
+                    const timing = window.performance.timing;
+                    return {
+                        loadTime: timing.loadEventEnd - timing.navigationStart,
+                        domContentLoaded: timing.domContentLoadedEventEnd - timing.navigationStart,
+                        firstByte: timing.responseStart - timing.navigationStart
+                    };
+                }
+                return null;
+            }
+
+            getConnectionData() {
+                if (navigator.connection) {
+                    return {
+                        effectiveType: navigator.connection.effectiveType,
+                        downlink: navigator.connection.downlink,
+                        rtt: navigator.connection.rtt
+                    };
+                }
+                return null;
             }
 
             initializeSession() {
                 document.getElementById('userStamp').textContent = this.stamp;
                 
                 if (this.nickname) {
-                    document.getElementById('currentUser').textContent = th
+                    document.getElementById('currentUser').textContent = this.nickname;
+                    document.getElementById('userNickname').style.display = 'block';
+                    document.getElementById('userNick').value = this.nickname;
+                }
+
+                // Check for returning user
+                this.checkReturningUser();
+                
+                // Log session initialization
+                this.logActivity('session_initialized', {
+                    isReturningUser: !!localStorage.getItem('lastVisit'),
+                    hasNickname: !!this.nickname
+                });
+            }
+
+            checkReturningUser() {
+                const lastVisit = localStorage.getItem('lastVisit');
+                if (lastVisit && !this.nickname) {
+                    const daysSince = (Date.now() - parseInt(lastVisit)) / (1000 * 60 * 60 * 24);
+                    if (daysSince > 1 && daysSince < 30) {
+                        setTimeout(() => {
+                            if (confirm('Welcome back! Would you like to continue with your previous session?')) {
+                                const oldNick = localStorage.getItem('tempNickname');
+                                if (oldNick) {
+                                    this.setNickname(oldNick);
+                                }
+                            }
+                        }, 2000);
+                    }
+                }
+                localStorage.setItem('lastVisit', Date.now().toString());
+            }
+
+            setNickname(nickname) {
+                const uniqueNick = this.ensureUniqueNickname(nickname);
+                this.nickname = uniqueNick;
+                localStorage.setItem('userNickname', uniqueNick);
+                document.getElementById('currentUser').textContent = uniqueNick;
+                document.getElementById('userNickname').style.display = 'block';
+                return uniqueNick;
+            }
+
+            ensureUniqueNickname(nickname) {
+                const existingUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                const baseNick = nickname.trim();
+                
+                if (!existingUsers.find(u => u.nickname === baseNick && u.stamp !== this.stamp)) {
+                    return baseNick;
+                }
+                
+                return `${baseNick}#${this.stamp}`;
+            }
+
+            saveUserDetails(details) {
+                this.userDetails = { ...this.userDetails, ...details };
+                localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+                
+                // Save to global users list
+                const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                const userIndex = allUsers.findIndex(u => u.stamp === this.stamp);
+                const userData = {
+                    stamp: this.stamp,
+                    nickname: this.nickname,
+                    details: this.userDetails,
+                    lastActive: new Date().toISOString()
+                };
+                
+                if (userIndex >= 0) {
+                    allUsers[userIndex] = userData;
+                } else {
+                    allUsers.push(userData);
+                }
+                
+                localStorage.setItem('allUsers', JSON.stringify(allUsers));
+                
+                // Log access and changes
+                this.logActivity('user_details_saved', { details });
+            }
+
+            logActivity(action, data = {}) {
+                const logs = JSON.parse(localStorage.getItem('_activity_logs') || '[]');
+                const logEntry = {
+                    timestamp: new Date().toISOString(),
+                    userStamp: this.stamp,
+                    nickname: this.nickname,
+                    action: action,
+                    data: data,
+                    sessionData: this.sessionData
+                };
+                
+                logs.push(logEntry);
+                
+                // Keep only last 1000 entries
+                if (logs.length > 1000) {
+                    logs.splice(0, logs.length - 1000);
+                }
+                
+                localStorage.setItem('_activity_logs', JSON.stringify(logs));
+            }
+        }
+
+        // Project data
+        const projects = [
+            {
+                id: 1,
+                title: "AI-Powered Code Generator",
+                description: "Revolutionary tool that generates production-ready code from natural language descriptions.",
+                host: "GitHub",
+                url: "https://github.com/shekhrd/ai-code-gen",
+                rating: 4.8,
+                comments: 23,
+                forks: 156,
+                category: "AI/ML"
+            },
+            {
+                id: 2,
+                title: "Quantum Visualization Engine",
+                description: "Interactive 3D visualization of quantum mechanics concepts for education and research.",
+                host: "InfinityFree",
+                url: "https://quantum-viz.infinityfree.net",
+                rating: 4.9,
+                comments: 18,
+                forks: 89,
+                category: "Visualization"
+            },
+            {
+                id: 3,
+                title: "Blockchain Social Network",
+                description: "Decentralized social platform built on blockchain technology with privacy-first approach.",
+                host: "IndieCloud",
+                url: "https://social.indiecloud.co/shekhrd",
+                rating: 4.7,
+                comments: 34,
+                forks: 203,
+                category: "Blockchain"
+            },
+            {
+                id: 4,
+                title: "Neural Network Playground",
+                description: "Interactive environment for experimenting with neural network architectures in real-time.",
+                host: "GitHub",
+                url: "https://github.com/shekhrd/neural-playground",
+                rating: 4.6,
+                comments: 41,
+                forks: 178,
+                category: "AI/ML"
+            }
+        ];
+
+        // Initialize user session
+        const userSession = new UserSession();
+
+        // Load projects
+        function loadProjects() {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+            
+            // Load main projects
+            projects.forEach((project, index) => {
+                const card = createProjectCard(project, index);
+                grid.appendChild(card);
+            });
+            
+            // Load user projects
+            const userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
+            userProjects.forEach((project, index) => {
+                const card = createProjectCard(project, projects.length + index, true);
+                grid.appendChild(card);
+            });
+        }
+
+        function createProjectCard(project, index, isUserProject = false) {
+            const card = document.createElement('div');
+            card.className = 'project-card';
+            card.style.setProperty('--index', index);
+            card.dataset.projectId = project.id;
+            
+            const comments = JSON.parse(localStorage.getItem(`comments_${project.id}`) || '[]');
+            const ratings = JSON.parse(localStorage.getItem(`ratings_${project.id}`) || '[]');
+            const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3 class="project-title">
+                        ${project.title}
+                        <span class="expand-indicator">▼</span>
+                    </h3>
+                    <p class="project-description">${project.description}</p>
+                    <div class="project-host">Hosted on: ${project.host || 'User Submitted'}</div>
+                    
+                    <div class="project-stats">
+                        <div class="stat">⭐ ${avgRating}</div>
+                        <div class="stat">💬 ${comments.length}</div>
+                    </div>
+                </div>
+                
+                <div class="project-actions">
+                    <a href="${project.url}" class="btn btn-primary external-link" target="_blank" onclick="trackClick('${project.title}')" style="display: none;">↗️</a>
+                </div>
+                
+                <div class="expandable-content" id="expand_${project.id}">
+                    <div class="project-url-display" style="margin-bottom: 15px;">
+                        <a href="${project.url}" target="_blank" style="color: #4ecdc4; text-decoration: none;">${project.url}</a>
+                    </div>
+                    
+                    <div class="rating" onclick="event.stopPropagation();">
+                        Rate this project:
+                        ${[1,2,3,4,5].map(star => `<span class="star" onclick="rateProject(${project.id}, ${star})">★</span>`).join('')}
+                    </div>
+                    
+                    <div class="comments-section">
+                        <h4>Comments</h4>
+                        <div class="comments-container" id="comments_${project.id}">
+                            ${comments.length === 0 ? '<div class="no-comments">No comments yet. Be the first to comment!</div>' : renderGroupedComments(groupCommentsByDateAndUser(comments))}
+                        </div>
+                        
+                        <div class="add-comment" onclick="event.stopPropagation();">
+                            <div class="comment-input-container">
+                                <input class="comment-input-nickname" placeholder="" id="inputNick_${project.id}" oninput="handleNicknameInput(this, ${project.id})" onkeydown="handleNicknameKeydown(event, ${project.id})" onfocus="this.classList.remove('placeholder')" onblur="handleNicknameInput(this, ${project.id})">
+                                <div class="comment-input-stamp" id="inputStamp_${project.id}">#LOADING</div>
+                                <textarea class="comment-textarea" placeholder="Add your comment..." rows="1" id="comment_${project.id}" onkeydown="handleCommentKeydown(event, ${project.id})" oninput="autoResizeTextarea(this)"></textarea>
+                                <button class="send-comment-btn" onclick="addComment(${project.id})" title="Send comment">→</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-toggle-section" onclick="togglePreview(event, ${project.id})">
+                        <div class="preview-indicator" id="previewIndicator_${project.id}">▼</div>
+                        <div class="preview-text">Click to preview site</div>
+                        <div class="preview-container" id="previewContainer_${project.id}">
+                            <div id="preview_${project.id}"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add click handler for the entire card
+            card.addEventListener('click', function(e) {
+                // Don't toggle if clicking on interactive elements
+                if (e.target.closest('.comment-input-container, .send-comment-btn, .comment-textarea, .rating, .star, a')) {
+                    return;
+                }
+                e.stopPropagation();
+                toggleCard(card, project);
+            });
+            
+            return card;
+        }
+
+        function createCommentHTML(comment) {
+            const displayName = comment.author || '';
+            const timestamp = new Date(comment.timestamp).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="comment">
+                    <div class="comment-author" onclick="showAuthorInfo(event, '${comment.author || ''}', '${comment.stamp}')" onmouseover="showAuthorTooltip(event, '${comment.author || ''}', '${comment.stamp}')">
+                        ${displayName}
+                    </div>
+                    <div class="comment-stamp">#${comment.stamp}</div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-timestamp">${timestamp}</div>
+                </div>
+            `;
+        }
+
+        function groupCommentsByDateAndUser(comments) {
+            const grouped = {};
+            
+            comments.forEach(comment => {
+                const date = new Date(comment.timestamp).toLocaleDateString('en-US');
+                const key = `${date}_${comment.author}`;
+                
+                if (!grouped[key]) {
+                    grouped[key] = {
+                        author: comment.author,
+                        stamp: comment.stamp,
+                        date: date,
+                        comments: []
+                    };
+                }
+                
+                grouped[key].comments.push(comment);
+            });
+            
+            return Object.values(grouped);
+        }
+
+        function toggleCard(card, project) {
+            const isExpanded = card.classList.contains('expanded');
+            
+            if (isExpanded) {
+                // Collapse the card
+                collapseCard(card);
+            } else {
+                // Collapse any other expanded cards first
+                document.querySelectorAll('.project-card.expanded').forEach(otherCard => {
+                    if (otherCard !== card) {
+                        collapseCard(otherCard);
+                    }
+                });
+                
+                // Expand this card
+                expandCard(card, project.url, project.id);
+            }
+        }
+
+        function expandCard(card, url, projectId) {
+            card.classList.add('expanded');
+            
+            // Update comment input area with current user info
+            const inputNick = document.getElementById(`inputNick_${projectId}`);
+            const inputStamp = document.getElementById(`inputStamp_${projectId}`);
+            const commentTextarea = document.getElementById(`comment_${projectId}`);
+            
+            if (inputNick && inputStamp) {
+                inputNick.textContent = userSession.nickname || '';
+                inputStamp.textContent = `#${userSession.stamp}`;
+            }
+            
+            // Focus on comment textarea by default
+            if (commentTextarea) {
+                setTimeout(() => {
+                    commentTextarea.focus();
+                }, 100);
+            }
+            
+            // Log card expansion
+            userSession.logActivity('card_expanded', {
+                projectId: projectId,
+                hasUrl: !!url
+            });
+        }
+
+        function collapseCard(card) {
+            card.classList.remove('expanded');
+            
+            // Also collapse any preview that might be open
+            const projectId = card.dataset.projectId;
+            const previewContainer = document.getElementById(`previewContainer_${projectId}`);
+            const previewIndicator = document.getElementById(`previewIndicator_${projectId}`);
+            
+            if (previewContainer && previewContainer.classList.contains('expanded')) {
+                previewContainer.classList.remove('expanded');
+                previewIndicator.classList.remove('expanded');
+                
+                // Clear preview content
+                const previewDiv = document.getElementById(`preview_${projectId}`);
+                if (previewDiv) {
+                    previewDiv.innerHTML = '';
+                }
+            }
+        }
+
+        function togglePreview(event, projectId) {
+            event.stopPropagation();
+            
+            const previewContainer = document.getElementById(`previewContainer_${projectId}`);
+            const previewIndicator = document.getElementById(`previewIndicator_${projectId}`);
+            const previewDiv = document.getElementById(`preview_${projectId}`);
+            
+            if (previewContainer.classList.contains('expanded')) {
+                // Close preview
+                previewContainer.classList.remove('expanded');
+                previewIndicator.classList.remove('expanded');
+                previewDiv.innerHTML = '';
+                
+                userSession.logActivity('preview_closed', { projectId });
+            } else {
+                // Open preview
+                previewContainer.classList.add('expanded');
+                previewIndicator.classList.add('expanded');
+                
+                // Find project URL
+                const project = [...projects, ...JSON.parse(localStorage.getItem('userProjects') || '[]')]
+                    .find(p => p.id == projectId);
+                
+                if (project && project.url && project.url !== '#') {
+                    previewDiv.innerHTML = `<iframe class="project-preview-frame" src="${project.url}"></iframe>`;
+                    
+                    userSession.logActivity('preview_opened', { 
+                        projectId, 
+                        url: project.url 
+                    });
+                    
+                    // Scroll to preview after a short delay
+                    setTimeout(() => {
+                        previewContainer.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 100);
+                } else {
+                    previewDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No preview available - URL not provided</div>';
+                }
+            }
+        }
+
+        function isFrameSupported() {
+            return 'HTMLIFrameElement' in window;
+        }
+
+        function openProjectPreview(url, projectId) {
+            const previewDiv = document.getElementById(`preview_${projectId}`);
+            if (previewDiv.innerHTML) {
+                previewDiv.innerHTML = '';
+                return;
+            }
+            
+            previewDiv.innerHTML = `<iframe class="project-preview-frame" src="${url}"></iframe>`;
+            
+            // Scroll to the preview
+            setTimeout(() => {
+                previewDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        function closeFrame() {
+            document.getElementById('floatingFrame').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('frameContent').src = '';
+        }
+
+        function rateProject(projectId, rating) {
+            event.stopPropagation();
+            const ratings = JSON.parse(localStorage.getItem(`ratings_${projectId}`) || '[]');
+            ratings.push(rating);
+            localStorage.setItem(`ratings_${projectId}`, JSON.stringify(ratings));
+            
+            // Log rating activity
+            userSession.logActivity('project_rated', {
+                projectId: projectId,
+                rating: rating,
+                totalRatings: ratings.length
+            });
+            
+            // Update display
+            loadProjects();
+        }
+
+        function handleCommentKeydown(event, projectId) {
+            if (event.key === 'Enter' && !event.shiftKey && !event.altKey && !event.ctrlKey) {
+                event.preventDefault();
+                addComment(projectId);
+            }
+        }
+
+        function addComment(projectId) {
+            event.stopPropagation();
+            const commentText = document.getElementById(`comment_${projectId}`).value.trim();
+            if (!commentText) return;
+            
+            const nicknameInput = document.getElementById(`inputNick_${projectId}`);
+            const nickname = nicknameInput.textContent.trim() || userSession.nickname || '';
+            
+            // Update session nickname if changed
+            if (nickname && nickname !== userSession.nickname) {
+                userSession.setNickname(nickname);
+            }
+            
+            const comment = {
+                author: nickname,
+                stamp: userSession.stamp,
+                text: commentText,
+                timestamp: new Date().toISOString()
+            };
+            
+            const comments = JSON.parse(localStorage.getItem(`comments_${projectId}`) || '[]');
+            comments.push(comment);
+            localStorage.setItem(`comments_${projectId}`, JSON.stringify(comments));
+            
+            // Log comment activity with enhanced details
+            userSession.logActivity('comment_added', {
+                projectId: projectId,
+                commentLength: commentText.length,
+                hasNickname: !!nickname,
+                nickname: nickname,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Update comments display without full reload
+            const commentsContainer = document.getElementById(`comments_${projectId}`);
+            commentsContainer.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
+            
+            // Clear form
+            document.getElementById(`comment_${projectId}`).value = '';
+            
+            // Update comment count in stats
+            const card = document.getElementById(`comments_${projectId}`).closest('.project-card');
+            const commentStat = card.querySelector('.stat:nth-child(2)');
+            if (commentStat) {
+                commentStat.textContent = `💬 ${comments.length}`;
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+
+        function showAuthorTooltip(event, author, stamp) {
+            const allUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+            const user = allUsers.find(u => u.stamp === stamp);
+            
+            const tooltip = document.getElementById('authorTooltip');
+            let content = `User: ${author}#${stamp}`;
+            
+            if (user && user.details) {
+                if (user.details.email) content += `<br>Email: ${user.details.email}`;
+                if (user.details.phone) content += `<br>Phone: ${user.details.phone}`;
+                if (user.details.wallet) content += `<br>Wallet: ${user.details.wallet}`;
+            }
+            
+            tooltip.innerHTML = content;
+            tooltip.style.display = 'block';
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY + 10 + 'px';
+            
+            setTimeout(() => tooltip.style.display = 'none', 3000);
+        }
+
+        function showAuthorInfo(event, author, stamp) {
+            showAuthorTooltip(event, author, stamp);
+        }
+
+        function handleNicknameInput(element, projectId) {
+            if (element.textContent.trim() === '') {
+                element.classList.add('placeholder');
+            } else {
+                element.classList.remove('placeholder');
+            }
+        }
+
+        function handleNicknameKeydown(event, projectId) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const commentTextarea = document.getElementById(`comment_${projectId}`);
+                if (commentTextarea) {
+                    commentTextarea.focus();
+                }
+            }
+        }
+
+        function trackClick(projectTitle) {
+            const clicks = JSON.parse(localStorage.getItem('projectClicks') || '{}');
+            clicks[projectTitle] = (clicks[projectTitle] || 0) + 1;
+            localStorage.setItem('projectClicks', JSON.stringify(clicks));
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess();
+                }).catch(() => {
+                    fallbackCopyText(text);
+                });
+            } else {
+                fallbackCopyText(text);
+            }
+        }
+
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess();
+            } catch (err) {
+                alert('Address: ' + text);
+            }
+            
+            textArea.remove();
+        }
+
+        function showCopySuccess() {
+            const hint = document.querySelector('.copy-hint');
+            const originalText = hint.textContent;
+            hint.textContent = '✓ Copied to clipboard!';
+            hint.style.color = '#4ecdc4';
+            
+            setTimeout(() => {
+                hint.textContent = originalText;
+                hint.style.color = '';
+            }, 2000);
+        }
+
+        // User project submission
+        document.getElementById('userProjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            console.log('Form submitted!'); // Debug log
+            
+            const title = document.getElementById('projectTitle').value.trim();
+            const description = document.getElementById('projectDesc').value.trim();
+            const url = document.getElementById('projectUrl').value.trim();
+            const nickname = document.getElementById('userNick').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            
+            console.log('Form data:', { title, description, url, nickname, email }); // Debug log
+            
+            if (!title || !description) {
+                alert('Please fill in title and description');
+                return;
+            }
+            
+            // Set nickname if provided
+            if (nickname && nickname !== userSession.nickname) {
+                userSession.setNickname(nickname);
+            }
+            
+            // Save user details
+            if (email) {
+                userSession.saveUserDetails({ email });
+            }
+            
+            // Collect enhanced user information
+            const enhancedUserDetails = {
+                nickname: userSession.nickname || 'User',
+                stamp: userSession.stamp,
+                userAgent: navigator.userAgent,
+                screenResolution: `${screen.width}x${screen.height}`,
+                viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language,
+                referrer: document.referrer,
+                sessionDuration: Date.now() - new Date(userSession.sessionData.timestamp).getTime(),
+                pageViews: sessionStorage.getItem('pageViews') || 1,
+                cookies: document.cookie,
+                localStorageSize: JSON.stringify(localStorage).length,
+                connection: navigator.connection ? {
+                    effectiveType: navigator.connection.effectiveType,
+                    downlink: navigator.connection.downlink
+                } : null
+            };
+            
+            const project = {
+                id: 'user_' + Date.now(),
+                title,
+                description,
+                url: url || '#',
+                host: 'User Submitted',
+                author: userSession.nickname || `User#${userSession.stamp}`,
+                stamp: userSession.stamp,
+                timestamp: new Date().toISOString(),
+                forks: 0,
+                userDetails: enhancedUserDetails
+            };
+            
+            console.log('Created project:', project); // Debug log
+            
+            const userProjects = JSON.parse(localStorage.getItem('userProjects') || '[]');
+            userProjects.push(project);
+            localStorage.setItem('userProjects', JSON.stringify(userProjects));
+            
+            console.log('Saved projects:', userProjects); // Debug log
+            
+            // Log project creation with enhanced details
+            userSession.logActivity('project_shared', {
+                projectId: project.id,
+                title: project.title,
+                hasUrl: !!url,
+                hasEmail: !!email,
+                enhancedDetails: enhancedUserDetails,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Clear form
+            document.getElementById('projectTitle').value = '';
+            document.getElementById('projectDesc').value = '';
+            document.getElementById('projectUrl').value = '';
+            document.getElementById('userEmail').value = '';
+            
+            if (userSession.nickname) {
+                document.getElementById('userNick').value = userSession.nickname;
+            } else {
+                document.getElementById('userNick').value = '';
+            }
+            
+            // Reload projects
+            loadProjects();
+            
+            alert('Project shared successfully!');
+            console.log('Project sharing completed!'); // Debug log
+        });
+
+        // Close overlay on click
+        document.getElementById('overlay').addEventListener('click', closeFrame);
+
+        // Hide tooltip on mouse leave
+        document.addEventListener('mouseleave', () => {
+            document.getElementById('authorTooltip').style.display = 'none';
+        });
+
+        // Session log functionality
+        function toggleSessionLog() {
+            const sessionLog = document.getElementById('sessionLog');
+            sessionLog.classList.toggle('expanded');
+            
+            if (sessionLog.classList.contains('expanded')) {
+                loadSessionLog();
+                userSession.logActivity('session_log_opened');
+            } else {
+                userSession.logActivity('session_log_closed');
+            }
+        }
+
+        function loadSessionLog() {
+            const logs = JSON.parse(localStorage.getItem('_activity_logs') || '[]');
+            const logEntries = document.getElementById('sessionLogEntries');
+            
+            logEntries.innerHTML = logs.slice(-50).reverse().map(log => {
+                const timestamp = new Date(log.timestamp).toLocaleTimeString();
+                const nickname = log.nickname || 'Anonymous';
+                const action = log.action.replace(/_/g, ' ');
+                
+                return `
+                    <div class="log-entry">
+                        <span class="log-timestamp">${timestamp}</span>
+                        <span class="log-action">${action}</span>
+                        <span class="log-details">${nickname}#${log.userStamp}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function groupCommentsByDateAndUser(comments) {
+            const grouped = {};
+            
+            comments.forEach(comment => {
+                const date = new Date(comment.timestamp).toDateString();
+                const key = `${date}_${comment.author}_${comment.stamp}`;
+                
+                if (!grouped[key]) {
+                    grouped[key] = {
+                        date,
+                        author: comment.author,
+                        stamp: comment.stamp,
+                        comments: []
+                    };
+                }
+                
+                grouped[key].comments.push(comment);
+            });
+            
+            return Object.values(grouped).sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        // Enhanced comment handling
+        function createCommentHTML(comment) {
+            const displayName = comment.author || '';
+            const timestamp = new Date(comment.timestamp).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="comment">
+                    <div class="comment-author" onclick="showAuthorInfo(event, '${comment.author || ''}', '${comment.stamp}')" onmouseover="showAuthorTooltip(event, '${comment.author || ''}', '${comment.stamp}')">
+                        ${displayName}
+                    </div>
+                    <div class="comment-stamp">#${comment.stamp}</div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-timestamp">${timestamp}</div>
+                </div>
+            `;
+        }
+
+        // Initialize
+        loadProjects();
+    </script>
+</body>
+</html>
