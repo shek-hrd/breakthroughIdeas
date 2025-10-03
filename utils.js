@@ -325,25 +325,6 @@ function sanitizeInput(input) {
 }
 
 /**
- * Sanitize input to prevent XSS attacks
- * @param {string} input - The input string to sanitize
- * @returns {string} - Sanitized input string
- */
-function sanitizeInput(input) {
-    if (typeof input !== 'string') return input;
-    return input.replace(/[<>"'&]/g, function(match) {
-        const entityMap = {
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;',
-            '&': '&amp;'
-        };
-        return entityMap[match];
-    });
-}
-
-/**
  * Throttle function
  * @param {Function} func - Function to throttle
  * @param {number} limit - Time limit in milliseconds
