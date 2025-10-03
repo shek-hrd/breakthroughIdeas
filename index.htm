@@ -948,28 +948,6 @@
     <div class="author-tooltip" id="authorTooltip"></div>
 
     <script>
-        // Application Configuration
-        const APP_CONFIG = {
-            STORAGE_KEYS: {
-                USERS: 'file_users.json',
-                PROJECTS: 'file_projects.json',
-                COMMENTS: 'file_comments.json',
-                RATINGS: 'file_ratings.json',
-                LOGS: 'file_logs.json',
-                CLICKS: 'file_clicks.json'
-            },
-            VALIDATION: {
-                MIN_TITLE_LENGTH: 3,
-                MIN_DESCRIPTION_LENGTH: 10,
-                MAX_TITLE_LENGTH: 100,
-                MAX_DESCRIPTION_LENGTH: 1000
-            },
-            RATE_LIMITING: {
-                COMMENT_COOLDOWN: 1000, // 1 second between comments
-                RATING_COOLDOWN: 1000,  // 1 second between ratings
-                PROJECT_SUBMISSION_COOLDOWN: 5000 // 5 seconds between project submissions
-            }
-        };
 
         // Utility functions
         function debounce(func, wait) {
@@ -1374,16 +1352,56 @@
         // Initialize storage on first load
         initializeStorageFiles();
 
+        // Populate example projects to storage
+        async function populateExampleProjects() {
+            try {
+                // Check if example projects are already in storage
+                const existingProjects = await userSession.storage.getItem('projects.allProjects') || [];
+                
+                if (existingProjects.length === 0) {
+                    // Convert example projects to storage format
+                    const exampleProjects = projects.map(project => ({
+                        id: project.id,
+                        title: project.title,
+                        description: project.description,
+                        host: project.host,
+                        url: project.url,
+                        category: project.category,
+                        timestamp: new Date().toISOString(),
+                        author: 'System',
+                        stamp: 'SYSTEM'
+                    }));
+                    
+                    // Save to storage
+                    await userSession.storage.setItem('projects.allProjects', exampleProjects);
+                    console.log('Example projects populated to storage');
+                    
+                    // Log the activity
+                    await userSession.storage.setItem('logs._activity_logs', [{
+                        action: 'system_populate_examples',
+                        timestamp: new Date().toISOString(),
+                        details: `Populated ${exampleProjects.length} example projects to storage`
+                    }]);
+                }
+            } catch (error) {
+                console.error('Failed to populate example projects:', error);
+            }
+        }
+
+        // Call this after storage initialization
+        populateExampleProjects();
+
         // Load projects
         async function loadProjects() {
             const container = document.getElementById('projectsGrid');
             container.innerHTML = '';
 
-            // Load user projects from storage
+            // Load all projects from storage
+            const systemProjects = await userSession.storage.getItem('projects.allProjects') || [];
             const userProjects = await userSession.storage.getItem('projects.userProjects') || [];
             
-            // Combine with existing projects
-            const allProjects = [...projects, ...userProjects]
+            // Combine system and user projects
+            const allProjects = [...systemProjects, ...userProjects]
                 .map((project, index) => ({ ...project, originalIndex: index }))
                 .sort((a, b) => {
                     const aExpanded = expandedProjects.has(a.id);
