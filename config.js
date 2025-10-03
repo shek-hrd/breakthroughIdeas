@@ -23,9 +23,11 @@ const APP_CONFIG = {
     }
 };
 
-// Rate limiting tracker
-const rateLimitTracker = {
-    lastCommentTime: 0,
-    lastRatingTime: 0,
-    lastProjectTime: 0
-};
+// Rate limiting tracker (moved to global scope to avoid conflicts)
+if (typeof rateLimitTracker === 'undefined') {
+    window.rateLimitTracker = {
+        lastCommentTime: 0,
+        lastRatingTime: 0,
+        lastProjectTime: 0
+    };
+}
