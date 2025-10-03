@@ -2176,6 +2176,39 @@
             }
         });
 
+        // Storage system test function
+        async function testStorageSystem() {
+            try {
+                console.log('Running storage system test...');
+                
+                // Test basic storage operations
+                const testKey = 'test.storage.key';
+                const testData = { test: 'data', timestamp: Date.now() };
+                
+                await userSession.storage.setItem(testKey, testData);
+                const retrievedData = await userSession.storage.getItem(testKey);
+                
+                if (JSON.stringify(retrievedData) === JSON.stringify(testData)) {
+                    console.log('✅ Storage read/write test passed');
+                } else {
+                    console.error('❌ Storage read/write test failed');
+                }
+                
+                await userSession.storage.removeItem(testKey);
+                const removedData = await userSession.storage.getItem(testKey);
+                
+                if (removedData === null) {
+                    console.log('✅ Storage remove test passed');
+                } else {
+                    console.error('❌ Storage remove test failed');
+                }
+                
+                console.log('Storage system test completed');
+            } catch (error) {
+                console.error('Storage system test failed:', error);
+            }
+        }
+
         // Initialize with error recovery
         document.addEventListener('DOMContentLoaded', async function() {
             try {
