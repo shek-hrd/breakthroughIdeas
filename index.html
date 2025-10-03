@@ -1241,6 +1241,48 @@
             return card;
         }
 
+        function groupCommentsByDateAndUser(comments) {
+            const grouped = {};
+            
+            comments.forEach(comment => {
+                const date = new Date(comment.timestamp).toLocaleDateString('cs-CZ');
+                const key = `${date}_${comment.author}`;
+                
+                if (!grouped[key]) {
+                    grouped[key] = {
+                        author: comment.author,
+                        stamp: comment.stamp,
+                        date: date,
+                        comments: []
+                    };
+                }
+                
+                grouped[key].comments.push(comment);
+            });
+            
+            return Object.values(grouped);
+        }
+
+        function renderGroupedComments(groupedComments) {
+            return groupedComments.map(group => {
+                const timeStr = group.comments[0].timestamp;
+                
+                return `
+                    <div class="comment-group">
+                        <div class="comment-header">
+                            <div class="comment-author">${group.author}</div>
+                            <div class="comment-stamp">#${group.stamp}</div>
+                        </div>
+                        <div class="comment-date-header">${group.date}</div>
+                        ${group.comments.map(comment => `
+                            <div class="comment-text">${comment.text}</div>
+                        `).join('')}
+                        <div class="comment-timestamp">${new Date(timeStr).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function createCommentHTML(comment) {
             const displayName = comment.author || '';
             const timestamp = new Date(comment.timestamp).toLocaleString('en-US', {
