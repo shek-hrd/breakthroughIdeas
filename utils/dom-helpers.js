@@ -1,7 +1,3 @@
-// Create centralized state manager
-// Implement proper event delegation
-// Add storage operation batching
-
 /**
  * DOM Helpers Module
  * Utility functions for DOM manipulation, event handling, and UI interactions
@@ -25,6 +21,14 @@ function showValidationErrors(container, errors) {
     
     const errorHTML = generateValidationErrorHTML(errors);
     container.insertAdjacentHTML('afterbegin', errorHTML);
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        const errorDiv = container.querySelector('.validation-errors');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }, 5000);
 }
 
 /**
@@ -36,6 +40,15 @@ function autoResizeTextarea(textarea) {
     
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+    
+    // Add event listener if not already added
+    if (!textarea.dataset.autoResize) {
+        textarea.dataset.autoResize = 'true';
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+    }
 }
 
 /**
@@ -188,6 +201,127 @@ function smoothScrollTo(element, offset = 0) {
     });
 }
 
+/**
+ * Get element by selector with error handling
+ * @param {string} selector - CSS selector
+ * @param {HTMLElement} parent - Parent element to search within (default: document)
+ * @returns {HTMLElement|null} - Found element or null
+ */
+function getElement(selector, parent = document) {
+    try {
+        return parent.querySelector(selector);
+    } catch (error) {
+        console.warn(`Invalid selector: ${selector}`, error);
+        return null;
+    }
+}
+
+/**
+ * Get elements by selector with error handling
+ * @param {string} selector - CSS selector
+ * @param {HTMLElement} parent - Parent element to search within (default: document)
+ * @returns {NodeList} - Found elements (empty NodeList if error)
+ */
+function getElements(selector, parent = document) {
+    try {
+        return parent.querySelectorAll(selector);
+    } catch (error) {
+        console.warn(`Invalid selector: ${selector}`, error);
+        return document.querySelectorAll(''); // Return empty NodeList
+    }
+}
+
+/**
+ * Create element with attributes and children
+ * @param {string} tagName - HTML tag name
+ * @param {Object} attributes - Attributes to set
+ * @param {Array} children - Child elements or text
+ * @returns {HTMLElement} - Created element
+ */
+function createElement(tagName, attributes = {}, children = []) {
+    const element = document.createElement(tagName);
+    
+    // Set attributes
+    Object.keys(attributes).forEach(key => {
+        if (key === 'className') {
+            element.className = attributes[key];
+        } else if (key === 'style' && typeof attributes[key] === 'object') {
+            Object.assign(element.style, attributes[key]);
+        } else {
+            element.setAttribute(key, attributes[key]);
+        }
+    });
+    
+    // Add children
+    children.forEach(child => {
+        if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+        } else if (child instanceof HTMLElement) {
+            element.appendChild(child);
+        }
+    });
+    
+    return element;
+}
+
+/**
+ * Generate validation error HTML (helper function)
+ * @param {Array} errors - Array of error messages
+ * @returns {string} - Generated HTML string
+ */
+function generateValidationErrorHTML(errors) {
+    if (errors.length === 0) return '';
+    
+    return `
+        <div class="validation-errors" style="
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #c33;
+        ">
+            <ul style="margin: 5px 0; padding-left: 20px;">
+                ${errors.map(error => `<li>${escapeHtml(error)}</li>`).join('')}
+            </ul>
+        </div>
+    `;
+}
+
+/**
+ * Generate notification HTML (helper function)
+ * @param {string} message - Notification message
+ * @param {string} type - Notification type ('success', 'error', 'warning', 'info')
+ * @returns {string} - Generated HTML
+ */
+function generateNotificationHTML(message, type = 'info') {
+    const typeStyles = {
+        success: { bg: '#d4edda', border: '#c3e6cb', color: '#155724' },
+        error: { bg: '#f8d7da', border: '#f5c6cb', color: '#721c24' },
+        warning: { bg: '#fff3cd', border: '#ffeeba', color: '#856404' },
+        info: { bg: '#d1ecf1', border: '#bee5eb', color: '#0c5460' }
+    };
+    
+    const style = typeStyles[type] || typeStyles.info;
+    
+    return `
+        <div class="notification notification-${type}" style="
+            background: ${style.bg};
+            border: 1px solid ${style.border};
+            color: ${style.color};
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+            position: relative;
+        ">
+            <span class="notification-message">${escapeHtml(message)}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()" 
+                    style="position: absolute; right: 8px; top: 8px; background: none; border: none; 
+                           color: inherit; font-size: 18px; cursor: pointer;">×</button>
+        </div>
+    `;
+}
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -201,7 +335,12 @@ if (typeof module !== 'undefined' && module.exports) {
         addEventListenerWithCleanup,
         setButtonLoadingState,
         showNotification,
-        smoothScrollTo
+        smoothScrollTo,
+        getElement,
+        getElements,
+        createElement,
+        generateValidationErrorHTML,
+        generateNotificationHTML
     };
 } else {
     window.DOMHelpers = {
@@ -215,6 +354,11 @@ if (typeof module !== 'undefined' && module.exports) {
         addEventListenerWithCleanup,
         setButtonLoadingState,
         showNotification,
-        smoothScrollTo
+        smoothScrollTo,
+        getElement,
+        getElements,
+        createElement,
+        generateValidationErrorHTML,
+        generateNotificationHTML
     };
 }
