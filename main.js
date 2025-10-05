@@ -118,12 +118,189 @@ window.addEventListener('error', function(e) {
 
 
 
+// Initialize application
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('Initializing application...');
+        
+        // Attach event listeners after DOM is ready
+        attachEventListeners();
+        
+        // Initialize storage files (assumed to be defined in project-functions.js)
+        await initializeStorageFiles();
+        
+        // Load projects
+        await loadProjects();
+        
+        // Run storage system test
+        setTimeout(testStorageSystem, 2000);
+        
+        console.log('Application initialized successfully!');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        
+        // Try to recover from initialization errors
+        try {
+            console.log('Attempting recovery...');
+            
+            // Clear potentially corrupted data
+            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
+            storageKeys.forEach(key => {
+                try {
+                    const data = localStorage.getItem(key);
+                    JSON.parse(data); // Test if valid JSON
+                } catch (e) {
+                    console.warn(`Clearing corrupted storage key: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Re-initialize
+            await initializeStorageFiles();
+            await loadProjects();
+            
+            console.log('Recovery completed successfully!');
+            
+        } catch (recoveryError) {
+            console.error('Recovery failed:', recoveryError);
+            alert('There was an issue loading the application. Please refresh the page.');
+        }
+    }
+});
+
 // Function to attach event listeners after DOM is loaded
 function attachEventListeners() {
     // User project form submission
     const userProjectForm = document.getElementById('userProjectForm');
     if (userProjectForm) {
         userProjectForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('User project form submitted'); // Debug log
+            
+            const title = document.getElementById('projectTitle').value.trim();
+            const description = document.getElementById('projectDesc').value.trim();
+            const link = document.getElementById('projectUrl').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const nickname = document.getElementById('userNick').value.trim();
+            const tags = document.getElementById('projectTags').value.split(',').map(tag => tag.trim()).filter(Boolean);
+            
+            // Validate project data
+            const validation = validateProjectData({
+                title,
+                description,
+                tags,
+                link: link || undefined
+            });
+            
+            if (!validation.isValid) {
+                showValidationErrors(validation.errors, userProjectForm);
+                return;
+            }
+            
+            // Rate limiting check
+            const now = Date.now();
+            if (now - rateLimitTracker.lastProjectTime < APP_CONFIG.RATE_LIMITING.PROJECT_COOLDOWN) {
+                const remainingTime = APP_CONFIG.RATE_LIMITING.PROJECT_COOLDOWN - (now - rateLimitTracker.lastProjectTime);
+                alert(`Please wait ${Math.ceil(remainingTime / 1000)} seconds before sharing another project.`);
+                return;
+            }
+            
+            try {
+                // Handle nickname
+                if (nickname && nickname !== userSession.nickname) {
+                    await userSession.setNickname(nickname);
+                }
+                
+                // Collect enhanced user details
+                const enhancedUserDetails = {
+                    email: email || null,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    screen: {
+                        width: screen.width,
+                        height: screen.height
+                    }
+                };
+                
+                if (email) {
+                    await userSession.saveUserDetails(enhancedUserDetails);
+                }
+                
+                // Create project object
+                const project = {
+                    id: Date.now(),
+                    title,
+                    description,
+                    tags,
+                    link: link || null,
+                    author: userSession.nickname || 'Anonymous',
+                    authorStamp: userSession.stamp,
+                    timestamp: new Date().toISOString(),
+                    type: 'user',
+                    userDetails: enhancedUserDetails
+                };
+                
+                // Save user project
+                const userProjects = await userSession.storage.getItem('projects.userProjects') || [];
+                userProjects.push(project);
+                await userSession.storage.setItem('projects.userProjects', userProjects);
+                
+                // Log project sharing activity
+                await userSession.logActivity('project_shared', {
+                    projectId: project.id,
+                    title: project.title,
+                    hasEmail: !!email,
+                    enhancedDetails: enhancedUserDetails,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Clear form
+                document.getElementById('projectTitle').value = '';
+                document.getElementById('projectDesc').value = '';
+                document.getElementById('projectUrl').value = '';
+                document.getElementById('userEmail').value = '';
+                
+                if (userSession.nickname) {
+                    document.getElementById('userNick').value = userSession.nickname;
+                } else {
+                    document.getElementById('userNick').value = '';
+                }
+                
+                // Update rate limit tracker
+                rateLimitTracker.lastProjectTime = now;
+                
+                // Reload projects
+                await loadProjects();
+                
+                alert('Project shared successfully!');
+                console.log('Project sharing completed!'); // Debug log
+            } catch (error) {
+                console.error('Error sharing project:', error);
+                alert('Failed to share project. Please try again.');
+            }
+        });
+    } else {
+        console.warn('userProjectForm element not found - event listener not attached');
+    }
+
+    // Close overlay on click
+    const overlayElement = document.getElementById('overlay');
+    if (overlayElement) {
+        overlayElement.addEventListener('click', closeFrame);
+    } else {
+        console.warn('overlay element not found - event listener not attached');
+    }
+
+    // Hide tooltip on mouse leave
+    document.addEventListener('mouseleave', () => {
+        const tooltip = document.getElementById('authorTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    });
+}
             e.preventDefault();
             console.log('User project form submitted'); // Debug log
             
@@ -249,160 +426,4 @@ function attachEventListeners() {
             tooltip.style.display = 'none';
         }
     });
-
-    // Initialize comment event handlers
-    initializeCommentEvents();
 }
-
-// Initialize application
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        console.log('Initializing application...');
-        
-        // Attach event listeners after DOM is ready
-        attachEventListeners();
-        
-        // Initialize storage files (assumed to be defined in project-functions.js)
-        await initializeStorageFiles();
-        
-        // Load projects
-        await loadProjects();
-        
-        // Run storage system test
-        setTimeout(testStorageSystem, 2000);
-        
-        console.log('Application initialized successfully!');
-        
-    } catch (error) {
-        console.error('Failed to initialize application:', error);
-        
-        // Try to recover from initialization errors
-        try {
-            console.log('Attempting recovery...');
-            
-            // Clear potentially corrupted data
-            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
-            storageKeys.forEach(key => {
-                try {
-                    const data = localStorage.getItem(key);
-                    JSON.parse(data); // Test if valid JSON
-                } catch (e) {
-                    console.warn(`Clearing corrupted storage key: ${key}`);
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            // Re-initialize
-            await initializeStorageFiles();
-            await loadProjects();
-            
-            console.log('Recovery completed successfully!');
-            
-        } catch (recoveryError) {
-            console.error('Recovery failed:', recoveryError);
-            alert('There was an issue loading the application. Please refresh the page.');
-        }
-    }
-});
-
-// Initialize application
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        console.log('Initializing application...');
-        
-        // Attach event listeners after DOM is ready
-        attachEventListeners();
-        
-        // Initialize storage files (assumed to be defined in project-functions.js)
-        await initializeStorageFiles();
-        
-        // Load projects
-        await loadProjects();
-        
-        // Run storage system test
-        setTimeout(testStorageSystem, 2000);
-        
-        console.log('Application initialized successfully!');
-        
-    } catch (error) {
-        console.error('Failed to initialize application:', error);
-        
-        // Try to recover from initialization errors
-        try {
-            console.log('Attempting recovery...');
-            
-            // Clear potentially corrupted data
-            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
-            storageKeys.forEach(key => {
-                try {
-                    const data = localStorage.getItem(key);
-                    JSON.parse(data); // Test if valid JSON
-                } catch (e) {
-                    console.warn(`Clearing corrupted storage key: ${key}`);
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            // Re-initialize
-            await initializeStorageFiles();
-            await loadProjects();
-            
-            console.log('Recovery completed successfully!');
-            
-        } catch (recoveryError) {
-            console.error('Recovery failed:', recoveryError);
-            alert('There was an issue loading the application. Please refresh the page.');
-        }
-    }
-});
-
-// Initialize application
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        console.log('Initializing application...');
-        
-        // Attach event listeners after DOM is ready
-        attachEventListeners();
-        
-        // Initialize storage files (assumed to be defined in project-functions.js)
-        await initializeStorageFiles();
-        
-        // Load projects
-        await loadProjects();
-        
-        // Run storage system test
-        setTimeout(testStorageSystem, 2000);
-        
-        console.log('Application initialized successfully!');
-        
-    } catch (error) {
-        console.error('Failed to initialize application:', error);
-        
-        // Try to recover from initialization errors
-        try {
-            console.log('Attempting recovery...');
-            
-            // Clear potentially corrupted data
-            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
-            storageKeys.forEach(key => {
-                try {
-                    const data = localStorage.getItem(key);
-                    JSON.parse(data); // Test if valid JSON
-                } catch (e) {
-                    console.warn(`Clearing corrupted storage key: ${key}`);
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            // Re-initialize
-            await initializeStorageFiles();
-            await loadProjects();
-            
-            console.log('Recovery completed successfully!');
-            
-        } catch (recoveryError) {
-            console.error('Recovery failed:', recoveryError);
-            alert('There was an issue loading the application. Please refresh the page.');
-        }
-    }
-});
