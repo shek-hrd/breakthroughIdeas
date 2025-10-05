@@ -395,3 +395,21 @@ function attachEventListeners() {
         }
     });
 }
+    }
+
+    // Close overlay on click
+    const overlayElement = document.getElementById('overlay');
+    if (overlayElement) {
+        overlayElement.addEventListener('click', closeFrame);
+    } else {
+        console.warn('overlay element not found - event listener not attached');
+    }
+
+    // Hide tooltip on mouse leave
+    document.addEventListener('mouseleave', () => {
+        const tooltip = document.getElementById('authorTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    });
+}
