@@ -14,9 +14,8 @@
 async function addComment(projectId, textarea) {
     try {
         const commentText = sanitizeInput(textarea.value.trim());
-        const projectCard = textarea.closest('.project-card');
-        const nicknameInput = projectCard?.querySelector(`[id*="nickname"]`) || document.getElementById(`nickname_${projectId}`);
-        const nickname = sanitizeInput(nicknameInput?.textContent?.trim() || nicknameInput?.value?.trim() || '');
+        const nicknameInput = document.getElementById(`nickname_${projectId}`);
+        const nickname = sanitizeInput(nicknameInput.textContent.trim());
         
         // Validation
         if (!commentText) {
@@ -72,9 +71,8 @@ async function addComment(projectId, textarea) {
             commentsContainer.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
         }
         
-        // Clear form and reset textarea height
+        // Clear form
         textarea.value = '';
-        textarea.style.height = 'auto';
         
         // Update comment count in stats
         const card = document.getElementById(`comments_${projectId}`).closest('.project-card');
@@ -239,53 +237,4 @@ function renderGroupedComments(groupedComments) {
                 </div>
             `;
         }).join('');
-}
-
-/**
- * Initialize comment input event handlers
- */
-function initializeCommentEvents() {
-    // Nickname input handler
-    const nicknameInput = document.getElementById('userNick');
-    if (nicknameInput) {
-        nicknameInput.addEventListener('input', function() {
-            const nickname = this.value.trim();
-            if (nickname) {
-                UserSession.updateNickname(nickname);
-            }
-        });
-    }
-    
-    // Comment input handler
-    const commentInput = document.getElementById('commentText');
-    if (commentInput) {
-        commentInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                const projectId = this.closest('.project-card')?.dataset.projectId;
-                if (projectId) {
-                    addComment(projectId);
-                }
-            }
-        });
-        
-        // Auto-resize textarea
-        commentInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        });
-    }
-}
-
-// Export functions for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        addComment,
-        displayComments,
-        showAuthorTooltip,
-        groupCommentsByDateAndUser,
-        renderGroupedComments,
-        createCommentHTML,
-        initializeCommentEvents
-    };
 }

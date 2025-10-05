@@ -286,8 +286,3 @@ class UserSession {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = UserSession;
 }
-
-// Create global instance for browser environments
-if (typeof window !== 'undefined') {
-    window.userSession = new UserSession();
-}

@@ -3,7 +3,41 @@
  * Handles initialization, event listeners, and application lifecycle
  */
 
+// Initialize storage files
+async function initializeStorageFiles() {
+    try {
+        // Create initial storage structure
+        const storageStructure = {
+            users: {
+                nickname: "",
+                userDetails: null,
+                userStamp: null,
+                lastVisit: null,
+                allUsers: []
+            },
+            projects: {
+                userProjects: []
+            },
+            comments: {},
+            ratings: {},
+            logs: {
+                _activity_logs: []
+            },
+            clicks: {}
+        };
 
+        // Initialize each storage file
+        for (const [key, data] of Object.entries(storageStructure)) {
+            const fileKey = `${key}.${key === 'users' ? 'users' : key === 'projects' ? 'userProjects' : key === 'logs' ? '_activity_logs' : ''}`;
+            const existingData = await userSession.storage.getItem(fileKey);
+            if (!existingData) {
+                await userSession.storage.setItem(fileKey, data);
+            }
+        }
+    } catch (error) {
+        console.log('Storage initialization failed, using localStorage fallback:', error);
+    }
+}
 
 // Session log functionality
 async function toggleSessionLog() {
@@ -66,7 +100,64 @@ async function loadSessionLog() {
     }).join('');
 }
 
+// Comment grouping and rendering
+function groupCommentsByDateAndUser(comments) {
+    const grouped = {};
+    
+    comments.forEach(comment => {
+        const date = new Date(comment.timestamp).toDateString();
+        const key = `${date}_${comment.author}_${comment.stamp}`;
+        
+        if (!grouped[key]) {
+            grouped[key] = {
+                date,
+                author: comment.author,
+                stamp: comment.stamp,
+                comments: []
+            };
+        }
+        
+        grouped[key].comments.push(comment);
+    });
+    
+    return Object.values(grouped).sort((a, b) => new Date(b.date) - new Date(a.date));
+}
 
+function createCommentHTML(comment) {
+    const displayName = comment.author || '';
+    const timestamp = new Date(comment.timestamp).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    return `
+        <div class="comment">
+            <div class="comment-author" onclick="showAuthorInfo(event, '${comment.author || ''}', '${comment.stamp}')" onmouseover="showAuthorTooltip(event, '${comment.author || ''}', '${comment.stamp}')">
+                ${displayName}
+            </div>
+            <div class="comment-stamp">#${comment.stamp}</div>
+            <div class="comment-text">${comment.text}</div>
+            <div class="comment-timestamp">${timestamp}</div>
+        </div>
+    `;
+}
+
+function renderGroupedComments(groupedComments) {
+    return groupedComments.map(group => `
+        <div class="comment-group">
+            <div class="comment-group-header">
+                <span class="comment-group-author">${group.author}</span>
+                <span class="comment-group-stamp">#${group.stamp}</span>
+                <span class="comment-group-date">${new Date(group.date).toLocaleDateString()}</span>
+            </div>
+            <div class="comment-group-comments">
+                ${group.comments.map(comment => createCommentHTML(comment)).join('')}
+            </div>
+        </div>
+    `).join('');
+}
 
 // Storage system test function
 async function testStorageSystem() {
@@ -126,7 +217,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Attach event listeners after DOM is ready
         attachEventListeners();
         
-        // Initialize storage files (assumed to be defined in project-functions.js)
+        // Initialize user session
+        await userSession.initializeSession();
+        
+        // Initialize storage files
         await initializeStorageFiles();
         
         // Load projects
@@ -184,132 +278,6 @@ function attachEventListeners() {
             const email = document.getElementById('userEmail').value.trim();
             const nickname = document.getElementById('userNick').value.trim();
             const tags = document.getElementById('projectTags').value.split(',').map(tag => tag.trim()).filter(Boolean);
-            
-            // Validate project data
-            const validation = validateProjectData({
-                title,
-                description,
-                tags,
-                link: link || undefined
-            });
-            
-            if (!validation.isValid) {
-                showValidationErrors(validation.errors, userProjectForm);
-                return;
-            }
-            
-            // Rate limiting check
-            const now = Date.now();
-            if (now - rateLimitTracker.lastProjectTime < APP_CONFIG.RATE_LIMITING.PROJECT_COOLDOWN) {
-                const remainingTime = APP_CONFIG.RATE_LIMITING.PROJECT_COOLDOWN - (now - rateLimitTracker.lastProjectTime);
-                alert(`Please wait ${Math.ceil(remainingTime / 1000)} seconds before sharing another project.`);
-                return;
-            }
-            
-            try {
-                // Handle nickname
-                if (nickname && nickname !== userSession.nickname) {
-                    await userSession.setNickname(nickname);
-                }
-                
-                // Collect enhanced user details
-                const enhancedUserDetails = {
-                    email: email || null,
-                    timestamp: new Date().toISOString(),
-                    userAgent: navigator.userAgent,
-                    language: navigator.language,
-                    screen: {
-                        width: screen.width,
-                        height: screen.height
-                    }
-                };
-                
-                if (email) {
-                    await userSession.saveUserDetails(enhancedUserDetails);
-                }
-                
-                // Create project object
-                const project = {
-                    id: Date.now(),
-                    title,
-                    description,
-                    tags,
-                    link: link || null,
-                    author: userSession.nickname || 'Anonymous',
-                    authorStamp: userSession.stamp,
-                    timestamp: new Date().toISOString(),
-                    type: 'user',
-                    userDetails: enhancedUserDetails
-                };
-                
-                // Save user project
-                const userProjects = await userSession.storage.getItem('projects.userProjects') || [];
-                userProjects.push(project);
-                await userSession.storage.setItem('projects.userProjects', userProjects);
-                
-                // Log project sharing activity
-                await userSession.logActivity('project_shared', {
-                    projectId: project.id,
-                    title: project.title,
-                    hasEmail: !!email,
-                    enhancedDetails: enhancedUserDetails,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Clear form
-                document.getElementById('projectTitle').value = '';
-                document.getElementById('projectDesc').value = '';
-                document.getElementById('projectUrl').value = '';
-                document.getElementById('userEmail').value = '';
-                
-                if (userSession.nickname) {
-                    document.getElementById('userNick').value = userSession.nickname;
-                } else {
-                    document.getElementById('userNick').value = '';
-                }
-                
-                // Update rate limit tracker
-                rateLimitTracker.lastProjectTime = now;
-                
-                // Reload projects
-                await loadProjects();
-                
-                alert('Project shared successfully!');
-                console.log('Project sharing completed!'); // Debug log
-            } catch (error) {
-                console.error('Error sharing project:', error);
-                alert('Failed to share project. Please try again.');
-            }
-        });
-    } else {
-        console.warn('userProjectForm element not found - event listener not attached');
-    }
-
-    // Close overlay on click
-    const overlayElement = document.getElementById('overlay');
-    if (overlayElement) {
-        overlayElement.addEventListener('click', closeFrame);
-    } else {
-        console.warn('overlay element not found - event listener not attached');
-    }
-
-    // Hide tooltip on mouse leave
-    document.addEventListener('mouseleave', () => {
-        const tooltip = document.getElementById('authorTooltip');
-        if (tooltip) {
-            tooltip.style.display = 'none';
-        }
-    });
-}
-            e.preventDefault();
-            console.log('User project form submitted'); // Debug log
-            
-            const title = document.getElementById('projectTitle').value.trim();
-            const description = document.getElementById('projectDesc').value.trim();
-            const link = document.getElementById('projectUrl').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            const nickname = document.getElementById('userNick').value.trim();
-            const tags = ['user-submitted']; // Default tags for user projects
             
             // Validate project data
             const validation = validateProjectData({
