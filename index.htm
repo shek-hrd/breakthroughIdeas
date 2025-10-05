@@ -21,10 +21,11 @@
         // copyToClipboard() is imported from utils.js
         // toggleSessionLog() is imported from utils.js
     </script>
-  <script src="config.js"></script>
+    <script src="config.js"></script>
     <script src="storage.js"></script>
     <script src="user-session.js"></script>
     <script>
+        // Create global userSession instance if it doesn't exist
         if (typeof window !== 'undefined' && typeof UserSession !== 'undefined' && !window.userSession) {
             window.userSession = new UserSession();
         }
@@ -36,27 +37,59 @@
     <script src="rating-functions.js"></script>
     <script src="main.js"></script>
     
+    <!-- Comment System Migration Script -->
+    <script>
+        /**
+         * Comment System Migration Helper
+         * Auto-migrates from old comment system to new consolidated system
+         */
+        (function() {
+            function isNewCommentSystemAvailable() {
+                return typeof window.addCommentFromUtils !== 'undefined' &&
+                       typeof window.displayComments !== 'undefined' &&
+                       typeof window.showAuthorTooltipFromUtils !== 'undefined';
+            }
+            
+            function migrateCommentFunctions() {
+                if (!isNewCommentSystemAvailable()) {
+                    console.warn('New comment system not available for migration');
+                    return false;
+                }
+                
+                console.log('Auto-migrating comment functions to new system...');
+                
+                // Create global aliases for the new functions
+                window.addComment = window.addCommentFromUtils;
+                window.showAuthorTooltip = window.showAuthorTooltipFromUtils;
+                window.handleNicknameInput = window.handleNicknameInputFromUtils;
+                window.handleCommentKeydown = window.handleCommentKeydownFromUtils;
+                window.handleNicknameKeydown = window.handleNicknameKeydownFromUtils;
+                window.initializeCommentEvents = window.initializeCommentEventsFromUtils;
+                
+                console.log('Comment functions auto-migrated successfully');
+                return true;
+            }
+            
+            // Auto-migrate when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', migrateCommentFunctions);
+            } else {
+                // DOM is already loaded, migrate immediately
+                setTimeout(migrateCommentFunctions, 100);
+            }
+            
+            // Also provide a manual migration function
+            window.migrateCommentSystem = migrateCommentFunctions;
+            
+            console.log('Comment system migration helper loaded');
+        })();
+    </script>
+    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        .text-with-outline {
-            text-shadow: 
-                -1px -1px 0 #000,
-                1px -1px 0 #000,
-                -1px 1px 0 #000,
-                1px 1px 0 #000;
-        }
-
-        .title, .subtitle, .breakthrough-section {
-            text-shadow: 
-                -1px -1px 0 #000,
-                1px -1px 0 #000,
-                -1px 1px 0 #000,
-                1px 1px 0 #000;
         }
 
         body {

@@ -1,15 +1,31 @@
 /**
  * Comment Functions Module
  * Handles comment functionality, user interactions, and form validation
+ * 
+ * @deprecated This module is being replaced by utils/comment-system.js
+ * New code should use the consolidated comment system from utils/comment-system.js
  */
+
+// Import the new consolidated comment system
+// Note: In a browser environment, these functions will be available globally
+// after the script is loaded. In Node.js, use require().
 
 /**
  * Add a comment to a project
  * @param {string} projectId - The ID of the project
  * @param {HTMLElement} textarea - The textarea element containing the comment
+ * @deprecated Use addComment from utils/comment-system.js instead
  */
 async function addComment(projectId, textarea) {
+    console.warn('addComment from comment-functions.js is deprecated. Use addComment from utils/comment-system.js instead.');
+    
     try {
+        // Delegate to the new consolidated comment system
+        if (typeof addCommentFromUtils !== 'undefined') {
+            return await addCommentFromUtils(projectId, textarea);
+        }
+        
+        // Fallback to the old implementation if the new one is not available
         const commentText = sanitizeInput(textarea.value.trim());
         const projectCard = textarea.closest('.project-card');
         const nicknameInput = projectCard?.querySelector(`[id*="nickname"]`) || document.getElementById(`nickname_${projectId}`);
