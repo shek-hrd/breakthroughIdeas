@@ -253,3 +253,156 @@ function attachEventListeners() {
     // Initialize comment event handlers
     initializeCommentEvents();
 }
+
+// Initialize application
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('Initializing application...');
+        
+        // Attach event listeners after DOM is ready
+        attachEventListeners();
+        
+        // Initialize storage files (assumed to be defined in project-functions.js)
+        await initializeStorageFiles();
+        
+        // Load projects
+        await loadProjects();
+        
+        // Run storage system test
+        setTimeout(testStorageSystem, 2000);
+        
+        console.log('Application initialized successfully!');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        
+        // Try to recover from initialization errors
+        try {
+            console.log('Attempting recovery...');
+            
+            // Clear potentially corrupted data
+            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
+            storageKeys.forEach(key => {
+                try {
+                    const data = localStorage.getItem(key);
+                    JSON.parse(data); // Test if valid JSON
+                } catch (e) {
+                    console.warn(`Clearing corrupted storage key: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Re-initialize
+            await initializeStorageFiles();
+            await loadProjects();
+            
+            console.log('Recovery completed successfully!');
+            
+        } catch (recoveryError) {
+            console.error('Recovery failed:', recoveryError);
+            alert('There was an issue loading the application. Please refresh the page.');
+        }
+    }
+});
+
+// Initialize application
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('Initializing application...');
+        
+        // Attach event listeners after DOM is ready
+        attachEventListeners();
+        
+        // Initialize storage files (assumed to be defined in project-functions.js)
+        await initializeStorageFiles();
+        
+        // Load projects
+        await loadProjects();
+        
+        // Run storage system test
+        setTimeout(testStorageSystem, 2000);
+        
+        console.log('Application initialized successfully!');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        
+        // Try to recover from initialization errors
+        try {
+            console.log('Attempting recovery...');
+            
+            // Clear potentially corrupted data
+            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
+            storageKeys.forEach(key => {
+                try {
+                    const data = localStorage.getItem(key);
+                    JSON.parse(data); // Test if valid JSON
+                } catch (e) {
+                    console.warn(`Clearing corrupted storage key: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Re-initialize
+            await initializeStorageFiles();
+            await loadProjects();
+            
+            console.log('Recovery completed successfully!');
+            
+        } catch (recoveryError) {
+            console.error('Recovery failed:', recoveryError);
+            alert('There was an issue loading the application. Please refresh the page.');
+        }
+    }
+});
+
+// Initialize application
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('Initializing application...');
+        
+        // Attach event listeners after DOM is ready
+        attachEventListeners();
+        
+        // Initialize storage files (assumed to be defined in project-functions.js)
+        await initializeStorageFiles();
+        
+        // Load projects
+        await loadProjects();
+        
+        // Run storage system test
+        setTimeout(testStorageSystem, 2000);
+        
+        console.log('Application initialized successfully!');
+        
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        
+        // Try to recover from initialization errors
+        try {
+            console.log('Attempting recovery...');
+            
+            // Clear potentially corrupted data
+            const storageKeys = ['file_users.json', 'file_projects.json', 'file_comments.json', 'file_ratings.json', 'file_logs.json', 'file_clicks.json'];
+            storageKeys.forEach(key => {
+                try {
+                    const data = localStorage.getItem(key);
+                    JSON.parse(data); // Test if valid JSON
+                } catch (e) {
+                    console.warn(`Clearing corrupted storage key: ${key}`);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Re-initialize
+            await initializeStorageFiles();
+            await loadProjects();
+            
+            console.log('Recovery completed successfully!');
+            
+        } catch (recoveryError) {
+            console.error('Recovery failed:', recoveryError);
+            alert('There was an issue loading the application. Please refresh the page.');
+        }
+    }
+});
