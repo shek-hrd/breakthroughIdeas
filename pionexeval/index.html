@@ -22,9 +22,6 @@
                 </div>
                 <button id="generate-ideal-bot" class="primary">Refresh Ideal Bot Analysis</button>
             </div>
-            <div id="ideal-bot-result" class="ideal-bot-result">
-                <p class="loading">Preparing deep analysis with the latest telemetry…</p>
-            </div>
         </section>
 
         <section class="control-bar">
@@ -122,6 +119,28 @@
                 </div>
             </div>
         </section>
+
+        <section id="debug-console" class="content-section">
+            <div class="section-heading">
+                <h2>Debug Console</h2>
+                <button id="toggle-debug-console" class="secondary">Expand Debug Console</button>
+            </div>
+            <div id="debug-console-content" class="debug-console-content">
+                <div class="debug-controls">
+                    <button id="clear-debug-log" class="secondary">Clear Log</button>
+                    <button id="export-debug-log" class="secondary">Export Log</button>
+                    <select id="debug-log-level">
+                        <option value="all">All</option>
+                        <option value="info">Info</option>
+                        <option value="warn">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+                <div id="debug-log-container" class="debug-log-container">
+                    <div class="debug-log-entry info">Debug console initialized. Ready for Pionex API operations.</div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <div id="pionex-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pionex-modal-title" aria-describedby="pionex-modal-description">
@@ -133,6 +152,36 @@
             <div class="modal-actions">
                 <button id="pionex-modal-try-login" class="accent">Attempt Secure Login</button>
                 <button id="pionex-modal-mock-login" class="secondary">Use Mock Session</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="api-key-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="api-key-modal-title" aria-describedby="api-key-modal-description">
+        <div class="modal-content">
+            <button id="api-key-modal-close" class="modal-close" aria-label="Close API key dialog">&times;</button>
+            <h2 id="api-key-modal-title">Pionex API Configuration</h2>
+            <p id="api-key-modal-description" class="modal-description">Enter your Pionex API credentials to enable automated bot creation and management.</p>
+
+            <div class="form-group">
+                <label for="api-key-input">API Key:</label>
+                <input type="text" id="api-key-input" placeholder="Enter your Pionex API Key" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="api-secret-input">API Secret:</label>
+                <input type="password" id="api-secret-input" placeholder="Enter your Pionex API Secret" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="trading-password-input">Trading Password:</label>
+                <input type="password" id="trading-password-input" placeholder="Enter your trading password (if required)" autocomplete="off">
+            </div>
+
+            <div id="api-key-modal-message" class="modal-message informational">Your credentials are encrypted and stored locally only.</div>
+
+            <div class="modal-actions">
+                <button id="test-api-connection" class="secondary">Test Connection</button>
+                <button id="save-api-credentials" class="accent">Save & Apply</button>
             </div>
         </div>
     </div>

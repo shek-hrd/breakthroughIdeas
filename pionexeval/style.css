@@ -672,6 +672,111 @@ main {
     border-radius: 4px;
 }
 
+/* Debug Console Styles */
+.debug-console-content {
+    background: rgba(5, 18, 18, 0.6);
+    border-radius: 16px;
+    border: 1px solid rgba(137, 213, 201, 0.25);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+}
+
+.debug-console-content.expanded {
+    max-height: 500px;
+    padding: 1.5rem;
+}
+
+.debug-controls {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.debug-log-container {
+    background: rgba(2, 12, 12, 0.8);
+    border: 1px solid rgba(137, 213, 201, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.debug-log-entry {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border-left: 3px solid;
+}
+
+.debug-log-entry.info {
+    background: rgba(137, 213, 201, 0.1);
+    border-left-color: var(--accent-primary);
+    color: var(--accent-secondary);
+}
+
+.debug-log-entry.warn {
+    background: rgba(255, 193, 7, 0.15);
+    border-left-color: #ffc107;
+    color: #ffeaa7;
+}
+
+.debug-log-entry.error {
+    background: rgba(255, 104, 104, 0.15);
+    border-left-color: #ff4757;
+    color: #ff6b7a;
+}
+
+.debug-log-entry:last-child {
+    margin-bottom: 0;
+}
+
+.debug-log-entry .timestamp {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+}
+
+/* API Key Modal Styles */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--accent-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(15, 46, 46, 0.7);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(137, 213, 201, 0.2);
+}
+
+.form-group input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
 @media (max-width: 960px) {
     .control-bar {
         grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
