@@ -160,6 +160,30 @@ class PionexTradingSuite {
     }
 
     /**
+     * Set mock mode state
+     */
+    setMockMode(enabled) {
+        this.isMockMode = enabled;
+        this.isLiveData = !enabled;
+
+        // Update UI to reflect the current mode
+        this.updateToggleUI();
+
+        this.log('info', `Mock mode ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    /**
+     * Update toggle UI based on current state
+     */
+    updateToggleUI() {
+        const toggle = document.getElementById('data-mode-toggle');
+        if (toggle) {
+            toggle.checked = this.isMockMode;
+            toggle.textContent = this.isMockMode ? 'Mock Mode' : 'Live Mode';
+        }
+    }
+
+    /**
      * Start the main system operations
      */
     startSystem() {
