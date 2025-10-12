@@ -37,7 +37,7 @@ class PionexTradingSuite {
         this.log('info', 'Initializing Pionex Trading Suite...');
 
         // Set initial state - public stream, mock off
-        this.setMockMode(false);
+        this.setMockMode(true);
         this.updateToggleUI();
 
         // Initialize modals
