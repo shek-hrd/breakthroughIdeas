@@ -1,0 +1,310 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+#top-simulations {
+    background-color: #444;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+#top-variants-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.top-variant-card {
+    background-color: #555;
+    color: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 0.5rem;
+    width: 30%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+main {
+    padding: 20px;
+}
+
+#controls {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.filter-sort-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+select, button {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#investment-options {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#options-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.option-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: #f9f9f9;
+}
+
+.option-card h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    height: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #28a745;
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out;
+}
+
+.simulation-stats {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 10px;
+}
+
+.simulation-controls button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    font-size: 0.8em;
+}
+
+.guide-section {
+    margin-top: 15px;
+    border-top: 1px solid #eee;\n    padding-top: 15px;
+}
+
+.guide-section h4 {
+    cursor: pointer;
+    color: #007bff;
+}
+
+.guide-content {
+    display: none;
+    background-color: #e9f7ff;
+    border-left: 3px solid #007bff;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.guide-content.expanded {
+    display: block;
+}
+
+.execute-button {
+    background-color: #28a745;
+    border-color: #28a745;
+    margin-top: 10px;
+}
+
+.execute-button:hover {
+    background-color: #218838;
+}
+
+.live-data-controls {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.live-data-controls label {
+    font-weight: bold;
+    color: #333;
+}
+
+.live-data-controls input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.live-data-controls button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.live-data-controls button:hover {
+    background-color: #0056b3;
+}
+
+.live-data-controls #live-data-countdown {
+    font-weight: bold;
+    color: #dc3545;
+}
+
+.prediction-details {
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.prediction-details .toggle-details {
+    cursor: pointer;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.prediction-details .toggle-details:hover {
+    text-decoration: underline;
+}
+
+.prediction-details .details-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.prediction-details .details-content.expanded {
+    max-height: 200px; /* Adjust as needed */
+    transition: max-height 0.3s ease-in;
+}
+
+.prediction-details .details-content p {
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+/* Modal for Pionex Login */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    position: relative;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.modal-content iframe {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.modal-content #close-modal {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    float: right;
+}
+
+.modal-content #close-modal:hover {
+    background-color: #c82333;
+}
+
+/* CSS Gradient Placeholder for graph-thumbnail */
+.graph-thumbnail {
+    background: linear-gradient(to right, #ece9e6, #ffffff, #ece9e6);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 0.9em;
+    overflow: hidden; /* Ensure content doesn't spill */
+}
+
+.graph-thumbnail canvas {
+    max-width: 100%;
+    max-height: 100%;
+    display: block; /* Remove extra space below canvas */
+}

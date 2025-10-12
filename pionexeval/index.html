@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pionex Investment Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Pionex Investment Analysis and Simulation</h1>
+        <div id="top-simulations">
+            <h2>Top 3 Promising Variants</h2>
+            <div id="top-variants-container">
+                <!-- Top 3 variants will be dynamically loaded here -->
+            </div>
+            <div class="top-graph-container">
+                <canvas id="top-graph-1" width="600" height="200"></canvas>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="controls">
+            <div class="filter-sort-container">
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by">
+                    <option value="apy">Current APY</option>
+                    <option value="pionex-eval">Pionex Evaluation</option>
+                    <option value="own-eval">My Evaluation</option>
+                    <option value="simulation-income">Simulation Income</option>
+                    <option value="min-duration">Minimal Duration</option>
+                </select>
+
+                <label for="filter-duration">Filter by Duration:</label>
+                <select id="filter-duration">
+                    <option value="all">All</option>
+                    <option value="10m">10 Minutes</option>
+                    <option value="15m">15 Minutes</option>
+                    <option value="1h">1 Hour</option>
+                    <option value="3h">3 Hours</option>
+                    <option value="16h">16 Hours</option>
+                    <option value="24h">24 Hours</option>
+                    <option value="7d">7 Days</option>
+                </select>
+
+                <button id="pause-all">Pause All Simulations</button>
+                <button id="start-filtered">Start Filtered Simulations</button>
+                <button id="pionex-login">Pionex Login (Real Data)</button>
+            </div>
+            <div class="live-data-controls">
+                <span>Next live update in: <span id="countdown">5</span>s</span>
+            </div>
+        </section>
+
+        <section id="investment-options">
+            <h2>Available Investment Options</h2>
+            <div id="options-container">
+                <!-- Investment options will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <section id="create-ideal-bot">
+            <h2>Create Ideal Bot</h2>
+            <button id="generate-ideal-bot">Generate Optimized Bot</button>
+            <div id="ideal-bot-result"></div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
