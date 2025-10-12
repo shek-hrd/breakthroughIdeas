@@ -267,12 +267,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Generate different data based on chart type
         let displayHistorical = historicalSeries;
         let displayPredicted = predictedSeries;
+        const pointsInterval = 60 * 1000; // 1 minute
 
         if (chartType === 'detailed') {
             // For detailed view, create a longer historical series (simulate 24h data)
             const extendedHistorical = [];
             const now = Date.now();
-            const pointsInterval = 60 * 1000; // 1 minute
             const extendedLength = 1440; // 24 hours * 60 minutes
 
             for (let i = extendedLength - 1; i >= 0; i--) {
