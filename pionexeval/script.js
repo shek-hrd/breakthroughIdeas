@@ -398,12 +398,12 @@ class PionexTradingSuite {
     updateBotConfigurationDisplay() {
         if (!this.idealBotConfig) return;
 
-        document.getElementById('bot-strategy')!.textContent = this.idealBotConfig.strategy.replace('_', ' ');
-        document.getElementById('bot-symbols')!.textContent = this.idealBotConfig.symbols.join(', ');
-        document.getElementById('bot-expected-apy')!.textContent = `${this.idealBotConfig.expectedPerformance.expectedAPY.toFixed(2)}%`;
-        document.getElementById('bot-risk-level')!.textContent = this.idealBotConfig.expectedPerformance.riskLevel;
-        document.getElementById('bot-grid-levels')!.textContent = this.idealBotConfig.parameters.gridLevels.toString();
-        document.getElementById('bot-position-size')!.textContent = `${(this.idealBotConfig.parameters.positionSize * 100).toFixed(1)}%`;
+        document.getElementById('bot-strategy').textContent = this.idealBotConfig.strategy.replace('_', ' ');
+        document.getElementById('bot-symbols').textContent = this.idealBotConfig.symbols.join(', ');
+        document.getElementById('bot-expected-apy').textContent = `${this.idealBotConfig.expectedPerformance.expectedAPY.toFixed(2)}%`;
+        document.getElementById('bot-risk-level').textContent = this.idealBotConfig.expectedPerformance.riskLevel;
+        document.getElementById('bot-grid-levels').textContent = this.idealBotConfig.parameters.gridLevels.toString();
+        document.getElementById('bot-position-size').textContent = `${(this.idealBotConfig.parameters.positionSize * 100).toFixed(1)}%`;
     }
 
     /**
