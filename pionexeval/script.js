@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataModeToggle = document.getElementById('data-mode-toggle');
     const dataModeText = document.getElementById('data-mode-text');
     const globalError = document.getElementById('global-error');
-    const pionexLoginButton = document.getElementById('pionex-login');
     const pionexModal = document.getElementById('pionex-modal');
     const pionexModalClose = document.getElementById('pionex-modal-close');
     const pionexModalTryLogin = document.getElementById('pionex-modal-try-login');
@@ -55,45 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
             minute: '2-digit',
             second: '2-digit'
         });
-    }
-
-    function updateSystemStats() {
-        // Simulate memory usage (random but trending)
-        const memoryUsage = Math.floor(Math.random() * 30) + 45; // 45-75%
-        const memoryElement = document.getElementById('memory-usage');
-        const memoryProgress = document.getElementById('memory-progress');
-        if (memoryElement) memoryElement.textContent = `${memoryUsage}%`;
-        if (memoryProgress) memoryProgress.style.width = `${memoryUsage}%`;
-
-        // Simulate CPU load (random but trending)
-        const cpuLoad = Math.floor(Math.random() * 20) + 15; // 15-35%
-        const cpuElement = document.getElementById('cpu-load');
-        const cpuProgress = document.getElementById('cpu-progress');
-        if (cpuElement) cpuElement.textContent = `${cpuLoad}%`;
-        if (cpuProgress) cpuProgress.style.width = `${cpuLoad}%`;
-
-        // Count running simulations
-        const runningCount = Object.keys(simulationIntervals).length;
-        const runningElement = document.getElementById('running-simulations');
-        if (runningElement) runningElement.textContent = runningCount.toString();
-
-        // Count active bots (simulated)
-        const activeBots = investmentOptions.filter(opt => opt.isRunning).length;
-        const activeBotsElement = document.getElementById('active-bots');
-        if (activeBotsElement) activeBotsElement.textContent = activeBots.toString();
-    }
-
-    function startSystemStats() {
-        stopSystemStats();
-        updateSystemStats(); // Initial update
-        systemStatsInterval = setInterval(updateSystemStats, 2000);
-    }
-
-    function stopSystemStats() {
-        if (systemStatsInterval) {
-            clearInterval(systemStatsInterval);
-            systemStatsInterval = null;
-        }
     }
 
     function generateHistoricalSeries(baseValue) {
@@ -193,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderOptions(options) {
         optionsContainer.innerHTML = '';
-
 
         options.forEach(option => {
             const card = document.createElement('article');
@@ -313,11 +272,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // For detailed view, create a longer historical series (simulate 24h data)
             const extendedHistorical = [];
             const now = Date.now();
-            const interval = 60 * 1000; // 1 minute
+            const pointsInterval = 60 * 1000; // 1 minute
             const extendedLength = 1440; // 24 hours * 60 minutes
 
             for (let i = extendedLength - 1; i >= 0; i--) {
-                const timestamp = new Date(now - i * interval);
+                const timestamp = new Date(now - i * pointsInterval);
                 const baseValue = historicalSeries.length > 0 ?
                     historicalSeries[historicalSeries.length - 1].value : 100;
                 const variance = (Math.random() - 0.5) * 0.3 * baseValue;
@@ -377,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pastBaseValue = displayHistorical[midPoint].value;
 
             for (let i = 1; i <= 5; i++) {
-                const timestamp = new Date(displayHistorical[midPoint].timestamp.getTime() + i * interval);
+                const timestamp = new Date(displayHistorical[midPoint].timestamp.getTime() + i * pointsInterval);
                 const drift = (Math.random() - 0.5) * 0.05 * pastBaseValue;
                 const value = Math.max(pastBaseValue + drift, 0.1);
                 pastPredictionData.push({ timestamp, value: parseFloat(value.toFixed(2)) });
@@ -549,6 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
         });
+
         document.querySelectorAll('.toggle-details').forEach(toggle => {
             toggle.onclick = (e) => {
                 const detailsContent = e.currentTarget.nextElementSibling;
@@ -557,6 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (arrow) arrow.textContent = detailsContent.classList.contains('expanded') ? '▲' : '▼';
             };
         });
+
         document.querySelectorAll('.toggle-guide').forEach(toggle => {
             toggle.onclick = (e) => {
                 const guideContent = e.currentTarget.nextElementSibling;
@@ -662,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function attemptPionexLogin() {
         try {
             if (useMockData) {
-                throw new Error('Switch to real data mode to initiate live login.');
+                throw new Error('Switch to live data mode to initiate live login.');
             }
             pionexModalMessage.textContent = 'Attempting secure login…';
             pionexModalMessage.className = 'modal-message info';
@@ -676,11 +637,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function useMockSession() {
         useMockData = true;
-        mockToggle.checked = true;
-        toggleMockMode();
+        dataModeToggle.checked = true;
+        toggleDataMode();
         pionexModalMessage.textContent = 'Mock Pionex session activated. Live trading data will remain simulated.';
         pionexModalMessage.className = 'modal-message info';
         setTimeout(closePionexModal, 1200);
+    }
+
+    function updateSystemStats() {
+        // Simulate memory usage (random but trending)
+        const memoryUsage = Math.floor(Math.random() * 30) + 45; // 45-75%
+        const memoryElement = document.getElementById('memory-usage');
+        const memoryProgress = document.getElementById('memory-progress');
+        if (memoryElement) memoryElement.textContent = `${memoryUsage}%`;
+        if (memoryProgress) memoryProgress.style.width = `${memoryUsage}%`;
+
+        // Simulate CPU load (random but trending)
+        const cpuLoad = Math.floor(Math.random() * 20) + 15; // 15-35%
+        const cpuElement = document.getElementById('cpu-load');
+        const cpuProgress = document.getElementById('cpu-progress');
+        if (cpuElement) cpuElement.textContent = `${cpuLoad}%`;
+        if (cpuProgress) cpuProgress.style.width = `${cpuLoad}%`;
+
+        // Count running simulations
+        const runningCount = Object.keys(simulationIntervals).length;
+        const runningElement = document.getElementById('running-simulations');
+        if (runningElement) runningElement.textContent = runningCount.toString();
+
+        // Count active bots (simulated)
+        const activeBots = investmentOptions.filter(opt => opt.isRunning).length;
+        const activeBotsElement = document.getElementById('active-bots');
+        if (activeBotsElement) activeBotsElement.textContent = activeBots.toString();
+    }
+
+    function startSystemStats() {
+        stopSystemStats();
+        updateSystemStats(); // Initial update
+        systemStatsInterval = setInterval(updateSystemStats, 2000);
+    }
+
+    function stopSystemStats() {
+        if (systemStatsInterval) {
+            clearInterval(systemStatsInterval);
+            systemStatsInterval = null;
+        }
     }
 
     async function performIdealBotAnalysis(force = false) {
@@ -793,7 +793,6 @@ document.addEventListener('DOMContentLoaded', () => {
             performIdealBotAnalysis(true);
         });
 
-        pionexLoginButton.addEventListener('click', openPionexModal);
         if (pionexModalClose) pionexModalClose.addEventListener('click', closePionexModal);
         if (pionexModalTryLogin) pionexModalTryLogin.addEventListener('click', attemptPionexLogin);
         if (pionexModalMockLogin) pionexModalMockLogin.addEventListener('click', useMockSession);
