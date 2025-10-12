@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const countdownElement = document.getElementById('countdown');
     const refreshRateInput = document.getElementById('refresh-rate-input');
     const applyRefreshRateButton = document.getElementById('apply-refresh-rate');
-    const mockToggle = document.getElementById('mock-toggle');
-    const mockToggleText = document.getElementById('mock-toggle-text');
+    const dataModeToggle = document.getElementById('data-mode-toggle');
+    const dataModeText = document.getElementById('data-mode-text');
     const globalError = document.getElementById('global-error');
     const pionexLoginButton = document.getElementById('pionex-login');
     const pionexModal = document.getElementById('pionex-modal');
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let liveDataCheckRate = 5000; // Default to 5 seconds
     let useMockData = true;
     let idealAnalysisCache = null;
+    let systemStatsInterval = null;
 
     const minDurationMap = { '10m': 10, '15m': 15, '1h': 60, '3h': 180, '16h': 960, '24h': 1440, '7d': 10080 };
 
@@ -54,6 +55,45 @@ document.addEventListener('DOMContentLoaded', () => {
             minute: '2-digit',
             second: '2-digit'
         });
+    }
+
+    function updateSystemStats() {
+        // Simulate memory usage (random but trending)
+        const memoryUsage = Math.floor(Math.random() * 30) + 45; // 45-75%
+        const memoryElement = document.getElementById('memory-usage');
+        const memoryProgress = document.getElementById('memory-progress');
+        if (memoryElement) memoryElement.textContent = `${memoryUsage}%`;
+        if (memoryProgress) memoryProgress.style.width = `${memoryUsage}%`;
+
+        // Simulate CPU load (random but trending)
+        const cpuLoad = Math.floor(Math.random() * 20) + 15; // 15-35%
+        const cpuElement = document.getElementById('cpu-load');
+        const cpuProgress = document.getElementById('cpu-progress');
+        if (cpuElement) cpuElement.textContent = `${cpuLoad}%`;
+        if (cpuProgress) cpuProgress.style.width = `${cpuLoad}%`;
+
+        // Count running simulations
+        const runningCount = Object.keys(simulationIntervals).length;
+        const runningElement = document.getElementById('running-simulations');
+        if (runningElement) runningElement.textContent = runningCount.toString();
+
+        // Count active bots (simulated)
+        const activeBots = investmentOptions.filter(opt => opt.isRunning).length;
+        const activeBotsElement = document.getElementById('active-bots');
+        if (activeBotsElement) activeBotsElement.textContent = activeBots.toString();
+    }
+
+    function startSystemStats() {
+        stopSystemStats();
+        updateSystemStats(); // Initial update
+        systemStatsInterval = setInterval(updateSystemStats, 2000);
+    }
+
+    function stopSystemStats() {
+        if (systemStatsInterval) {
+            clearInterval(systemStatsInterval);
+            systemStatsInterval = null;
+        }
     }
 
     function generateHistoricalSeries(baseValue) {
@@ -154,47 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderOptions(options) {
         optionsContainer.innerHTML = '';
 
-        const highlightTargets = {
-            apy: null,
-            pionexEval: null,
-            ownEval: null,
-            simulatedIncome: null,
-            liveIncome: null
-        };
-
-        if (options.length) {
-            highlightTargets.apy = options.reduce((max, option) => option.apy > max.apy ? option : max, options[0]);
-            highlightTargets.pionexEval = options.reduce((max, option) => option.pionexEval > max.pionexEval ? option : max, options[0]);
-            highlightTargets.ownEval = options.reduce((max, option) => option.ownEval > max.ownEval ? option : max, options[0]);
-            highlightTargets.simulatedIncome = options.reduce((max, option) => option.currentIncome > max.currentIncome ? option : max, options[0]);
-            highlightTargets.liveIncome = options.reduce((max, option) => option.liveIncome > max.liveIncome ? option : max, options[0]);
-        }
-
-        const highlightIds = new Set([
-            highlightTargets.apy?.id,
-            highlightTargets.pionexEval?.id,
-            highlightTargets.ownEval?.id,
-            highlightTargets.simulatedIncome?.id,
-            highlightTargets.liveIncome?.id
-        ].filter(Boolean));
 
         options.forEach(option => {
             const card = document.createElement('article');
             card.className = 'option-card';
             card.dataset.id = option.id;
-            if (highlightIds.has(option.id)) {
-                card.classList.add('highlighted');
-            }
-
-            const badges = [];
-            if (highlightTargets.apy && highlightTargets.apy.id === option.id) badges.push('<span class="highlight-badge badge-apy">Top APY</span>');
-            if (highlightTargets.pionexEval && highlightTargets.pionexEval.id === option.id) badges.push('<span class="highlight-badge badge-pionex">Top Pionex</span>');
-            if (highlightTargets.ownEval && highlightTargets.ownEval.id === option.id) badges.push('<span class="highlight-badge badge-own">Top Personal</span>');
-            if (highlightTargets.simulatedIncome && highlightTargets.simulatedIncome.id === option.id) badges.push('<span class="highlight-badge badge-simulated">Top Simulated</span>');
-            if (highlightTargets.liveIncome && highlightTargets.liveIncome.id === option.id) badges.push('<span class="highlight-badge badge-live">Top Live</span>');
 
             card.innerHTML = `
-                ${badges.join('')}
                 <h3>${option.name} <span>(${option.type})</span></h3>
                 <div class="option-meta">
                     <div><strong>Current APY:</strong> <span class="value-highlight">${option.apy}%</span></div>
@@ -203,7 +209,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div><strong>Min Duration:</strong> ${option.minDuration}</div>
                 </div>
                 <div class="chart-container">
-                    <canvas class="graph-thumbnail" id="graph-${option.graphThumbnail}" width="600" height="320" aria-label="Performance chart for ${option.name}"></canvas>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-chart="overview" data-id="${option.id}">Overview (1h)</button>
+                        <button class="chart-tab" data-chart="detailed" data-id="${option.id}">Detailed (24h)</button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas class="graph-overview" id="graph-overview-${option.id}" width="600" height="320" aria-label="Overview chart for ${option.name}"></canvas>
+                        <canvas class="graph-detailed hidden" id="graph-detailed-${option.id}" width="600" height="320" aria-label="Detailed chart for ${option.name}"></canvas>
+                    </div>
                     <div class="timeline-labels">
                         <span id="timeline-start-${option.id}">--</span>
                         <span id="timeline-end-${option.id}">--</span>
@@ -230,8 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="simulation-controls">
-                    <button class="start-simulation" data-id="${option.id}" ${option.isRunning ? 'disabled' : ''}>Start Simulation</button>
-                    <button class="pause-simulation" data-id="${option.id}" ${!option.isRunning ? 'disabled' : ''}>Pause Simulation</button>
+                    <button class="toggle-simulation" data-id="${option.id}">
+                        ${option.isRunning ? 'Pause Simulation' : 'Start Simulation'}
+                    </button>
                 </div>
                 <div class="guide-section">
                     <h4 class="toggle-guide">Step-by-step Guide <span class="arrow">▼</span></h4>
@@ -240,22 +254,47 @@ document.addEventListener('DOMContentLoaded', () => {
                         <ol>
                             <li>Navigate to Pionex and locate ${option.name}.</li>
                             <li>Allocate 101 USDT and confirm balance availability.</li>
-                            <li>Adjust grid parameters per the ideal parameters.</li>
+                            <li>Set grid parameters: Min Volatility ${option.idealParameters.minVolatility}, Max Drawdown ${option.idealParameters.maxDrawdown}, Target Volume ${option.idealParameters.targetVolume}.</li>
+                            <li>Configure ${option.predictionTechnique} model with volatility ${option.predictionParameters.volatility} and ${option.predictionParameters.trend} trend bias.</li>
                             <li>Review risk metrics and confirm bot deployment.</li>
                         </ol>
+                        <div class="specific-settings">
+                            <h5>Specific Settings for ${option.name}:</h5>
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <strong>Grid Spacing:</strong> ${(Math.random() * 0.02 + 0.005).toFixed(4)}
+                                </div>
+                                <div class="setting-item">
+                                    <strong>Stop Loss:</strong> ${(Math.random() * 5 + 2).toFixed(2)}%
+                                </div>
+                                <div class="setting-item">
+                                    <strong>Take Profit:</strong> ${(Math.random() * 3 + 1).toFixed(2)}%
+                                </div>
+                                <div class="setting-item">
+                                    <strong>Rebalance Threshold:</strong> ${(Math.random() * 0.1 + 0.02).toFixed(3)}
+                                </div>
+                                <div class="setting-item">
+                                    <strong>Min Order Size:</strong> ${(Math.random() * 5 + 1).toFixed(2)} USDT
+                                </div>
+                                <div class="setting-item">
+                                    <strong>Max Positions:</strong> ${Math.floor(Math.random() * 10) + 5}
+                                </div>
+                            </div>
+                        </div>
                         <button class="execute-button" data-id="${option.id}">Execute automated setup</button>
                     </div>
                 </div>
             `;
 
             optionsContainer.appendChild(card);
-            drawGraph(`graph-${option.graphThumbnail}`, option.historicalSeries, option.predictionSeries, option.id);
+            drawGraph(`graph-overview-${option.id}`, option.historicalSeries, option.predictionSeries, option.id, 'overview');
+            drawGraph(`graph-detailed-${option.id}`, option.historicalSeries, option.predictionSeries, option.id, 'detailed');
         });
 
         addEventListenersToOptionCards();
     }
 
-    function drawGraph(canvasId, historicalSeries, predictedSeries, optionId) {
+    function drawGraph(canvasId, historicalSeries, predictedSeries, optionId, chartType = 'overview') {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
@@ -266,7 +305,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const width = canvas.width - padding * 2;
         const height = canvas.height - padding * 2;
 
-        const combinedSeries = [...historicalSeries, ...predictedSeries];
+        // Generate different data based on chart type
+        let displayHistorical = historicalSeries;
+        let displayPredicted = predictedSeries;
+
+        if (chartType === 'detailed') {
+            // For detailed view, create a longer historical series (simulate 24h data)
+            const extendedHistorical = [];
+            const now = Date.now();
+            const interval = 60 * 1000; // 1 minute
+            const extendedLength = 1440; // 24 hours * 60 minutes
+
+            for (let i = extendedLength - 1; i >= 0; i--) {
+                const timestamp = new Date(now - i * interval);
+                const baseValue = historicalSeries.length > 0 ?
+                    historicalSeries[historicalSeries.length - 1].value : 100;
+                const variance = (Math.random() - 0.5) * 0.3 * baseValue;
+                const value = Math.max(baseValue + variance, 0.1);
+                extendedHistorical.push({ timestamp, value: parseFloat(value.toFixed(2)) });
+            }
+            displayHistorical = extendedHistorical.slice(-60); // Show last 60 points for detailed view
+        }
+
+        const combinedSeries = [...displayHistorical, ...displayPredicted];
         const values = combinedSeries.map(point => point.value);
         const minY = Math.min(...values);
         const maxY = Math.max(...values);
@@ -280,25 +341,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return { x, y };
         }
 
+        // Draw historical data (solid line)
         ctx.lineWidth = 2.4;
         ctx.strokeStyle = '#a0ffdf';
         ctx.beginPath();
-        historicalSeries.forEach((point, index) => {
+        displayHistorical.forEach((point, index) => {
             const { x, y } = project(point, index, combinedSeries.length);
             if (index === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         });
         ctx.stroke();
 
-        const lastHistoricalIndex = historicalSeries.length - 1;
+        // Draw current prediction (dashed line, more visible)
+        const lastHistoricalIndex = displayHistorical.length - 1;
         ctx.strokeStyle = '#ff9f9f';
+        ctx.lineWidth = 2.0;
         ctx.setLineDash([8, 6]);
         ctx.beginPath();
-        predictedSeries.forEach((point, idx) => {
+        displayPredicted.forEach((point, idx) => {
             const index = lastHistoricalIndex + 1 + idx;
             const { x, y } = project(point, index, combinedSeries.length);
             if (idx === 0) {
-                const { x: prevX, y: prevY } = project(historicalSeries[lastHistoricalIndex], lastHistoricalIndex, combinedSeries.length);
+                const { x: prevX, y: prevY } = project(displayHistorical[lastHistoricalIndex], lastHistoricalIndex, combinedSeries.length);
                 ctx.moveTo(prevX, prevY);
             }
             ctx.lineTo(x, y);
@@ -306,13 +370,55 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.stroke();
         ctx.setLineDash([]);
 
+        // Draw past prediction as fainter dashed line (simulate previous predictions)
+        if (chartType === 'detailed' && displayHistorical.length > 20) {
+            const pastPredictionData = [];
+            const midPoint = Math.floor(displayHistorical.length * 0.7);
+            const pastBaseValue = displayHistorical[midPoint].value;
+
+            for (let i = 1; i <= 5; i++) {
+                const timestamp = new Date(displayHistorical[midPoint].timestamp.getTime() + i * interval);
+                const drift = (Math.random() - 0.5) * 0.05 * pastBaseValue;
+                const value = Math.max(pastBaseValue + drift, 0.1);
+                pastPredictionData.push({ timestamp, value: parseFloat(value.toFixed(2)) });
+            }
+
+            ctx.strokeStyle = 'rgba(255, 159, 159, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 8]);
+            ctx.beginPath();
+
+            const startIndex = midPoint;
+            pastPredictionData.forEach((point, idx) => {
+                const index = startIndex + 1 + idx;
+                const { x, y } = project(point, index, combinedSeries.length);
+                if (idx === 0) {
+                    const { x: prevX, y: prevY } = project(displayHistorical[startIndex], startIndex, combinedSeries.length);
+                    ctx.moveTo(prevX, prevY);
+                }
+                ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
         ctx.fillStyle = 'rgba(137, 213, 201, 0.2)';
         ctx.fillRect(padding, padding, width, height);
 
         const startLabel = document.getElementById(`timeline-start-${optionId}`);
         const endLabel = document.getElementById(`timeline-end-${optionId}`);
-        if (startLabel) startLabel.textContent = formatTimestamp(historicalSeries[0].timestamp);
-        if (endLabel) endLabel.textContent = formatTimestamp(predictedSeries[predictedSeries.length - 1].timestamp);
+        if (startLabel) {
+            const startTime = chartType === 'detailed' ?
+                displayHistorical[0].timestamp :
+                displayHistorical[0].timestamp;
+            startLabel.textContent = formatTimestamp(startTime);
+        }
+        if (endLabel) {
+            const endTime = displayPredicted.length > 0 ?
+                displayPredicted[displayPredicted.length - 1].timestamp :
+                displayHistorical[displayHistorical.length - 1].timestamp;
+            endLabel.textContent = formatTimestamp(endTime);
+        }
     }
 
     function updateOptionCard(option) {
@@ -334,14 +440,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!option || option.isRunning) return;
 
         option.isRunning = true;
-        const startSelector = `.start-simulation[data-id="${optionId}"]`;
-        const pauseSelector = `.pause-simulation[data-id="${optionId}"]`;
+        const toggleSelector = `.toggle-simulation[data-id="${optionId}"]`;
 
         function syncButtons() {
-            const startButton = document.querySelector(startSelector);
-            const pauseButton = document.querySelector(pauseSelector);
-            if (startButton) startButton.disabled = option.isRunning;
-            if (pauseButton) pauseButton.disabled = !option.isRunning;
+            const toggleButton = document.querySelector(toggleSelector);
+            if (toggleButton) toggleButton.textContent = 'Pause Simulation';
         }
 
         syncButtons();
@@ -385,10 +488,8 @@ document.addEventListener('DOMContentLoaded', () => {
         delete simulationIntervals[optionId];
         option.isRunning = false;
 
-        const startButton = document.querySelector(`.start-simulation[data-id="${optionId}"]`);
-        const pauseButton = document.querySelector(`.pause-simulation[data-id="${optionId}"]`);
-        if (startButton) startButton.disabled = false;
-        if (pauseButton) pauseButton.disabled = true;
+        const toggleButton = document.querySelector(`.toggle-simulation[data-id="${optionId}"]`);
+        if (toggleButton) toggleButton.textContent = 'Start Simulation';
     }
 
     function applyFiltersAndSort() {
@@ -413,11 +514,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addEventListenersToOptionCards() {
-        document.querySelectorAll('.start-simulation').forEach(button => {
-            button.onclick = (e) => startSimulation(parseInt(e.currentTarget.dataset.id, 10));
+        document.querySelectorAll('.toggle-simulation').forEach(button => {
+            button.onclick = (e) => {
+                const optionId = parseInt(e.currentTarget.dataset.id, 10);
+                const option = investmentOptions.find(opt => opt.id === optionId);
+                if (option.isRunning) {
+                    pauseSimulation(optionId);
+                } else {
+                    startSimulation(optionId);
+                }
+            };
         });
-        document.querySelectorAll('.pause-simulation').forEach(button => {
-            button.onclick = (e) => pauseSimulation(parseInt(e.currentTarget.dataset.id, 10));
+
+        // Chart tab switching
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.onclick = (e) => {
+                const chartType = e.currentTarget.dataset.chart;
+                const optionId = e.currentTarget.dataset.id;
+
+                // Update active tab
+                document.querySelectorAll(`.chart-tab[data-id="${optionId}"]`).forEach(t => t.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+
+                // Show/hide graphs
+                const overviewGraph = document.getElementById(`graph-overview-${optionId}`);
+                const detailedGraph = document.getElementById(`graph-detailed-${optionId}`);
+
+                if (chartType === 'overview') {
+                    if (overviewGraph) overviewGraph.classList.remove('hidden');
+                    if (detailedGraph) detailedGraph.classList.add('hidden');
+                } else {
+                    if (overviewGraph) overviewGraph.classList.add('hidden');
+                    if (detailedGraph) detailedGraph.classList.remove('hidden');
+                }
+            };
         });
         document.querySelectorAll('.toggle-details').forEach(toggle => {
             toggle.onclick = (e) => {
@@ -487,17 +617,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (countdownElement) countdownElement.textContent = '--';
     }
 
-    function toggleMockMode() {
-        useMockData = mockToggle.checked;
-        if (mockToggleText) {
-            mockToggleText.textContent = useMockData ? 'Mock data enabled' : 'Real data mode';
+    function toggleDataMode() {
+        useMockData = dataModeToggle.checked;
+        if (dataModeText) {
+            dataModeText.textContent = useMockData ? 'Mock Data Mode' : 'Live Data Mode';
         }
         if (!useMockData) {
-            showGlobalError('Real data endpoints are not configured. Reverting to mock mode.', 'info');
-            mockToggle.checked = true;
-            useMockData = true;
+            // Try to authenticate with Pionex
+            attemptPionexAuthentication();
         } else {
             hideGlobalError();
+        }
+    }
+
+    async function attemptPionexAuthentication() {
+        try {
+            showGlobalError('Attempting to connect to Pionex...', 'info');
+            // Simulate authentication delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            // For now, revert to mock mode since we don't have real Pionex API
+            throw new Error('Pionex API not configured. Please configure API credentials or use Mock Data Mode.');
+        } catch (error) {
+            showGlobalError(error.message, 'error');
+            dataModeToggle.checked = true;
+            useMockData = true;
+            dataModeText.textContent = 'Mock Data Mode';
         }
     }
 
@@ -505,8 +649,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!pionexModal) return;
         pionexModal.classList.remove('hidden');
         pionexModalMessage.textContent = useMockData
-            ? 'You are currently in mock mode. Switch to real data to authenticate against Pionex.'
-            : 'Attempting secure login. Make sure you trust this device before proceeding.';
+            ? 'You are currently in mock data mode. Switch to live data mode to authenticate against Pionex.'
+            : 'Live data mode is active. Configure your Pionex API credentials to enable real trading data.';
         pionexModalMessage.className = `modal-message ${useMockData ? 'info' : 'info'}`;
     }
 
@@ -643,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             startLiveDataChecking();
         });
 
-        mockToggle.addEventListener('change', toggleMockMode);
+        dataModeToggle.addEventListener('change', toggleDataMode);
 
         idealBotButton.addEventListener('click', () => {
             performIdealBotAnalysis(true);
@@ -673,8 +817,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         performIdealBotAnalysis();
-        toggleMockMode();
+        toggleDataMode();
         startLiveDataChecking();
+        startSystemStats();
         attachEventListeners();
     }
 

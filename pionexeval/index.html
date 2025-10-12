@@ -54,11 +54,11 @@
             </div>
 
             <div class="control-group toggle">
-                <label class="switch" aria-label="Toggle mock data mode">
-                    <input type="checkbox" id="mock-toggle" checked>
+                <label class="switch" aria-label="Toggle data mode and Pionex login">
+                    <input type="checkbox" id="data-mode-toggle" checked>
                     <span class="slider round"></span>
                 </label>
-                <span class="toggle-label" id="mock-toggle-text">Mock data enabled</span>
+                <span class="toggle-label" id="data-mode-text">Mock Data Mode</span>
             </div>
 
             <div class="control-group refresh-control">
@@ -70,7 +70,6 @@
             <div class="control-group button-group">
                 <button id="pause-all" class="secondary">Pause All Simulations</button>
                 <button id="start-filtered" class="secondary">Start Filtered Simulations</button>
-                <button id="pionex-login" class="accent">Pionex Login</button>
             </div>
 
             <div class="control-group status">
@@ -88,16 +87,39 @@
         <section id="investment-options" class="content-section">
             <div class="section-heading">
                 <h2>Available Investment Options</h2>
-                <div class="highlight-legend" aria-label="Highlight legend">
-                    <span class="legend-item"><span class="legend-swatch apy"></span>Highest APY</span>
-                    <span class="legend-item"><span class="legend-swatch pionex"></span>Highest Pionex Eval</span>
-                    <span class="legend-item"><span class="legend-swatch own"></span>Highest My Eval</span>
-                    <span class="legend-item"><span class="legend-swatch simulated"></span>Highest Simulated Income</span>
-                    <span class="legend-item"><span class="legend-swatch live"></span>Highest Live Income</span>
-                </div>
             </div>
             <div id="options-container" class="options-grid" aria-live="polite">
                 <!-- Investment options will be dynamically populated here -->
+            </div>
+        </section>
+
+        <section id="system-stats" class="content-section">
+            <div class="section-heading">
+                <h2>System Statistics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Memory Usage</div>
+                    <div class="stat-value" id="memory-usage">Calculating...</div>
+                    <div class="stat-progress">
+                        <div class="stat-progress-bar" id="memory-progress"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">CPU Load</div>
+                    <div class="stat-value" id="cpu-load">Calculating...</div>
+                    <div class="stat-progress">
+                        <div class="stat-progress-bar" id="cpu-progress"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Running Simulations</div>
+                    <div class="stat-value" id="running-simulations">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Bots</div>
+                    <div class="stat-value" id="active-bots">0</div>
+                </div>
             </div>
         </section>
     </main>
