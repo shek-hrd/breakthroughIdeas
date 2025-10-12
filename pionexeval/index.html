@@ -24,6 +24,49 @@
             </div>
         </section>
 
+        <section id="ideal-bot-settings" class="ideal-bot-settings">
+            <div class="settings-header">
+                <h3>Current Ideal Bot Configuration</h3>
+                <div class="bot-status">
+                    <span id="bot-status" class="status-indicator">Analyzing Market...</span>
+                    <span id="last-analysis" class="last-analysis">Last analysis: Never</span>
+                </div>
+            </div>
+            <div id="bot-configuration" class="bot-configuration">
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Strategy:</label>
+                        <span id="bot-strategy" class="config-value">Analyzing...</span>
+                    </div>
+                    <div class="config-item">
+                        <label>Target Symbols:</label>
+                        <span id="bot-symbols" class="config-value">Calculating...</span>
+                    </div>
+                    <div class="config-item">
+                        <label>Expected APY:</label>
+                        <span id="bot-expected-apy" class="config-value">Calculating...</span>
+                    </div>
+                    <div class="config-item">
+                        <label>Risk Level:</label>
+                        <span id="bot-risk-level" class="config-value">Assessing...</span>
+                    </div>
+                    <div class="config-item">
+                        <label>Grid Levels:</label>
+                        <span id="bot-grid-levels" class="config-value">Optimizing...</span>
+                    </div>
+                    <div class="config-item">
+                        <label>Position Size:</label>
+                        <span id="bot-position-size" class="config-value">Calculating...</span>
+                    </div>
+                </div>
+                <div class="bot-actions">
+                    <button id="apply-ideal-bot" class="accent">Apply Ideal Bot</button>
+                    <button id="export-bot-config" class="secondary">Export Config</button>
+                    <button id="reset-errors" class="secondary">Reset Errors</button>
+                </div>
+            </div>
+        </section>
+
         <section class="control-bar">
             <div class="control-group">
                 <label for="sort-by">Sort by:</label>
@@ -51,11 +94,7 @@
             </div>
 
             <div class="control-group toggle">
-                <label class="switch" aria-label="Toggle data mode and Pionex login">
-                    <input type="checkbox" id="data-mode-toggle" checked>
-                    <span class="slider round"></span>
-                </label>
-                <span class="toggle-label" id="data-mode-text">Mock Data Mode</span>
+                <button id="data-mode-toggle" class="toggle-button secondary">Start Live Data</button>
             </div>
 
             <div class="control-group refresh-control">
@@ -65,8 +104,9 @@
             </div>
 
             <div class="control-group button-group">
-                <button id="pause-all" class="secondary">Pause All Simulations</button>
-                <button id="start-filtered" class="secondary">Start Filtered Simulations</button>
+                <button id="pause-all" class="toggle-button secondary">Pause All</button>
+                <button id="start-analysis" class="toggle-button accent">Start Analysis</button>
+                <button id="refresh-data" class="toggle-button primary">Refresh Data</button>
             </div>
 
             <div class="control-group status">
@@ -122,22 +162,112 @@
 
         <section id="debug-console" class="content-section">
             <div class="section-heading">
-                <h2>Debug Console</h2>
+                <h2>Debug Console & API Tester</h2>
                 <button id="toggle-debug-console" class="secondary">Expand Debug Console</button>
             </div>
             <div id="debug-console-content" class="debug-console-content">
-                <div class="debug-controls">
-                    <button id="clear-debug-log" class="secondary">Clear Log</button>
-                    <button id="export-debug-log" class="secondary">Export Log</button>
-                    <select id="debug-log-level">
-                        <option value="all">All</option>
-                        <option value="info">Info</option>
-                        <option value="warn">Warning</option>
-                        <option value="error">Error</option>
-                    </select>
+                <!-- API Curl Tester -->
+                <div class="api-tester-section">
+                    <h3>Pionex API Curl Tester</h3>
+                    <div class="tester-controls">
+                        <div class="control-group">
+                            <label for="api-endpoint-select">API Endpoint:</label>
+                            <select id="api-endpoint-select">
+                                <option value="">Select an endpoint...</option>
+                                <!-- Public Market Data Endpoints -->
+                                <optgroup label="📊 Market Data (Public)">
+                                    <option value="GET_MARKET_TICKERS">GET /api/v1/market/tickers - 24hr Ticker</option>
+                                    <option value="GET_MARKET_TICKER">GET /api/v1/market/ticker/24hr - Single Ticker</option>
+                                    <option value="GET_MARKET_DEPTH">GET /api/v1/market/depth - Order Book</option>
+                                    <option value="GET_MARKET_TRADES">GET /api/v1/market/trades - Recent Trades</option>
+                                    <option value="GET_MARKET_KLINES">GET /api/v1/market/klines - Kline Data</option>
+                                    <option value="GET_COMMON_SYMBOLS">GET /api/v1/common/symbols - Symbol Info</option>
+                                </optgroup>
+                                <!-- Private Account Endpoints -->
+                                <optgroup label="🔐 Account (Private)">
+                                    <option value="GET_ACCOUNT_BALANCE">GET /api/v1/account/balance - Account Balance</option>
+                                    <option value="GET_TRADE_ALL_ORDERS">GET /api/v1/trade/allOrders - All Orders</option>
+                                    <option value="GET_TRADE_OPEN_ORDERS">GET /api/v1/trade/openOrders - Open Orders</option>
+                                    <option value="POST_TRADE_ORDER">POST /api/v1/trade/order - Place Order</option>
+                                    <option value="DELETE_TRADE_ORDER">DELETE /api/v1/trade/order - Cancel Order</option>
+                                </optgroup>
+                                <!-- WebSocket Endpoints -->
+                                <optgroup label="🔗 WebSocket">
+                                    <option value="WS_PUBLIC_STREAM">WebSocket Public Stream</option>
+                                    <option value="WS_PRIVATE_STREAM">WebSocket Private Stream</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="request-method">Method:</label>
+                            <select id="request-method">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="symbol-input">Symbol:</label>
+                            <input type="text" id="symbol-input" placeholder="e.g., BTC_USDT" value="BTC_USDT">
+                        </div>
+
+                        <button id="load-endpoint-params" class="secondary">Load Parameters</button>
+                        <button id="send-api-request" class="accent">Send Request</button>
+                    </div>
+
+                    <!-- Dynamic Parameters Section -->
+                    <div id="endpoint-parameters" class="endpoint-parameters" style="display: none;">
+                        <h4>Request Parameters</h4>
+                        <div id="parameters-container" class="parameters-container">
+                            <!-- Parameters will be dynamically added here -->
+                        </div>
+                        <button id="add-parameter" class="secondary">Add Parameter</button>
+                    </div>
+
+                    <!-- Generated Curl Command -->
+                    <div class="curl-output-section">
+                        <h4>Generated cURL Command</h4>
+                        <div class="curl-controls">
+                            <button id="copy-curl" class="secondary">Copy cURL</button>
+                            <button id="format-curl" class="secondary">Format</button>
+                        </div>
+                        <textarea id="curl-output" class="curl-output" readonly placeholder="Select an endpoint and configure parameters to generate cURL command..."></textarea>
+                    </div>
+
+                    <!-- Request/Response Section -->
+                    <div class="request-response-section">
+                        <div class="response-tabs">
+                            <button class="tab-button active" data-tab="request">Request</button>
+                            <button class="tab-button" data-tab="response">Response</button>
+                        </div>
+                        <div id="request-tab" class="tab-content">
+                            <h5>Request Details</h5>
+                            <pre id="request-details">No request sent yet...</pre>
+                        </div>
+                        <div id="response-tab" class="tab-content" style="display: none;">
+                            <h5>Response</h5>
+                            <pre id="response-details">No response yet...</pre>
+                        </div>
+                    </div>
                 </div>
-                <div id="debug-log-container" class="debug-log-container">
-                    <div class="debug-log-entry info">Debug console initialized. Ready for Pionex API operations.</div>
+
+                <!-- Debug Log Section -->
+                <div class="debug-log-section">
+                    <div class="debug-controls">
+                        <button id="clear-debug-log" class="secondary">Clear Log</button>
+                        <button id="export-debug-log" class="secondary">Export Log</button>
+                        <select id="debug-log-level">
+                            <option value="all">All</option>
+                            <option value="info">Info</option>
+                            <option value="warn">Warning</option>
+                            <option value="error">Error</option>
+                        </select>
+                    </div>
+                    <div id="debug-log-container" class="debug-log-container">
+                        <div class="debug-log-entry info">Debug console initialized. Ready for Pionex API operations.</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -182,6 +312,31 @@
             <div class="modal-actions">
                 <button id="test-api-connection" class="secondary">Test Connection</button>
                 <button id="save-api-credentials" class="accent">Save & Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="api-secret-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="api-secret-modal-title" aria-describedby="api-secret-modal-description">
+        <div class="modal-content">
+            <button id="api-secret-modal-close" class="modal-close" aria-label="Close API secret dialog">&times;</button>
+            <h2 id="api-secret-modal-title">API Secret Required</h2>
+            <p id="api-secret-modal-description" class="modal-description">This API endpoint requires authentication. Please provide your API secret to generate the signature.</p>
+
+            <div class="form-group">
+                <label for="api-secret-temp-input">API Secret:</label>
+                <input type="password" id="api-secret-temp-input" placeholder="Enter your API secret for this request" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="pionex-signature-input">Or PIONEX-SIGNATURE (if pre-calculated):</label>
+                <input type="text" id="pionex-signature-input" placeholder="Enter pre-calculated signature (optional)" autocomplete="off">
+            </div>
+
+            <div id="api-secret-modal-message" class="modal-message informational">Your API secret is only used for this request and is not stored.</div>
+
+            <div class="modal-actions">
+                <button id="use-temp-secret" class="accent">Use for This Request</button>
+                <button id="configure-permanent-secret" class="secondary">Configure Permanent Credentials</button>
             </div>
         </div>
     </div>

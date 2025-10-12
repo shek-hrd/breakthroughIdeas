@@ -5,7 +5,15 @@
 
 class PionexTradingSuite {
     constructor() {
-        this.isMockMode = false;
+        // Start with everything paused
+        this.isPaused = true;
+        this.isAnalysisRunning = false;
+        this.isDataLoading = false;
+        this.isRefreshing = false;
+        this.errorCount = 0;
+        this.maxErrors = 3;
+
+        this.isLiveData = false; // Start with live data off
         this.refreshInterval = null;
         this.refreshRate = 5000; // 5 seconds default
         this.websocket = null;
@@ -17,7 +25,8 @@ class PionexTradingSuite {
 
         this.initializeComponents();
         this.setupEventListeners();
-        this.startSystem();
+        // Don't start automatically - wait for user to toggle buttons
+        this.updateUIState();
     }
 
     /**
@@ -33,9 +42,16 @@ class PionexTradingSuite {
         // Initialize modals
         this.pionexModal = new ModalManager('pionex-modal');
         this.apiKeyModal = new ModalManager('api-key-modal');
+        this.apiSecretModal = new ModalManager('api-secret-modal');
 
         // Initialize debug console
         this.debugConsole = new DebugConsole('debug-console-content', 'debug-log-container');
+
+        // Initialize API tester
+        this.initializeApiTester();
+
+        // Generate initial ideal bot configuration
+        this.generateInitialBotConfig();
 
         this.log('info', 'Components initialized successfully');
     }
@@ -44,9 +60,35 @@ class PionexTradingSuite {
      * Setup all event listeners
      */
     setupEventListeners() {
-        // Data mode toggle
-        document.getElementById('data-mode-toggle')?.addEventListener('change', (e) => {
-            this.setMockMode(e.target.checked);
+        // Data mode toggle button
+        document.getElementById('data-mode-toggle')?.addEventListener('click', () => {
+            this.toggleDataMode();
+        });
+
+        // Control buttons
+        document.getElementById('pause-all')?.addEventListener('click', () => {
+            this.togglePauseAll();
+        });
+
+        document.getElementById('start-analysis')?.addEventListener('click', () => {
+            this.toggleAnalysis();
+        });
+
+        document.getElementById('refresh-data')?.addEventListener('click', () => {
+            this.refreshData();
+        });
+
+        // Ideal bot actions
+        document.getElementById('apply-ideal-bot')?.addEventListener('click', () => {
+            this.applyIdealBot();
+        });
+
+        document.getElementById('export-bot-config')?.addEventListener('click', () => {
+            this.exportBotConfig();
+        });
+
+        document.getElementById('reset-errors')?.addEventListener('click', () => {
+            this.resetErrors();
         });
 
         // Refresh rate controls
@@ -79,6 +121,16 @@ class PionexTradingSuite {
 
         document.getElementById('test-api-connection')?.addEventListener('click', () => {
             this.testApiConnection();
+        });
+
+        // API Secret modal controls
+        document.getElementById('use-temp-secret')?.addEventListener('click', () => {
+            this.useTemporarySecret();
+        });
+
+        document.getElementById('configure-permanent-secret')?.addEventListener('click', () => {
+            this.apiSecretModal.hide();
+            this.showApiKeyDialog();
         });
 
         // Debug console controls
@@ -129,33 +181,243 @@ class PionexTradingSuite {
     }
 
     /**
-     * Set mock mode state
+     * Toggle data mode between live and paused
      */
-    setMockMode(enabled) {
-        this.isMockMode = enabled;
-        this.updateToggleUI();
-
-        if (enabled) {
-            this.stopLiveDataFetching();
-            this.startMockDataFetching();
-            this.log('info', 'Switched to mock data mode');
+    toggleDataMode() {
+        if (this.isPaused) {
+            this.startDataLoading();
         } else {
-            this.stopMockDataFetching();
-            this.startLiveDataFetching();
-            this.log('info', 'Switched to live data mode');
+            this.pauseDataLoading();
         }
     }
 
     /**
-     * Update toggle UI elements
+     * Start data loading
      */
-    updateToggleUI() {
-        const toggle = document.getElementById('data-mode-toggle');
-        const label = document.getElementById('data-mode-text');
+    startDataLoading() {
+        if (this.isDataLoading) return;
 
-        if (toggle && label) {
-            toggle.checked = this.isMockMode;
-            label.textContent = this.isMockMode ? 'Mock Data Mode' : 'Live Data Mode';
+        this.isPaused = false;
+        this.isDataLoading = true;
+        this.errorCount = 0;
+
+        this.updateUIState();
+
+        if (this.isLiveData) {
+            this.startLiveDataFetching();
+        } else {
+            this.startMockDataFetching();
+        }
+
+        this.log('info', 'Data loading started');
+    }
+
+    /**
+     * Pause data loading
+     */
+    pauseDataLoading() {
+        this.isPaused = true;
+        this.isDataLoading = false;
+
+        this.stopLiveDataFetching();
+        this.stopMockDataFetching();
+
+        this.updateUIState();
+        this.log('info', 'Data loading paused');
+    }
+
+    /**
+     * Toggle pause all functionality
+     */
+    togglePauseAll() {
+        this.isPaused = !this.isPaused;
+
+        if (this.isPaused) {
+            this.pauseAllOperations();
+        } else {
+            this.resumeAllOperations();
+        }
+    }
+
+    /**
+     * Toggle analysis on/off
+     */
+    toggleAnalysis() {
+        this.isAnalysisRunning = !this.isAnalysisRunning;
+
+        if (this.isAnalysisRunning) {
+            this.startAnalysis();
+        } else {
+            this.stopAnalysis();
+        }
+
+        this.updateUIState();
+    }
+
+    /**
+     * Refresh data manually
+     */
+    refreshData() {
+        if (this.isRefreshing) return;
+
+        this.isRefreshing = true;
+        this.updateUIState();
+
+        this.refreshAllData();
+
+        setTimeout(() => {
+            this.isRefreshing = false;
+            this.updateUIState();
+        }, 2000);
+    }
+
+    /**
+     * Pause all operations
+     */
+    pauseAllOperations() {
+        this.isPaused = true;
+        this.isAnalysisRunning = false;
+        this.isDataLoading = false;
+
+        this.stopLiveDataFetching();
+        this.stopMockDataFetching();
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+
+        this.updateUIState();
+        this.log('info', 'All operations paused');
+    }
+
+    /**
+     * Resume all operations
+     */
+    resumeAllOperations() {
+        this.isPaused = false;
+
+        if (this.isDataLoading) {
+            this.startDataLoading();
+        }
+
+        if (this.isAnalysisRunning) {
+            this.startAnalysis();
+        }
+
+        this.updateUIState();
+        this.log('info', 'All operations resumed');
+    }
+
+    /**
+     * Start analysis
+     */
+    startAnalysis() {
+        this.refreshIdealBot();
+        this.startCountdownTimer();
+        this.log('info', 'Market analysis started');
+    }
+
+    /**
+     * Stop analysis
+     */
+    stopAnalysis() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+        this.log('info', 'Market analysis stopped');
+    }
+
+    /**
+     * Update all UI elements based on current state
+     */
+    updateUIState() {
+        // Update data mode toggle button
+        const dataToggle = document.getElementById('data-mode-toggle');
+        if (dataToggle) {
+            dataToggle.textContent = this.isPaused ? 'Start Live Data' : 'Pause Data';
+            dataToggle.className = `toggle-button ${this.isPaused ? 'secondary' : 'accent'}`;
+        }
+
+        // Update pause all button
+        const pauseAll = document.getElementById('pause-all');
+        if (pauseAll) {
+            pauseAll.textContent = this.isPaused ? 'Resume All' : 'Pause All';
+            pauseAll.className = `toggle-button ${this.isPaused ? 'accent' : 'secondary'}`;
+        }
+
+        // Update analysis button
+        const analysisButton = document.getElementById('start-analysis');
+        if (analysisButton) {
+            analysisButton.textContent = this.isAnalysisRunning ? 'Stop Analysis' : 'Start Analysis';
+            analysisButton.className = `toggle-button ${this.isAnalysisRunning ? 'secondary' : 'accent'}`;
+        }
+
+        // Update refresh button
+        const refreshButton = document.getElementById('refresh-data');
+        if (refreshButton) {
+            refreshButton.className = `toggle-button ${this.isRefreshing ? 'secondary loading' : 'primary'}`;
+            refreshButton.textContent = this.isRefreshing ? 'Refreshing...' : 'Refresh Data';
+            refreshButton.disabled = this.isRefreshing;
+        }
+
+        // Update bot status
+        this.updateBotStatus();
+
+        // Update countdown display
+        this.updateCountdownDisplay();
+    }
+
+    /**
+     * Update bot status display
+     */
+    updateBotStatus() {
+        const statusIndicator = document.getElementById('bot-status');
+        const lastAnalysis = document.getElementById('last-analysis');
+
+        if (statusIndicator && lastAnalysis) {
+            if (this.errorCount >= this.maxErrors) {
+                statusIndicator.textContent = 'Error';
+                statusIndicator.className = 'status-indicator error';
+            } else if (this.isAnalysisRunning) {
+                statusIndicator.textContent = 'Analyzing';
+                statusIndicator.className = 'status-indicator analyzing';
+            } else {
+                statusIndicator.textContent = 'Ready';
+                statusIndicator.className = 'status-indicator ready';
+            }
+
+            lastAnalysis.textContent = `Last analysis: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Update bot configuration display
+        this.updateBotConfigurationDisplay();
+    }
+
+    /**
+     * Update bot configuration display
+     */
+    updateBotConfigurationDisplay() {
+        if (!this.idealBotConfig) return;
+
+        document.getElementById('bot-strategy')!.textContent = this.idealBotConfig.strategy.replace('_', ' ');
+        document.getElementById('bot-symbols')!.textContent = this.idealBotConfig.symbols.join(', ');
+        document.getElementById('bot-expected-apy')!.textContent = `${this.idealBotConfig.expectedPerformance.expectedAPY.toFixed(2)}%`;
+        document.getElementById('bot-risk-level')!.textContent = this.idealBotConfig.expectedPerformance.riskLevel;
+        document.getElementById('bot-grid-levels')!.textContent = this.idealBotConfig.parameters.gridLevels.toString();
+        document.getElementById('bot-position-size')!.textContent = `${(this.idealBotConfig.parameters.positionSize * 100).toFixed(1)}%`;
+    }
+
+    /**
+     * Update countdown display
+     */
+    updateCountdownDisplay() {
+        const countdownElement = document.getElementById('countdown');
+        if (countdownElement) {
+            if (this.isPaused || !this.isAnalysisRunning) {
+                countdownElement.textContent = '--';
+            } else {
+                const remaining = Math.max(0, this.refreshRate / 1000 - (this.errorCount * 2));
+                countdownElement.textContent = Math.ceil(remaining).toString();
+            }
         }
     }
 
@@ -201,6 +463,7 @@ class PionexTradingSuite {
 
             this.websocket.onerror = (error) => {
                 this.log('error', 'WebSocket error: ' + error);
+                this.handleError('WebSocket connection failed');
             };
 
         } catch (error) {
@@ -329,6 +592,7 @@ class PionexTradingSuite {
 
         } catch (error) {
             this.log('error', 'Error fetching initial market data: ' + error.message);
+            this.handleError('Market data fetch failed');
         }
     }
 
@@ -749,7 +1013,9 @@ class PionexTradingSuite {
     displayIdealBotConfig() {
         if (!this.idealBotConfig) return;
 
-        // This would update the ideal bot section in the UI
+        // Update the visible bot settings section immediately
+        this.updateBotConfigurationDisplay();
+
         this.log('info', `Ideal bot strategy: ${this.idealBotConfig.strategy}`);
         this.log('info', `Target symbols: ${this.idealBotConfig.symbols.join(', ')}`);
         this.log('info', `Expected APY: ${this.idealBotConfig.expectedPerformance.expectedAPY.toFixed(2)}%`);
@@ -832,9 +1098,265 @@ class PionexTradingSuite {
 
         } catch (error) {
             this.log('error', 'API connection test failed: ' + error.message);
-            this.showModalMessage('api-key-modal-message', 'error', 'API connection failed: ' + error.message);
+                this.showModalMessage('api-key-modal-message', 'error', 'API connection failed: ' + error.message);
+            }
         }
-    }
+    
+        /**
+         * Show API secret modal for temporary authentication
+         */
+        showApiSecretModal() {
+            this.apiSecretModal.show();
+    
+            // Clear previous inputs
+            document.getElementById('api-secret-temp-input').value = '';
+            document.getElementById('pionex-signature-input').value = '';
+        }
+    
+        /**
+         * Use temporary API secret for current request
+         */
+        useTemporarySecret() {
+            const tempSecret = document.getElementById('api-secret-temp-input').value.trim();
+            const tempSignature = document.getElementById('pionex-signature-input').value.trim();
+    
+            if (!tempSecret && !tempSignature) {
+                this.showModalMessage('api-secret-modal-message', 'error', 'Please enter API secret or pre-calculated signature.');
+                return;
+            }
+    
+            // Store temporary credentials for this request
+            this.tempCredentials = {
+                secret: tempSecret,
+                signature: tempSignature,
+                timestamp: Date.now()
+            };
+    
+            this.apiSecretModal.hide();
+    
+            // Retry the API request with temporary credentials
+            this.sendApiRequestWithTempCredentials();
+    
+            this.log('info', 'Using temporary API credentials for this request');
+        }
+    
+        /**
+         * Send API request with temporary credentials
+         */
+        async sendApiRequestWithTempCredentials() {
+            const endpointKey = document.getElementById('api-endpoint-select').value;
+            const endpoint = this.apiEndpoints[endpointKey];
+    
+            if (!endpoint) {
+                this.log('error', 'No endpoint selected');
+                return;
+            }
+    
+            try {
+                this.log('info', `Sending authenticated request to ${endpoint.path}`);
+    
+                // Build request configuration with temporary credentials
+                const requestConfig = await this.buildRequestConfigWithTempCredentials(endpoint);
+    
+                // Update request tab
+                this.updateRequestTab(requestConfig);
+    
+                // Send request
+                const response = await fetch(requestConfig.url, requestConfig.options);
+    
+                // Parse response
+                const responseData = await response.json();
+    
+                // Update response tab
+                this.updateResponseTab(response, responseData);
+    
+                // Log to debug console
+                this.log('info', `Authenticated request completed: ${response.status} ${response.statusText}`);
+    
+                // Clear temporary credentials after use
+                this.tempCredentials = null;
+    
+            } catch (error) {
+                this.log('error', `Authenticated request failed: ${error.message}`);
+                this.updateResponseTab(null, { error: error.message });
+            }
+        }
+    
+        /**
+         * Build request configuration with temporary credentials
+         */
+        async buildRequestConfigWithTempCredentials(endpoint) {
+            const symbol = document.getElementById('symbol-input').value;
+            let url = `https://api.pionex.com${endpoint.path}`;
+            const options = {
+                method: endpoint.method,
+                headers: {}
+            };
+    
+            // Add authentication headers using temporary credentials
+            if (this.tempCredentials) {
+                const timestamp = Date.now();
+                const queryString = this.buildQueryString(endpoint);
+    
+                if (this.tempCredentials.signature) {
+                    // Use pre-calculated signature
+                    options.headers['PIONEX-SIGNATURE'] = this.tempCredentials.signature;
+                } else {
+                    // Generate signature from secret
+                    const signature = await this.generateSignature(queryString, this.tempCredentials.secret);
+                    options.headers['PIONEX-SIGNATURE'] = signature;
+                }
+            }
+    
+            // Add query parameters for GET requests
+            if (endpoint.method === 'GET') {
+                const params = [];
+    
+                if (symbol) {
+                    params.push(`symbol=${encodeURIComponent(symbol)}`);
+                }
+    
+                const paramRows = document.querySelectorAll('.parameter-row');
+                paramRows.forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        const name = inputs[0].value.trim();
+                        const value = inputs[1].value.trim();
+                        if (name && value) {
+                            params.push(`${name}=${encodeURIComponent(value)}`);
+                        }
+                    }
+                });
+    
+                if (params.length > 0) {
+                    url += `?${params.join('&')}`;
+                }
+            }
+    
+            // Add JSON body for POST/DELETE requests
+            if (endpoint.method === 'POST' || endpoint.method === 'DELETE') {
+                const paramRows = document.querySelectorAll('.parameter-row');
+                if (paramRows.length > 0) {
+                    const jsonBody = {};
+                    paramRows.forEach(row => {
+                        const inputs = row.querySelectorAll('input');
+                        if (inputs.length >= 2) {
+                            const name = inputs[0].value.trim();
+                            const value = inputs[1].value.trim();
+                            if (name && value) {
+                                jsonBody[name] = value;
+                            }
+                        }
+                    });
+    
+                    if (Object.keys(jsonBody).length > 0) {
+                        options.headers['Content-Type'] = 'application/json';
+                        options.body = JSON.stringify(jsonBody);
+                    }
+                }
+            }
+    
+            return { url, options };
+        }
+    
+        /**
+         * Handle errors and pause on repeated failures
+         */
+        handleError(errorSource) {
+            this.errorCount++;
+    
+            this.log('error', `${errorSource} - Error count: ${this.errorCount}/${this.maxErrors}`);
+    
+            if (this.errorCount >= this.maxErrors) {
+                this.log('error', `Maximum errors reached (${this.maxErrors}). Pausing operations.`);
+                this.pauseAllOperations();
+    
+                // Show error in UI
+                const statusIndicator = document.getElementById('bot-status');
+                if (statusIndicator) {
+                    statusIndicator.textContent = 'Too Many Errors';
+                    statusIndicator.className = 'status-indicator error';
+                }
+            }
+    
+            this.updateUIState();
+        }
+    
+        /**
+         * Apply ideal bot configuration
+         */
+        applyIdealBot() {
+            if (!this.idealBotConfig) {
+                this.log('warn', 'No ideal bot configuration available');
+                return;
+            }
+    
+            this.log('info', 'Applying ideal bot configuration...');
+    
+            // Here you would implement the actual bot application
+            // For now, just log the action
+            this.log('info', `Applied bot strategy: ${this.idealBotConfig.strategy}`);
+            this.log('info', `Target symbols: ${this.idealBotConfig.symbols.join(', ')}`);
+        }
+    
+        /**
+         * Export bot configuration
+         */
+        exportBotConfig() {
+            if (!this.idealBotConfig) {
+                this.log('warn', 'No bot configuration to export');
+                return;
+            }
+    
+            const configText = JSON.stringify(this.idealBotConfig, null, 2);
+            const blob = new Blob([configText], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+    
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ideal-bot-config-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+    
+            URL.revokeObjectURL(url);
+            this.log('info', 'Bot configuration exported');
+        }
+    
+        /**
+         * Reset error count and resume operations
+         */
+        resetErrors() {
+            this.errorCount = 0;
+            this.updateUIState();
+            this.log('info', 'Error count reset');
+        }
+    
+        /**
+         * Generate initial bot configuration for immediate display
+         */
+        generateInitialBotConfig() {
+            // Create a basic initial configuration
+            this.idealBotConfig = {
+                strategy: 'MEAN_REVERSION',
+                symbols: ['BTC_USDT', 'ETH_USDT'],
+                parameters: {
+                    gridLevels: 10,
+                    stopLoss: 0.02,
+                    takeProfit: 0.05,
+                    positionSize: 0.1
+                },
+                expectedPerformance: {
+                    expectedAPY: 45.5,
+                    riskLevel: 'MEDIUM',
+                    confidence: 0.75
+                },
+                lastUpdated: Date.now()
+            };
+    
+            // Display immediately
+            this.displayIdealBotConfig();
+    
+            this.log('info', 'Initial bot configuration generated and displayed');
+        }
 
     /**
      * Generate HMAC SHA256 signature for API authentication
@@ -1000,6 +1522,642 @@ class PionexTradingSuite {
 
         URL.revokeObjectURL(url);
         this.log('info', 'Debug log exported');
+    }
+
+    /**
+     * Initialize API Tester
+     */
+    initializeApiTester() {
+        this.apiEndpoints = this.getApiEndpoints();
+        this.currentRequestTab = 'request';
+        this.setupApiTesterEventListeners();
+        this.log('info', 'API Tester initialized');
+    }
+
+    /**
+     * Get all available API endpoints from documentation
+     */
+    getApiEndpoints() {
+        return {
+            // Public Market Data Endpoints
+            GET_MARKET_TICKERS: {
+                method: 'GET',
+                path: '/api/v1/market/tickers',
+                description: 'Get 24hr ticker price change statistics',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: false, description: 'Trading symbol (optional)' },
+                    { name: 'type', type: 'string', required: false, description: 'SPOT or PERP (default: SPOT)' }
+                ],
+                requiresAuth: false,
+                weight: 1
+            },
+            GET_MARKET_TICKER: {
+                method: 'GET',
+                path: '/api/v1/market/ticker/24hr',
+                description: 'Get single ticker data',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' }
+                ],
+                requiresAuth: false,
+                weight: 1
+            },
+            GET_MARKET_DEPTH: {
+                method: 'GET',
+                path: '/api/v1/market/depth',
+                description: 'Get order book depth',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' },
+                    { name: 'limit', type: 'number', required: false, description: 'Limit (default: 20, max: 1000)' }
+                ],
+                requiresAuth: false,
+                weight: 1
+            },
+            GET_MARKET_TRADES: {
+                method: 'GET',
+                path: '/api/v1/market/trades',
+                description: 'Get recent trades',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' },
+                    { name: 'limit', type: 'number', required: false, description: 'Limit (default: 100, max: 500)' }
+                ],
+                requiresAuth: false,
+                weight: 1
+            },
+            GET_MARKET_KLINES: {
+                method: 'GET',
+                path: '/api/v1/market/klines',
+                description: 'Get kline/candlestick data',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' },
+                    { name: 'interval', type: 'string', required: true, description: 'Kline interval (1m, 5m, 1h, etc.)' },
+                    { name: 'startTime', type: 'number', required: false, description: 'Start time in milliseconds' },
+                    { name: 'endTime', type: 'number', required: false, description: 'End time in milliseconds' },
+                    { name: 'limit', type: 'number', required: false, description: 'Limit (default: 500, max: 1000)' }
+                ],
+                requiresAuth: false,
+                weight: 1
+            },
+            GET_COMMON_SYMBOLS: {
+                method: 'GET',
+                path: '/api/v1/common/symbols',
+                description: 'Get symbol information',
+                parameters: [
+                    { name: 'symbols', type: 'string', required: false, description: 'Comma-separated symbols' },
+                    { name: 'type', type: 'string', required: false, description: 'SPOT or PERP (default: SPOT)' }
+                ],
+                requiresAuth: false,
+                weight: 5
+            },
+
+            // Private Account Endpoints
+            GET_ACCOUNT_BALANCE: {
+                method: 'GET',
+                path: '/api/v1/account/balance',
+                description: 'Get account balance',
+                parameters: [],
+                requiresAuth: true,
+                weight: 5
+            },
+            GET_TRADE_ALL_ORDERS: {
+                method: 'GET',
+                path: '/api/v1/trade/allOrders',
+                description: 'Get all orders',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: false, description: 'Trading symbol' },
+                    { name: 'limit', type: 'number', required: false, description: 'Limit (max: 100)' },
+                    { name: 'startTime', type: 'number', required: false, description: 'Start time in milliseconds' },
+                    { name: 'endTime', type: 'number', required: false, description: 'End time in milliseconds' }
+                ],
+                requiresAuth: true,
+                weight: 10
+            },
+            GET_TRADE_OPEN_ORDERS: {
+                method: 'GET',
+                path: '/api/v1/trade/openOrders',
+                description: 'Get open orders',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: false, description: 'Trading symbol' },
+                    { name: 'limit', type: 'number', required: false, description: 'Limit (max: 100)' }
+                ],
+                requiresAuth: true,
+                weight: 3
+            },
+            POST_TRADE_ORDER: {
+                method: 'POST',
+                path: '/api/v1/trade/order',
+                description: 'Place a new order',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' },
+                    { name: 'side', type: 'string', required: true, description: 'BUY or SELL' },
+                    { name: 'type', type: 'string', required: true, description: 'Order type (LIMIT, MARKET)' },
+                    { name: 'quantity', type: 'string', required: false, description: 'Order quantity' },
+                    { name: 'quoteQuantity', type: 'string', required: false, description: 'Quote quantity for market orders' },
+                    { name: 'price', type: 'string', required: false, description: 'Order price for limit orders' },
+                    { name: 'timeInForce', type: 'string', required: false, description: 'GTC, IOC, FOK' }
+                ],
+                requiresAuth: true,
+                weight: 1
+            },
+            DELETE_TRADE_ORDER: {
+                method: 'DELETE',
+                path: '/api/v1/trade/order',
+                description: 'Cancel an order',
+                parameters: [
+                    { name: 'symbol', type: 'string', required: true, description: 'Trading symbol' },
+                    { name: 'orderId', type: 'string', required: false, description: 'Order ID' },
+                    { name: 'clientOrderId', type: 'string', required: false, description: 'Client order ID' }
+                ],
+                requiresAuth: true,
+                weight: 1
+            },
+
+            // WebSocket Endpoints
+            WS_PUBLIC_STREAM: {
+                method: 'WS',
+                path: 'wss://ws.pionex.com/wsPub',
+                description: 'WebSocket public stream connection',
+                parameters: [
+                    { name: 'subscriptions', type: 'array', required: true, description: 'Array of subscription objects' }
+                ],
+                requiresAuth: false,
+                weight: 0
+            },
+            WS_PRIVATE_STREAM: {
+                method: 'WS',
+                path: 'wss://ws.pionex.com/ws',
+                description: 'WebSocket private stream connection',
+                parameters: [
+                    { name: 'key', type: 'string', required: true, description: 'API Key' },
+                    { name: 'timestamp', type: 'number', required: true, description: 'Timestamp in milliseconds' },
+                    { name: 'signature', type: 'string', required: true, description: 'HMAC SHA256 signature' }
+                ],
+                requiresAuth: true,
+                weight: 0
+            }
+        };
+    }
+
+    /**
+     * Setup API tester event listeners
+     */
+    setupApiTesterEventListeners() {
+        // Endpoint selection
+        document.getElementById('api-endpoint-select')?.addEventListener('change', (e) => {
+            this.loadEndpointConfiguration(e.target.value);
+        });
+
+        // Load parameters button
+        document.getElementById('load-endpoint-params')?.addEventListener('click', () => {
+            this.loadCurrentEndpointParameters();
+        });
+
+        // Send request button
+        document.getElementById('send-api-request')?.addEventListener('click', () => {
+            this.sendApiRequest();
+        });
+
+        // Add parameter button
+        document.getElementById('add-parameter')?.addEventListener('click', () => {
+            this.addParameterRow();
+        });
+
+        // Copy curl button
+        document.getElementById('copy-curl')?.addEventListener('click', () => {
+            this.copyCurlToClipboard();
+        });
+
+        // Format curl button
+        document.getElementById('format-curl')?.addEventListener('click', () => {
+            this.formatCurlOutput();
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                this.switchRequestResponseTab(e.target.dataset.tab);
+            });
+        });
+
+        this.log('info', 'API tester event listeners configured');
+    }
+
+    /**
+     * Load endpoint configuration
+     */
+    loadEndpointConfiguration(endpointKey) {
+        const endpoint = this.apiEndpoints[endpointKey];
+        if (!endpoint) return;
+
+        // Update method selector
+        const methodSelect = document.getElementById('request-method');
+        if (methodSelect) {
+            methodSelect.value = endpoint.method;
+        }
+
+        // Clear and load parameters
+        this.loadCurrentEndpointParameters();
+
+        this.log('info', `Loaded endpoint configuration: ${endpoint.description}`);
+    }
+
+    /**
+     * Load current endpoint parameters
+     */
+    loadCurrentEndpointParameters() {
+        const endpointKey = document.getElementById('api-endpoint-select').value;
+        const endpoint = this.apiEndpoints[endpointKey];
+
+        if (!endpoint) {
+            this.log('warn', 'No endpoint selected');
+            return;
+        }
+
+        const container = document.getElementById('parameters-container');
+        if (!container) return;
+
+        // Clear existing parameters
+        container.innerHTML = '';
+
+        // Add endpoint parameters
+        endpoint.parameters.forEach(param => {
+            this.addParameterRow(param);
+        });
+
+        // Show parameters section
+        const paramsSection = document.getElementById('endpoint-parameters');
+        if (paramsSection) {
+            paramsSection.style.display = 'block';
+        }
+
+        // Generate curl command
+        this.generateCurlCommand();
+
+        this.log('info', `Loaded ${endpoint.parameters.length} parameters for ${endpointKey}`);
+    }
+
+    /**
+     * Add parameter row to the UI
+     */
+    addParameterRow(parameter = null) {
+        const container = document.getElementById('parameters-container');
+        if (!container) return;
+
+        const row = document.createElement('div');
+        row.className = 'parameter-row';
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.placeholder = 'Parameter name';
+        nameInput.value = parameter ? parameter.name : '';
+
+        const valueInput = document.createElement('input');
+        valueInput.type = 'text';
+        valueInput.placeholder = 'Parameter value';
+        valueInput.value = '';
+
+        const typeSelect = document.createElement('select');
+        typeSelect.innerHTML = `
+            <option value="string">String</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean</option>
+            <option value="array">Array</option>
+        `;
+
+        const removeButton = document.createElement('button');
+        removeButton.className = 'secondary';
+        removeButton.textContent = 'Remove';
+        removeButton.addEventListener('click', () => {
+            row.remove();
+            this.generateCurlCommand();
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(valueInput);
+        row.appendChild(typeSelect);
+        row.appendChild(removeButton);
+
+        container.appendChild(row);
+
+        // Add event listeners for real-time curl generation
+        [nameInput, valueInput, typeSelect].forEach(element => {
+            element.addEventListener('input', () => this.generateCurlCommand());
+        });
+
+        // Set parameter details if provided
+        if (parameter) {
+            typeSelect.value = parameter.type;
+            if (parameter.description) {
+                valueInput.placeholder = parameter.description;
+            }
+        }
+
+        this.generateCurlCommand();
+    }
+
+    /**
+     * Generate cURL command from current configuration
+     */
+    generateCurlCommand() {
+        const endpointKey = document.getElementById('api-endpoint-select').value;
+        const endpoint = this.apiEndpoints[endpointKey];
+        const symbol = document.getElementById('symbol-input').value;
+
+        if (!endpoint) {
+            document.getElementById('curl-output').value = 'Select an endpoint to generate cURL command...';
+            return;
+        }
+
+        let curl = `curl -X ${endpoint.method}`;
+
+        // Add headers
+        if (endpoint.requiresAuth) {
+            curl += ` \\\n  -H "PIONEX-KEY: YOUR_API_KEY" \\\n  -H "PIONEX-SIGNATURE: YOUR_SIGNATURE"`;
+        }
+
+        // Build URL
+        let url = `https://api.pionex.com${endpoint.path}`;
+
+        // Add query parameters for GET requests
+        if (endpoint.method === 'GET') {
+            const params = [];
+
+            // Add symbol if provided
+            if (symbol) {
+                params.push(`symbol=${encodeURIComponent(symbol)}`);
+            }
+
+            // Add custom parameters
+            const paramRows = document.querySelectorAll('.parameter-row');
+            paramRows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    const name = inputs[0].value.trim();
+                    const value = inputs[1].value.trim();
+                    if (name && value) {
+                        params.push(`${name}=${encodeURIComponent(value)}`);
+                    }
+                }
+            });
+
+            if (params.length > 0) {
+                url += `?${params.join('&')}`;
+            }
+        }
+
+        curl += ` \\\n  "${url}"`;
+
+        // Add JSON body for POST/DELETE requests
+        if (endpoint.method === 'POST' || endpoint.method === 'DELETE') {
+            const paramRows = document.querySelectorAll('.parameter-row');
+            if (paramRows.length > 0) {
+                const jsonBody = {};
+                paramRows.forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        const name = inputs[0].value.trim();
+                        const value = inputs[1].value.trim();
+                        if (name && value) {
+                            jsonBody[name] = value;
+                        }
+                    }
+                });
+
+                if (Object.keys(jsonBody).length > 0) {
+                    curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(jsonBody, null, 2)}'`;
+                }
+            }
+        }
+
+        const curlOutput = document.getElementById('curl-output');
+        if (curlOutput) {
+            curlOutput.value = curl;
+        }
+    }
+
+    /**
+     * Send API request
+     */
+    async sendApiRequest() {
+        const endpointKey = document.getElementById('api-endpoint-select').value;
+        const endpoint = this.apiEndpoints[endpointKey];
+
+        if (!endpoint) {
+            this.log('error', 'No endpoint selected');
+            return;
+        }
+
+        try {
+            // Check if authentication is required
+            if (endpoint.requiresAuth && !this.apiCredentials) {
+                this.log('warn', 'Authentication required for this endpoint');
+                this.showApiSecretModal();
+                return;
+            }
+
+            this.log('info', `Sending ${endpoint.method} request to ${endpoint.path}`);
+
+            // Build request configuration
+            const requestConfig = await this.buildRequestConfig(endpoint);
+
+            // Update request tab
+            this.updateRequestTab(requestConfig);
+
+            // Send request
+            const response = await fetch(requestConfig.url, requestConfig.options);
+
+            // Parse response
+            const responseData = await response.json();
+
+            // Update response tab
+            this.updateResponseTab(response, responseData);
+
+            // Log to debug console
+            this.log('info', `Request completed: ${response.status} ${response.statusText}`);
+
+        } catch (error) {
+            this.log('error', `Request failed: ${error.message}`);
+            this.updateResponseTab(null, { error: error.message });
+        }
+    }
+
+    /**
+     * Build request configuration
+     */
+    async buildRequestConfig(endpoint) {
+        const symbol = document.getElementById('symbol-input').value;
+        let url = `https://api.pionex.com${endpoint.path}`;
+        const options = {
+            method: endpoint.method,
+            headers: {}
+        };
+
+        // Add authentication headers if required
+        if (endpoint.requiresAuth && this.apiCredentials) {
+            const timestamp = Date.now();
+            const queryString = this.buildQueryString(endpoint);
+            const signature = await this.generateSignature(queryString, this.apiCredentials.secret);
+
+            options.headers['PIONEX-KEY'] = this.apiCredentials.key;
+            options.headers['PIONEX-SIGNATURE'] = signature;
+        }
+
+        // Add query parameters for GET requests
+        if (endpoint.method === 'GET') {
+            const params = [];
+
+            if (symbol) {
+                params.push(`symbol=${encodeURIComponent(symbol)}`);
+            }
+
+            const paramRows = document.querySelectorAll('.parameter-row');
+            paramRows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length >= 2) {
+                    const name = inputs[0].value.trim();
+                    const value = inputs[1].value.trim();
+                    if (name && value) {
+                        params.push(`${name}=${encodeURIComponent(value)}`);
+                    }
+                }
+            });
+
+            if (params.length > 0) {
+                url += `?${params.join('&')}`;
+            }
+        }
+
+        // Add JSON body for POST/DELETE requests
+        if (endpoint.method === 'POST' || endpoint.method === 'DELETE') {
+            const paramRows = document.querySelectorAll('.parameter-row');
+            if (paramRows.length > 0) {
+                const jsonBody = {};
+                paramRows.forEach(row => {
+                    const inputs = row.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        const name = inputs[0].value.trim();
+                        const value = inputs[1].value.trim();
+                        if (name && value) {
+                            jsonBody[name] = value;
+                        }
+                    }
+                });
+
+                if (Object.keys(jsonBody).length > 0) {
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(jsonBody);
+                }
+            }
+        }
+
+        return { url, options };
+    }
+
+    /**
+     * Build query string for signature generation
+     */
+    buildQueryString(endpoint) {
+        const params = [];
+
+        // Add timestamp
+        params.push(`timestamp=${Date.now()}`);
+
+        // Add other parameters
+        const paramRows = document.querySelectorAll('.parameter-row');
+        paramRows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if (inputs.length >= 2) {
+                const name = inputs[0].value.trim();
+                const value = inputs[1].value.trim();
+                if (name && value) {
+                    params.push(`${name}=${value}`);
+                }
+            }
+        });
+
+        return params.sort().join('&');
+    }
+
+    /**
+     * Update request tab with request details
+     */
+    updateRequestTab(requestConfig) {
+        const requestDetails = document.getElementById('request-details');
+        if (!requestDetails) return;
+
+        const details = {
+            timestamp: new Date().toISOString(),
+            url: requestConfig.url,
+            method: requestConfig.options.method,
+            headers: requestConfig.options.headers,
+            body: requestConfig.options.body || null
+        };
+
+        requestDetails.textContent = JSON.stringify(details, null, 2);
+    }
+
+    /**
+     * Update response tab with response data
+     */
+    updateResponseTab(response, data) {
+        const responseDetails = document.getElementById('response-details');
+        if (!responseDetails) return;
+
+        const details = {
+            timestamp: new Date().toISOString(),
+            status: response ? response.status : 'Error',
+            statusText: response ? response.statusText : 'Request Failed',
+            headers: response ? Object.fromEntries(response.headers.entries()) : {},
+            data: data
+        };
+
+        responseDetails.textContent = JSON.stringify(details, null, 2);
+    }
+
+    /**
+     * Switch between request and response tabs
+     */
+    switchRequestResponseTab(tab) {
+        this.currentRequestTab = tab;
+
+        // Update tab buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.toggle('active', button.dataset.tab === tab);
+        });
+
+        // Update tab content visibility
+        document.getElementById('request-tab')?.style.setProperty('display',
+            tab === 'request' ? 'block' : 'none');
+        document.getElementById('response-tab')?.style.setProperty('display',
+            tab === 'response' ? 'block' : 'none');
+    }
+
+    /**
+     * Copy cURL command to clipboard
+     */
+    copyCurlToClipboard() {
+        const curlOutput = document.getElementById('curl-output');
+        if (!curlOutput) return;
+
+        curlOutput.select();
+        document.execCommand('copy');
+
+        this.log('info', 'cURL command copied to clipboard');
+    }
+
+    /**
+     * Format cURL output
+     */
+    formatCurlOutput() {
+        const curlOutput = document.getElementById('curl-output');
+        if (!curlOutput) return;
+
+        try {
+            // This would format the cURL command for better readability
+            let formatted = curlOutput.value.replace(/ \\\n/g, ' \\\n  ');
+            curlOutput.value = formatted;
+        } catch (error) {
+            this.log('error', 'Error formatting cURL output: ' + error.message);
+        }
     }
 
     /**
