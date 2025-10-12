@@ -14,6 +14,7 @@ class PionexTradingSuite {
         this.maxErrors = 3;
 
         this.isLiveData = false; // Start with live data off
+        this.isMockMode = false; // Start with mock mode off
         this.refreshInterval = null;
         this.refreshRate = 5000; // 5 seconds default
         this.websocket = null;
