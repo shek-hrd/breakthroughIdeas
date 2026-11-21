@@ -319,7 +319,7 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
   const coord = useMemo(() => layout(nodes, edgeList, themes), [nodes, edgeList, themes]);
 
   const [rot, setRot] = useState({ rx: -0.3, ry: 0.4 });
-  const rotRef = useRef(rot); rotRef.current = rot;
+  const rotRef = useRef({ rx: -0.3, ry: 0.4 });
   const [zoom, setZoom] = useState(1.05);
   const [dims, setDims] = useState({ w: 800, h: 560 });
   const vel = useRef({ x: 0, y: config.autoSpin });
@@ -343,6 +343,8 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
   // vertical centre offset: with the panel docked below, the sphere rides higher to reduce overlap
   const cs = Math.max(0, Math.min(130, (centerLift || 0) * dims.h));
   const csRef = useRef(0); csRef.current = cs;
+  const lastAutoFocusRef = useRef(0);
+  const lastRotFlushRef = useRef(0);
 
   const act = useCallback(() => { lastAct.current = Date.now(); }, []);
 
@@ -393,41 +395,56 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
       const dt = Math.min(50, now - prev); prev = now;
       const f = Math.min(2.5, Math.max(0.2, dt / 16.7));
       const dd = dragDelta.current;
+      let r = rotRef.current;
+      let changed = false;
       if ((dd.x || dd.y) && dragRef.current) {
         const mx = dd.x, my = dd.y;
         dd.x = 0; dd.y = 0;
-        setRot((r) => ({ rx: Math.max(-1.45, Math.min(1.45, r.rx - my * 0.0045)), ry: r.ry + mx * 0.0045 }));
+        r = { rx: Math.max(-1.45, Math.min(1.45, r.rx - my * 0.0045)), ry: r.ry + mx * 0.0045 };
+        changed = true;
       }
       if (!dragRef.current) {
         if (target.current) {
-          setRot((r) => {
-            const n = rotateToTarget(r.rx, r.ry, target.current);
-            if (n.done) { target.current = null; vel.current.y = cfgRef.current.autoSpin * 0.4; vel.current.x = 0; }
-            return { rx: Math.max(-1.45, Math.min(1.45, n.rx)), ry: n.ry };
-          });
+          const n = rotateToTarget(r.rx, r.ry, target.current);
+          if (n.done) { target.current = null; vel.current.y = cfgRef.current.autoSpin * 0.4; vel.current.x = 0; }
+          r = { rx: Math.max(-1.45, Math.min(1.45, n.rx)), ry: n.ry };
+          changed = true;
         } else {
           const v = vel.current;
           v.x *= Math.pow(cfgRef.current.inertia, f);
           if (Date.now() > holdUntil.current) v.y += (cfgRef.current.autoSpin - v.y) * 0.008 * f;
           v.y *= Math.pow(0.985, f);
           if (Math.abs(v.x) < 0.0004) v.x = 0;
-          setRot((r) => ({ rx: Math.max(-1.45, Math.min(1.45, r.rx + v.x * f)), ry: r.ry + v.y * f }));
+          if (v.x || v.y) {
+            r = { rx: Math.max(-1.45, Math.min(1.45, r.rx + v.x * f)), ry: r.ry + v.y * f };
+            changed = true;
+          }
         }
       }
+      if (changed) {
+        rotRef.current = r;
+        if (now - lastRotFlushRef.current > 33) { lastRotFlushRef.current = now; setRot(r); }
+      }
       if (!dragRef.current) {
-        // one node always shows its details: the frontmost, live while the ball turns
-        let best = null, bz = -2;
-        const { rx, ry } = rotRef.current;
-        const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
-        nodesRef.current.forEach((n) => {
-          const c = coordRef.current[n.id]; if (!c) return;
-          const x = c.x * cy + c.z * sy;
-          const z1 = -c.x * sy + c.z * cy;
-          const y = c.y * cx - z1 * sx;
-          const z = c.y * sx + z1 * cx;
-          if (z > bz) { bz = z; best = n.id; }
-        });
-        if (best && !pinnedRef.current && best !== focusRef.current) setFocus(best, true);
+        // one node always shows its details: the frontmost, but throttled to avoid render storms
+        const nowAF = Date.now();
+        if (nowAF - lastAutoFocusRef.current > 1500) {
+          let best = null, bz = -2;
+          const { rx, ry } = rotRef.current;
+          const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
+          nodesRef.current.forEach((n) => {
+            const c = coordRef.current[n.id]; if (!c) return;
+            const x = c.x * cy + c.z * sy;
+            const z1 = -c.x * sy + c.z * cy;
+            const y = c.y * cx - z1 * sx;
+            const z = c.y * sx + z1 * cx;
+            if (z > bz) { bz = z; best = n.id; }
+          });
+          if (best && !pinnedRef.current && best !== focusRef.current) {
+            lastAutoFocusRef.current = nowAF;
+            setFocus(best, true);
+          }
+        }
       }
       raf = requestAnimationFrame(loop);
     };

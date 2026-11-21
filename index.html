@@ -69,12 +69,11 @@
         }
     </script>
 
-    <!-- React runtime + JSX compiler (no build step) -->
+    <!-- React runtime (precompiled mindmap, no in-browser Babel) -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 
-    <!-- mindmap component (auto-mounts to #ideas-sphere) -->
-    <script src="breakthroughIdeas.jsx" type="text/babel" data-presets="react"></script>
+    <!-- mindmap component (precompiled from breakthroughIdeas.jsx, auto-mounts to #ideas-sphere) -->
+    <script src="breakthroughIdeas.js"></script>
 </body>
 </html>
