@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - kilo/silent-core-tu9
 
 permissions:
   contents: read
@@ -13,11 +14,16 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          branch: kilo/silent-core-tu9
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
