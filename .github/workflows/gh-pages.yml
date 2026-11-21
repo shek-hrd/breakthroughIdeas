@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - kilo/silent-core-tu9
 
 permissions:
   contents: read
