@@ -19,6 +19,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          branch: kilo/silent-core-tu9
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
