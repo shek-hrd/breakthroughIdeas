@@ -1684,7 +1684,7 @@ function Screen({ dataset, chrome, hookControls, aSection, config, setConfig, ta
 const EMPTY_DS = { meta: { title: "New mindmap — waiting for a data source", source: "", schema: "idea-sphere/v1" }, themes: [], nodes: [], edges: [] };
 
 /* datasets: optional array of idea-sphere/v1 datasets preloaded as extra tabs when embedding */
-export default function App({ datasets }) {
+function App({ datasets }) {
   const preloaded = (datasets || []).filter((d) => d && d.meta && d.nodes).map((d, i) => ({
     id: "pre-" + i + "-" + String(d.meta.title || "map").replace(/[^a-z0-9]+/gi, "-").slice(0, 24),
     label: String(d.meta.title || "map " + (i + 1)).slice(0, 26),
@@ -1767,4 +1767,9 @@ export default function App({ datasets }) {
       </div>
     </div>
   );
+}
+// auto-mount when loaded as a standalone page script
+if (typeof document !== "undefined") {
+  const root = document.getElementById("ideas-sphere");
+  if (root) ReactDOM.createRoot(root).render(React.createElement(App));
 }

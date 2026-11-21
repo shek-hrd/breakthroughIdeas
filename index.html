@@ -69,16 +69,12 @@
         }
     </script>
 
-    <!-- React runtime + JSX compiler (no build step, per the TSX docs) -->
+    <!-- React runtime + JSX compiler (no build step) -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 
-    <!-- the mindmap component: export default App(...) -->
-    <script src="breakthroughIdeas.jsx" type="text/babel" data-presets="react" data-type="module"></script>
-    <!-- mount the app -->
-    <script type="text/babel" data-presets="react" data-type="module">
-        ReactDOM.createRoot(document.getElementById("ideas-sphere")).render(React.createElement(App));
-    </script>
+    <!-- mindmap component (auto-mounts to #ideas-sphere) -->
+    <script src="breakthroughIdeas.jsx" type="text/babel" data-presets="react"></script>
 </body>
 </html>
