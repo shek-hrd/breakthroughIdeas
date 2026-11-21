@@ -1,175 +1,169 @@
-# Breakthrough Ideas - GitHub Storage Implementation Guide
+# breakthroughIdeas — shek-hrd
 
-## Overview
-This project has been updated to use a file-based storage system that can be easily deployed to GitHub Pages with GitHub Issues for data persistence.
+> **"Let's make it all easier — invent, innovate, and share freely."**
+> Portfolio and repository of breakthrough ideas. This repo hosts the live portfolio page and the Ideas Sphere.
 
-## Current Storage System
-The application now uses a `FileStorage` class that:
-- Stores data in localStorage using a file-based structure
-- Automatically initializes storage files on first load
-- Supports example projects that are populated on first visit
-- Handles user projects, comments, ratings, and activity logs
+**Generated:** 2026-11-19 · **Source:** github.com/shek-hrd · **Sphere:** idea-sphere/v1
 
-## GitHub Implementation Instructions
+Live sphere: [`index.html`](./index.html) · Latest page (previous version): [`portfolio.html`](./portfolio.html)
 
-### 1. GitHub Repository Setup
-```bash
-# Create a new repository or use existing one
-git init
-git add .
-git commit -m "Initial commit with file-based storage system"
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-git push -u origin main
-```
+---
 
-### 2. Enable GitHub Pages
-1. Go to your repository settings
-2. Scroll down to "Pages" section
-3. Select source: "Deploy from a branch"
-4. Choose "main" branch and "/ (root)" folder
-5. Click "Save"
+## How to read this map
 
-### 3. GitHub Issues for Data Storage
-Since GitHub Pages is static hosting, you'll need to use GitHub Issues API for persistent data storage:
+The **repository mindmap** is the main view: every entry below is an idea node on a 3D Ideas Sphere, grouped by theme, and interconnected by relation edges. Four concepts sit above the surface as unifying themes.
 
-#### Option A: GitHub Issues API (Recommended)
-1. Create a new repository specifically for data storage (e.g., `breakthrough-ideas-data`)
-2. Enable GitHub Issues in that repository
-3. Use GitHub API to create/read/update issues as data entries
+The **latest breakthroughIdeas page** (`portfolio.html`) is kept as a second view.
 
-#### Option B: GitHub Gists API
-1. Use GitHub Gists for storing JSON data
-2. Create a personal access token with gist permissions
-3. Use the Gists API for CRUD operations
+---
 
-### 4. Update Storage Implementation
-Replace the current `FileStorage` class with a GitHub-based storage system:
+## Concepts
 
-```javascript
-// Example GitHub Issues Storage Implementation
-class GitHubStorage {
-    constructor(owner, repo, token) {
-        this.owner = owner;
-        this.repo = repo;
-        this.token = token;
-        this.baseUrl = `https://api.github.com/repos/${owner}/${repo}`;
-    }
-    
-    async getItem(key, defaultValue = null) {
-        try {
-            const response = await fetch(`${this.baseUrl}/issues?labels=${key}`, {
-                headers: {
-                    'Authorization': `token ${this.token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            
-            const issues = await response.json();
-            if (issues.length > 0) {
-                // Parse data from issue body
-                return JSON.parse(issues[0].body);
-            }
-            return defaultValue;
-        } catch (error) {
-            console.error('GitHub storage get error:', error);
-            return defaultValue;
-        }
-    }
-    
-    async setItem(key, value) {
-        try {
-            const data = JSON.stringify(value, null, 2);
-            
-            // Check if issue already exists
-            const existing = await this.getItem(key);
-            
-            if (existing) {
-                // Update existing issue
-                const issues = await fetch(`${this.baseUrl}/issues?labels=${key}`, {
-                    headers: { 'Authorization': `token ${this.token}` }
-                }).then(r => r.json());
-                
-                if (issues.length > 0) {
-                    await fetch(`${this.baseUrl}/issues/${issues[0].number}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': `token ${this.token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ body: data })
-                    });
-                }
-            } else {
-                // Create new issue
-                await fetch(`${this.baseUrl}/issues`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `token ${this.token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title: `Data: ${key}`,
-                        body: data,
-                        labels: [key, 'data']
-                    })
-                });
-            }
-        } catch (error) {
-            console.error('GitHub storage set error:', error);
-        }
-    }
-}
-```
+| Concept | Meaning |
+|---|---|
+| 🪙 **Fair-trade compute** | One reciprocity principle: users contribute compute proportional to AI service (simulated fair-trade mining → real xmrig runners). |
+| 🔌 **Disappearing switchboard** | Servers exist only to introduce peers and hold no data — dating signaler, chat relay, game lobbies, dungeon multiplayer. |
+| 🧩 **Position-as-data** | Data addressed by where it lies, not stored: π offsets, unicode tokens, hex grids, extracted maps. |
+| 🔑 **Keyless AI chains** | Fallback chains that keep AI usable in a browser with no API keys: puter.net.fetch → Pollinations → local; provider rotation. |
 
-### 5. Environment Variables Setup
-Create a `.env` file for local development:
-```
-GITHUB_OWNER=your-username
-GITHUB_REPO=your-data-repo
-GITHUB_TOKEN=your-personal-access-token
-```
+---
 
-### 6. Security Considerations
-1. **Never commit tokens to repository**
-2. Use GitHub Secrets for production tokens
-3. Implement rate limiting for API calls
-4. Consider using GitHub Apps instead of personal tokens
-5. Set up proper CORS headers if needed
+## The Ideas
 
-### 7. Deployment Checklist
-- [ ] Repository created and configured
-- [ ] GitHub Pages enabled
-- [ ] Data repository set up with Issues enabled
-- [ ] Personal access token created with appropriate permissions
-- [ ] Storage implementation updated to use GitHub API
-- [ ] Environment variables configured
-- [ ] Rate limiting implemented
-- [ ] Error handling added
-- [ ] Testing completed
+### AI & Agents
 
-### 8. Testing the Implementation
-1. Deploy to GitHub Pages
-2. Visit the deployed site
-3. Create a test project
-4. Add comments and ratings
-5. Check GitHub Issues for data entries
-6. Refresh page to verify data persistence
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 1 | Peaceful LLM | [peacefulLLM](https://github.com/shek-hrd/peacefulLLM) | AI proxy & testing hub with 5-provider fallback chain (Groq, OpenAI, Together, Hugging Face, Ollama), email session links, XOR-encrypted client data. One-stop resilient AI access with no backend and no registration. | high |
+| 2 | pionbot — trading bot prompts | [peacefulLLM/pionbot](https://github.com/shek-hrd/peacefulLLM/blob/main/pionbot/user-prompts.md) | Pionex bot instructions & user prompts folder inside peacefulLLM, feeding AI-generated trading-bot instructions toward Pionex repos. | high |
+| 3 | AI Conclave | [AIConclavebyMeta-](https://github.com/shek-hrd/AIConclavebyMeta-) | Multi-model AI conclave console: parallel models (Puter, Pollinations, OpenAI, Anthropic, Gemini…) with CORS-bridged fetch chain. Run many AI models in one keyless browser page. | high |
+| 4 | Kilo Code Instructions (Lite) | [kilo-code-AI-instructions](https://github.com/shek-hrd/kilo-code-AI-instructions) | Installable VSCode extension packaging 1M-token-optimized Kilo Code instructions with Code Supernova. Turn AI instruction sets into a one-click IDE extension. | high |
 
-### 9. Backup Strategy
-- Regular exports of GitHub Issues data
-- Automated backups using GitHub Actions
-- Local development copies
-- Version control for data schema changes
+### Compute & Mining
 
-### 10. Monitoring and Maintenance
-- Set up GitHub Actions for automated tasks
-- Monitor API rate limits
-- Regular security token rotation
-- Performance monitoring
-- User activity analytics
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 5 | Fair-Trade AI Mining | [mineAI](https://github.com/shek-hrd/mineAI) | Browser mining simulation running only while AI processes a request; processing time inversely tied to hashrate. Web Workers + hardware detection. Prove fair-exchange: compute pays for AI answers. | high |
+| 6 | Minepoolie — Monero mining platform | [minepoolie](https://github.com/shek-hrd/minepoolie) | Autonomous Monero mining dashboard/miner/runner orchestration, per-runner deploy packages, diagnostics. Real xmrig verified at ~410–450 H/s on AMD EPYC. Built from long AI-agent session logs. | high |
 
-## Example Projects Data Migration
-The system automatically populates example projects on first visit. These are stored in the new storage system and can be modified through the GitHub Issues interface.
+### Trading & Markets
 
-## Support
-For issues or questions about the GitHub implementation, please create an issue in this repository.
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 7 | Pionex Grid (pioneer branch) | [pioneer](https://github.com/shek-hrd/pioneer/tree/kilo/firm-matrix-42p) | Pionex Grid control UI plus pionex_local.py and agent.html — AI agent layer for Pionex bot automation. Automate grid-bot creation locally & via agent. | high |
+| 8 | Pionier | [pionier](https://github.com/shek-hrd/pionier) | "Pionex bot creation automation" — live Pionex Grid page, sibling/variant of pioneer. Publish the Pionex automation front-end. | high |
+| 9 | BTC Streaming Curves | [magicarpet](https://github.com/shek-hrd/magicarpet) | Family of demos streaming BTC price into progressive multi-resolution curved-line rendering (qwen/chatgpt/claude variants, qvid). Emulate server-side progressive streaming. | high |
+
+### P2P, Chat & Dating
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 10 | Decentralized Chatter | [chatter](https://github.com/shek-hrd/chatter) | Browser-only decentralized chat: 14-char identity stamps, simulated WebRTC mesh, blockchain-structured message integrity, LRU cache, admin console. | high |
+| 11 | P2P Encrypted Chat | [ciphp2pchat](https://github.com/shek-hrd/ciphp2pchat) | Lightweight E2E P2P chat; ECDH keys in IndexedDB, minimal relay/ping helpers. Smallest possible privacy-first chat between two browsers. | high |
+| 12 | Network Dating | [dateherenow](https://github.com/shek-hrd/dateherenow) | WebRTC dating app: discover/connect over network, profile cards, match notifications, signaling-server status light. | high |
+| 13 | Dating Signaling Server | [datehere](https://github.com/shek-hrd/datehere) | Socket.IO switchboard introducing two WebRTC clients, holds no user data, health endpoint for Render hosting. Companion backend for Network Dating. | high |
+
+### Games & 3D
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 14 | Dragon's Nest — Tarot Dungeon | [tarotdungeon](https://github.com/shek-hrd/tarotdungeon) | 3D multiplayer dungeon (Three.js + Socket.IO): 62-card tarot deck reshapes rooms by symbolism, grandma-voice narration. Educational tarot immersion. | high |
+| 15 | Little Prince Skies | [littleprinceskies](https://github.com/shek-hrd/littleprinceskies) | Planet-hopping canvas platformer: walk, jump, sword-pointing, teleport to other planets. Contemplative micro-planet world. | high |
+| 16 | ChessBoat — 3D Chess | [chessboat](https://github.com/shek-hrd/chessboat) | Full-rule 3D/2D browser chess: castling, en passant, promotion, drag/click/keyboard, undo/redo, auto-save, FPS monitor. | high |
+| 17 | Rocketz | [rocketz](https://github.com/shek-hrd/rocketz) | Rocket arcade game, live GitHub Pages page. | live-page |
+| 18 | Ball Bounce Multiplayer | [ballbouncemultiplayer](https://github.com/shek-hrd/ballbouncemultiplayer) | Multiplayer ball-bounce physics toy. | live-page |
+| 19 | Go Multiplayer | [gomultiplayer](https://github.com/shek-hrd/gomultiplayer) | Sparse multiplayer game page on GitHub Pages. | live-page |
+| 20 | Game Platform | [gameplatform](https://github.com/shek-hrd/gameplatform) | 3 MB JS game-platform bundle; shared hub/foundation for games. | med |
+| 21 | Game Desk (placeholder) | [gamedesk](https://github.com/shek-hrd/gamedesk) | Empty scaffold — reserved slot. | high |
+| 22 | 3D Professional Studio | [presentstrae](https://github.com/shek-hrd/presentstrae) | Presentation studio in 3D, four model-generated implementations kept separate (deeps/grox/mistral/ms). | high |
+
+### Web Tools & Capture
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 23 | Rapture — Capture & AI Analysis | [rap](https://github.com/shek-hrd/rap) | Screen capture + recording with AI analysis (Gemini/OpenAI/Claude, Puter), TTS readout, local+cloud storage, gallery. "toužjevono". | high |
+| 24 | Rapture Accessible (for blind) | [rap/4blind](https://github.com/shek-hrd/rap/blob/main/4blind/index.html) | Sub-app in rap/4blind: voice-command capture with ARIA/screen-reader support. | high |
+| 25 | Crypto Donation Widget | [rap/crypto-donation-widget.html](https://github.com/shek-hrd/rap/blob/main/crypto-donation-widget.html) | Embeddable collapsible donation widget (one include before `</html>`). | high |
+| 26 | Instweb — AI Builder Hub | [instweb](https://github.com/shek-hrd/instweb) | Hub of no-code AI-builder app iterations (aibuild*.html) + deployed-domains logs. Generate/host small web apps from AI prompts instantly. | high |
+| 27 | Smart HTML Fetcher | [textweb](https://github.com/shek-hrd/textweb) | PHP proxy emulating text browsers (lynx, w3m, elinks, browsh, carbonyl) with renderer switching. Read the modern web as clean text. | high |
+| 28 | Download Videos/Audio | [downloadVideosAudio](https://github.com/shek-hrd/downloadVideosAudio) | Extract audio from any video file completely in the browser (offline-first). | high |
+| 29 | Litmap | [litmap](https://github.com/shek-hrd/litmap) | Small JS app; contents not fully read. | med |
+
+### Data, Encoding & Vision
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 30 | Pi Storage | [pistorage](https://github.com/shek-hrd/pistorage) | Concept: π/e as ultimate storage — every numeric sequence exists in π, so payload = (numeric base, constant, start offset, length) + encoders. | high |
+| 31 | Math Solver Suite | [pistorage/fremsol](https://github.com/shek-hrd/pistorage/blob/main/fremsol.htm) | Solver experiments inside pistorage: fremsol, fremathsolver, mathgpt, mymathsolver, qwenarchim. Compare AI-built math solvers. | high |
+| 32 | Unicode Token Database | [unitoken](https://github.com/shek-hrd/unitoken) | Searchable database assigning translations/tokens to Unicode characters (unicodeData.json). | high |
+| 33 | HexaImage | [hexaimage](https://github.com/shek-hrd/hexaimage) | Reinterprets CCD sensor pixels into hexagonal grid via 3×3 sampling windows; multiple AI-built variants. | high |
+| 34 | Extractmap | [extractmap](https://github.com/shek-hrd/extractmap) | Large (18 MB) extraction-to-map experiment; contents not fully read. | live-page |
+
+### Systems & Hardware
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 35 | GxOS — graphics-chip OS | [gxos0](https://github.com/shek-hrd/gxos0) | Real-mode MBR bootloader → 32-bit VGA Mode 13h kernel with windowing + bytecode GPU-emulation; USB MBR deploy. Research into PTX/SASS/GCN & flashable-NIC-BIOS translation. | high |
+| 36 | Enneapyrochronon | [Enneapyrochronon](https://github.com/shek-hrd/Enneapyrochronon) | 9-atom quantum reservoir computing concept (Chen et al., PRL 2026: "nine atoms outperform thousands-node network"). | high |
+
+### Finance & Collecting
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 37 | Save My Ass | [savemyars](https://github.com/shek-hrd/savemyars) | React demo triaging a difficult financial situation step by step. Guided financial rescue checklist. | high |
+| 38 | Coin Collection Manager | [coinoresent](https://github.com/shek-hrd/coinoresent) | Numismatics manager: coin cards, obverse/reverse images, draggable annotations, MS-70 grading, multi-scenario valuation, JSON/CSV/PDF export. | high |
+
+### Meta & Archives
+
+| # | Idea | Repo | Summary | Confidence |
+|---|---|---|---|---|
+| 39 | breakthroughIdeas (portfolio) | [breakthroughIdeas](https://github.com/shek-hrd/breakthroughIdeas) | "shekhrd's projects - breakthrough Ideas" portfolio + archives; motto: "Let's make it all easier - invent, innovate, and share freely". | high |
+| 40 | Zen Portfolio (optimized) | [breakthroughIdeas/zen](https://github.com/shek-hrd/breakthroughIdeas/blob/main/zen/claude_portfolio.html) | Optimized portfolio version: user stamps, nicknames, expandable session/access log. | high |
+| 41 | Conversation Export Archive | [breakthroughIdeas/old](https://github.com/shek-hrd/breakthroughIdeas/blob/main/old/claude.htm) | Raw AI chat exports (claude.htm, zenkimi.htm, ContKimik2b.htm, portfolios, index snapshots). | high |
+| 42 | Stamp + Session Logging | [breakthroughIdeas/old/uprav.txt](https://github.com/shek-hrd/breakthroughIdeas/blob/main/old/uprav.txt) | Nickname + stamp entry; comments aligned nick-left/stamp-right; session logs: location, pathway, latency, cookies. | high |
+| 43 | Projects (placeholder) | [projects](https://github.com/shek-hrd/projects) | Empty placeholder. | high |
+| 44 | Sensei (fresh) | [sensei](https://github.com/shek-hrd/sensei) | Created 2026-11-18, no content yet — reserved / incoming. | high |
+
+---
+
+## Repository → Idea extraction
+
+Each repository listed above is the source of its extracted idea, written back into the repository README as the idea entry, interlinked to the repository:
+
+- AI/agents → proxy & fallback, codegen instructions
+- compute/mining → fair-trade & runner orchestration
+- trading → Pionex automation (pioneer / pionier / magicarpet)
+- p2p → chat & dating decentralization (chatter / ciphp2pchat / datehere / dateherenow)
+- games → 3D worlds & multiplayer (tarotdungeon / littleskies / chessboat / …)
+- web → capture, fetch, build (rap / instweb / textweb / dlvideosaudio)
+- data → encoding, vision, maps (pistorage / unitoken / hexaimage / extractmap)
+- sys → OS & hardware (gxos0 / ennea)
+- fin → finance & collecting (savemyars / coinoresent)
+- meta → archives & portfolio (breakthroughIdeas / zen / old)
+
+Each idea node carries `{ id · theme · kind · title · summary · objective · key files · tags · links · confidence }`, and edges interconnect them. The dataset schema is `idea-sphere/v1`.
+
+---
+
+## Interconnections
+
+Notable relational edges across repos (excerpt):
+
+- **peacefulLLM ↔ aiconclave** — keyless multi-model access + fallback chains
+- **peacefulLLM ↔ peaceful-pionbot** — pionbot folder lives inside peacefulLLM
+- **peaceful-pionbot ↔ pioneer** — bot prompts feed the Pionex automation layer
+- **pioneer ↔ pionier** — same Pionex Grid app, two repos
+- **mineAI ↔ minepoolie** — simulation → real xmrig runners
+- **concept-faircompute ↔ mineAI / minepoolie** — fair-compute economy
+- **chatter / ciphp2pchat / datehere / dateherenow ↔ concept-switchboard** — disappearing switchboard
+- **concept-keyless ↔ peacefulLLM / aiconclave / rap** — keyless AI chains
+- **concept-encode ↔ pistorage / unitoken / hexaimage / extractmap** — position-as-data
+- **gxos0 ↔ ennea** — bare-metal GPU OS ↔ 9-atom quantum compute
+- **coinoresent ↔ savemyars** — money organization under pressure
+- **breakthrough ↔ meta-zen / meta-archives / meta-stamp** — portfolio archive & identity logging
+
+---
+
+## License / Intent
+
+Intent: every line of code, every algorithm, every creative solution is a step towards transforming imagination into reality. These projects are bridges to tomorrow — open source, free to invent, innovate and share.

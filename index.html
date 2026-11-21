@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>breakthroughIdeas — shek-hrd · GitHub Ideas Sphere</title>
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; background: #0a100e; }
+        body { overflow: hidden; }
+        /* view switcher bar */
+        #viewbar {
+            height: 44px; display: flex; align-items: center; gap: 8px;
+            padding: 0 12px; background: #0b1210;
+            border-bottom: 1px solid rgba(110,231,183,0.18);
+            font-family: 'Segoe UI', Tahoma, sans-serif; z-index: 999;
+        }
+        #viewbar .brand {
+            color: #6ee7b7; font-weight: 300; letter-spacing: .04em;
+            font-size: 13px; margin-right: 6px; white-space: nowrap;
+            text-decoration: none;
+        }
+        #viewbar .brand b { font-weight: 600; }
+        #viewbar button {
+            appearance: none; border: 1px solid rgba(255,255,255,.2);
+            background: transparent; color: rgba(255,255,255,.55);
+            font: inherit; font-size: 12px; padding: 4px 12px;
+            border-radius: 999px; cursor: pointer; transition: all .2s;
+        }
+        #viewbar button:hover { color: #fff; border-color: rgba(110,231,183,.6); }
+        #viewbar button.active {
+            color: #0a100e; background: #6ee7b7; border-color: #6ee7b7;
+            font-weight: 600;
+        }
+        #viewbar .right { margin-left: auto; color: rgba(255,255,255,.35); font-size: 11px; }
+        #viewbar .right a { color: rgba(110,231,183,.7); text-decoration: none; }
+        #viewbar .right a:hover { color: #6ee7b7; }
+        /* view panes */
+        .pane { position: absolute; top: 44px; bottom: 0; left: 0; right: 0; }
+        #sphere-pane { height: calc(100% - 44px); width: 100%; }
+        #portfolio-pane { display: none; }
+        #portfolio-pane iframe { width: 100%; height: 100%; border: 0; }
+        body.view-portfolio #portfolio-pane { display: block; }
+        body.view-portfolio #sphere-pane { display: none; }
+    </style>
+</head>
+<body>
+    <nav id="viewbar">
+        <a class="brand" href="https://github.com/shek-hrd" target="_blank" rel="noreferrer">shek-hrd · <b>breakthroughIdeas</b></a>
+        <button id="tab-sphere" class="active" onclick="setView('sphere')">◉ repository mindmap</button>
+        <button id="tab-portfolio" onclick="setView('portfolio')">▤ portfolio (latest page)</button>
+        <span class="right">idea-sphere/v1 · <a href="https://github.com/shek-hrd/breakthroughIdeas" target="_blank" rel="noreferrer">repo ↗</a></span>
+    </nav>
+
+    <div id="sphere-pane" class="pane" style="height: calc(100% - 44px);">
+        <!-- React mount point for the mindmap (breakthroughIdeas.jsx) -->
+        <div id="ideas-sphere" style="height:100%;width:100%"></div>
+    </div>
+
+    <div id="portfolio-pane" class="pane">
+        <!-- the previously latest breakthroughIdeas page -->
+        <iframe src="portfolio.html" title="breakthroughIdeas portfolio (previous latest page)"></iframe>
+    </div>
+
+    <script>
+        function setView(v) {
+            document.body.classList.toggle('view-portfolio', v === 'portfolio');
+            document.getElementById('tab-sphere').classList.toggle('active', v === 'sphere');
+            document.getElementById('tab-portfolio').classList.toggle('active', v === 'portfolio');
+        }
+    </script>
+
+    <!-- React runtime + JSX compiler (no build step) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+
+    <!-- mindmap component (auto-mounts to #ideas-sphere) -->
+    <script src="breakthroughIdeas.jsx" type="text/babel" data-presets="react"></script>
+</body>
+</html>
