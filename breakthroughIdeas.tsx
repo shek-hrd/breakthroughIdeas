@@ -136,6 +136,79 @@ const HUB = {
   ],
 };
 
+/* ---------- helpers ---------- */
+
+/* ---------- live-tested datasets (real pulls captured 2026-11-19, source recorded per tab) ---------- */
+
+const TEST_WIKI = {
+  meta: { title: "Wikipedia net — concept & knowledge maps", subtitle: "live pull 19 Nov 2026 · 6 of 8,352 hits · search API via reader fallback", source: "search:test", schema: "idea-sphere/v1", verified: "2026-11-19 — action API answered through r.jina.ai after the direct call was blocked" },
+  themes: [
+    { id: "wq", name: "search focus", color: "#f59e0b" },
+    { id: "wth", name: "mapping theory", color: "#34d399" },
+    { id: "wkn", name: "knowledge practice", color: "#60a5fa" },
+  ],
+  nodes: [
+    { id: "wq1", th: "wq", kind: "query", t: "concept map knowledge", s: "internet search focus: 8,352 total Wikipedia hits, 6 captured live.", tags: ["search"] },
+    { id: "wc1", th: "wth", kind: "source", t: "Concept map", s: "Organizes knowledge graphically: ideas and information as boxes or circles, used by writers and educators to structure what they depict.", g: "https://en.wikipedia.org/wiki/Concept_map", tags: ["diagrams"] },
+    { id: "wc2", th: "wth", kind: "source", t: "Mind map", s: "Branching and radial diagrams; pictorial methods that record knowledge and model systems trace back centuries.", g: "https://en.wikipedia.org/wiki/Mind_map", tags: ["diagrams"] },
+    { id: "wt1", th: "wth", kind: "source", t: "Topic map", s: "A standard for representing and interchanging knowledge with an emphasis on findability of information.", g: "https://en.wikipedia.org/wiki/Topic_map", tags: ["standards"] },
+    { id: "wcg", th: "wth", kind: "source", t: "Cognitive map", s: "Mental maps, scripts and schemata: cognitive maps serve the construction and accumulation of spatial knowledge.", g: "https://en.wikipedia.org/wiki/Cognitive_map", tags: ["cognition"] },
+    { id: "wk1", th: "wkn", kind: "source", t: "Knowledge management", s: "Strategic KM: the form of shared knowledge defines the concept between codification and personalization.", g: "https://en.wikipedia.org/wiki/Knowledge_management", tags: ["strategy"] },
+    { id: "wk2", th: "wkn", kind: "source", t: "Definitions of knowledge", s: "Essential features of knowledge: its conception, theory and analysis across traditions.", g: "https://en.wikipedia.org/wiki/Definitions_of_knowledge", tags: ["epistemology"] },
+  ],
+  edges: [
+    ["wq1", "wc1", "found", "search hit"], ["wq1", "wc2", "found", "search hit"], ["wq1", "wt1", "found", "search hit"],
+    ["wq1", "wcg", "found", "search hit"], ["wq1", "wk1", "found", "search hit"], ["wq1", "wk2", "found", "search hit"],
+    ["wc1", "wc2", "shares", "diagram tradition"], ["wc1", "wt1", "shares", "structure"], ["wc2", "wcg", "shares", "radial maps"], ["wk1", "wk2", "shares", "knowledge"],
+  ],
+};
+
+const TEST_HN = {
+  meta: { title: "Hacker News — mind map tools", subtitle: "live pull 19 Nov 2026 · HN Algolia API, verified without key", source: "hn:test", schema: "idea-sphere/v1", verified: "2026-11-19 — hn.algolia.com/api/v1/search answered with story data" },
+  themes: [
+    { id: "hq", name: "search focus", color: "#f59e0b" },
+    { id: "ht", name: "HN tools", color: "#34d399" },
+    { id: "hai", name: "AI learning", color: "#a78bfa" },
+  ],
+  nodes: [
+    { id: "hq1", th: "hq", kind: "query", t: "mind map (HN search)", s: "Hacker News stories about mind-mapping, captured live from the Algolia API.", tags: ["search"] },
+    { id: "hn1", th: "ht", kind: "source", t: "Markmap — Markdown to Mind Map", s: "506 points · 78 comments · converts Markdown documents into interactive mind maps.", g: "https://markmap.js.org/", tags: ["markdown"] },
+    { id: "hn2", th: "ht", kind: "source", t: "H-m-m: Hackers mind map", s: "346 points · 124 comments · terminal-friendly mind map editor.", g: "https://github.com/nadrad/h-m-m", tags: ["editor"] },
+    { id: "hn3", th: "ht", kind: "source", t: "text2mindmap", s: "323 points · 99 comments · turns indented text into mind maps (Show HN).", g: "https://tobloef.com/text2mindmap/", tags: ["text"] },
+    { id: "hn4", th: "ht", kind: "source", t: "Interactive Mind Map for learning", s: "293 points · 58 comments · knowledge-map of learning resources on GitHub.", g: "https://github.com/nikitavoloboev/knowledge-map", tags: ["learning"] },
+    { id: "hn5", th: "ht", kind: "source", t: "Org-brain", s: "190 points · 25 comments · mind-mapping inside org-mode.", g: "https://github.com/Kungsgeten/org-brain", tags: ["emacs"] },
+    { id: "hn6", th: "hai", kind: "source", t: "Create mind maps with AI (learn-thing)", s: "Show HN: enter a topic, an LLM generates a learning mind map with links; runs local via Ollama or external models.", g: "https://github.com/aotakeda/learn-thing", tags: ["ai"] },
+  ],
+  edges: [
+    ["hq1", "hn1", "found", "search hit"], ["hq1", "hn2", "found", "search hit"], ["hq1", "hn3", "found", "search hit"],
+    ["hq1", "hn4", "found", "search hit"], ["hq1", "hn5", "found", "search hit"], ["hq1", "hn6", "found", "search hit"],
+    ["hn1", "hn3", "shares", "text input"], ["hn2", "hn5", "shares", "hacker tooling"], ["hn6", "hn4", "shares", "learning maps"],
+  ],
+};
+
+const TEST_PAGE = {
+  meta: { title: "Pionex Grid — pionier live page", subtitle: "live pull 19 Nov 2026 · page fetched via r.jina.ai reader", source: "https://shek-hrd.github.io/pionier/", schema: "idea-sphere/v1", verified: "2026-11-19 — reader returned 2,105 chars incl. the live futures table" },
+  themes: [
+    { id: "pm", name: "market surface", color: "#f59e0b" },
+    { id: "pc", name: "grid console", color: "#34d399" },
+    { id: "pn", name: "connection", color: "#60a5fa" },
+    { id: "pr", name: "failure modes", color: "#ef4444" },
+  ],
+  nodes: [
+    { id: "pp0", th: "pm", kind: "source", t: "Pionex Grid (pionier)", s: "Public futures data grid: Symbol, Lev, Last, 24h, OI, Fund — a tap-to-market table feeding the grid builder.", p: "https://shek-hrd.github.io/pionier/", tags: ["futures"] },
+    { id: "pp1", th: "pc", kind: "section", t: "Grid console", s: "Grids 2–500, leverage, grid type, trend, investment in USDT; both buttons only fill the Console tab — you review the exact request, then send.", p: "https://shek-hrd.github.io/pionier/", tags: ["console"] },
+    { id: "pp2", th: "pn", kind: "section", t: "Keys & relay", s: "API key/secret stay in the browser (local storage); grant bot reading + bot trading only; leave the IP whitelist empty because Cloudflare addresses vary.", p: "https://shek-hrd.github.io/pionier/", tags: ["keys"] },
+    { id: "pp3", th: "pr", kind: "section", t: "Deploy pitfalls", s: "Plain-file upload on Pages breaks: upload the zip (index.html + _worker.js); chat sandboxes (Venice, claude.ai) cannot reach Pionex at all — use Chrome on the deployed link.", p: "https://shek-hrd.github.io/pionier/", tags: ["workers"] },
+    { id: "pp4", th: "pr", kind: "section", t: "Signed-request errors", s: "INVALID_SIGNATURE: re-paste the secret without spaces, keep phone clock automatic. INVALID_TIMESTAMP: clock drift over 20 s (auto-corrected for small drift).", p: "https://shek-hrd.github.io/pionier/", tags: ["signature"] },
+    { id: "pp5", th: "pr", kind: "section", t: "Limits & data gaps", s: "HTTP 429: Pionex allows ~10 req/s per IP and bans 60 s — the app pauses itself. Dashes in OI/Fund mean field names differ; paste the openInterests response for mapping.", p: "https://shek-hrd.github.io/pionier/", tags: ["ratelimit"] },
+  ],
+  edges: [
+    ["pp0", "pp1", "feeds", "market rows drive the console"], ["pp1", "pp2", "needs", "signed requests"],
+    ["pp2", "pp3", "constrains", "relay topology"], ["pp3", "pp4", "triggers", "debug path"], ["pp4", "pp5", "relates", "API friction"],
+  ],
+};
+
+/* sphere placement: theme bands around the ball */
 function layout(nodes, edges, themes) {
   // hierarchical globe: themes are continents, ideas are states/cities on circular discs
   // near-related ideas pull together, less-related ones drift apart
@@ -169,12 +242,8 @@ function layout(nodes, edges, themes) {
     const list = groups[tid]; if (!list || !list.length) return;
     const [e1, e2] = discBasis[tid]; const a = A[tid];
     list.forEach((n, j) => {
-      // one-line hash: same idea always lands on the same scattered spot (stars, not lattice)
-      let hs = 2166136261;
-      for (let q = 0; q < n.id.length; q++) { hs ^= n.id.charCodeAt(q); hs = Math.imul(hs, 16777619) >>> 0; }
-      const jr = ((hs % 1000) / 1000) - 0.5;
-      const rho = rest * 1.35 * Math.sqrt((j + 0.5) / list.length) * (1 + jr * 0.26);
-      const th = j * GOLD + jr * 0.6;
+      const rho = rest * 1.35 * Math.sqrt((j + 0.5) / list.length); // circular sunflower disc: states ring, cities spiral
+      const th = j * GOLD;
       const ox = (e1[0] * Math.cos(th) + e2[0] * Math.sin(th)) * rho;
       const oy = (e1[1] * Math.cos(th) + e2[1] * Math.sin(th)) * rho;
       const oz = (e1[2] * Math.cos(th) + e2[2] * Math.sin(th)) * rho;
@@ -232,14 +301,13 @@ function layout(nodes, edges, themes) {
   return out;
 }
 
+const IDLE_MS = 3200;
+
 /* ---------- breakthroughIdeas styling layer ---------- */
 
 const BI_CSS = `
 @keyframes bi-gradient {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes bi-fade {from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes bi-twinkle {from{opacity:.7}to{opacity:1}}
-@keyframes bi-ghost {0%,100%{opacity:.14}50%{opacity:.34}}
-.bi-node{transition:box-shadow .55s ease, opacity .4s ease}
 .bi-title{background:linear-gradient(45deg,#bfe9d4,#6ee7b7,#9be3c3);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:bi-gradient 4s ease infinite;font-weight:300}
 .bi-serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;letter-spacing:.02em}
 .bi-tabfont{font-family:Candara,Optima,'Trebuchet MS','Segoe UI',sans-serif;letter-spacing:.035em;font-style:normal}
@@ -250,7 +318,7 @@ input[type=range]{accent-color:#34d399}
 
 const DEFAULT_CONFIG = {
   nodeScale: 0.55,
-  linkAlpha: 0.16,
+  linkAlpha: 0.28,
   keywordLines: true,
   nodeLabels: true,
   miniDesc: true,
@@ -311,7 +379,9 @@ function rotateToTarget(rx, ry, target) {  const dRy = Math.atan2(Math.sin(targe
   return { ry: ry + dRy * 0.06, rx: rx + dRx * 0.06, done: Math.abs(dRy) < 0.012 && Math.abs(dRx) < 0.012 };
 }
 
-function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, muted, pinned, centerLift }) {
+function normalize3(v) { const L = Math.max(1e-6, Math.hypot(v.x, v.y, v.z)); return { x: v.x / L, y: v.y / L, z: v.z / L }; }
+
+function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, muted }) {
   const { nodes, edges, themes } = dataset;
   const themeMap = useMemo(() => { const m = {}; themes.forEach((t) => m[t.id] = t); return m; }, [themes]);
   const nodesById = useMemo(() => { const m = {}; nodes.forEach((n) => m[n.id] = n); return m; }, [nodes]);
@@ -330,19 +400,12 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
   const pinchBase = useRef(null);
   const lastMove = useRef({ dx: 0, dy: 0, t: 0 });
   const lastAct = useRef(Date.now());
-  const holdUntil = useRef(0);
-  const pinnedRef = useRef(pinned); pinnedRef.current = pinned;
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const cfgRef = useRef(config); cfgRef.current = config;
   const focusRef = useRef(focusId); focusRef.current = focusId;
   const nodesRef = useRef(nodes); nodesRef.current = nodes;
   const coordRef = useRef(coord); coordRef.current = coord;
-  const dimsRef = useRef(dims); dimsRef.current = dims;
-  const zoomRef = useRef(zoom); zoomRef.current = zoom;
-  // vertical centre offset: with the panel docked below, the sphere rides higher to reduce overlap
-  const cs = Math.max(0, Math.min(130, (centerLift || 0) * dims.h));
-  const csRef = useRef(0); csRef.current = cs;
 
   const act = useCallback(() => { lastAct.current = Date.now(); }, []);
 
@@ -363,18 +426,6 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
         let sx = 0, sy = 0, sz = 0, k = 0;
         nodesRef.current.forEach((n) => { const c = coord[n.id]; if (c && n.th === thid) { sx += c.x; sy += c.y; sz += c.z; k++; } });
         if (k) aim(sx, sy, sz, 0.55);
-      },
-      // screen position of a node right now (for the floating panel's gentle avoidance)
-      nodeScreenPos: (id) => {
-        const c = coordRef.current[id]; if (!c) return null;
-        const d = dimsRef.current; const R = Math.min(d.w * 0.5, d.h * 0.78) * zoomRef.current;
-        const { rx, ry } = rotRef.current;
-        const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
-        const x = c.x * cy + c.z * sy;
-        const z1 = -c.x * sy + c.z * cy;
-        const y = c.y * cx - z1 * sx;
-        const z = c.y * sx + z1 * cx;
-        return { x: d.w / 2 + x * R, y: d.h / 2 - csRef.current + y * R, z };
       },
     };
   }, [coord, apiRef]);
@@ -408,14 +459,12 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
         } else {
           const v = vel.current;
           v.x *= Math.pow(cfgRef.current.inertia, f);
-          if (Date.now() > holdUntil.current) v.y += (cfgRef.current.autoSpin - v.y) * 0.008 * f;
-          v.y *= Math.pow(0.985, f);
-          if (Math.abs(v.x) < 0.0004) v.x = 0;
+          v.y += (cfgRef.current.autoSpin - v.y) * 0.02 * f;
+          v.y *= Math.pow(0.999, f);
           setRot((r) => ({ rx: Math.max(-1.45, Math.min(1.45, r.rx + v.x * f)), ry: r.ry + v.y * f }));
         }
       }
-      if (!dragRef.current) {
-        // one node always shows its details: the frontmost, live while the ball turns
+      if (Date.now() - lastAct.current > cfgRef.current.idleMs && !dragRef.current) {
         let best = null, bz = -2;
         const { rx, ry } = rotRef.current;
         const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
@@ -427,7 +476,8 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
           const z = c.y * sx + z1 * cx;
           if (z > bz) { bz = z; best = n.id; }
         });
-        if (best && !pinnedRef.current && best !== focusRef.current) setFocus(best, true);
+        if (best && best !== focusRef.current) setFocus(best, true);
+        lastAct.current = Date.now() - cfgRef.current.idleMs + 1500;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -445,7 +495,7 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, w, h);
     const R = Math.min(w * 0.5, h * 0.78) * zoom;
-    const cxp = w / 2, cyp = h / 2 - Math.max(0, Math.min(130, (centerLift || 0) * h));
+    const cxp = w / 2, cyp = h / 2;
     const { rx, ry } = rot;
     const cy = Math.cos(ry), sy = Math.sin(ry), cx = Math.cos(rx), sx = Math.sin(rx);
     const proj = (pt) => {
@@ -455,46 +505,37 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
       const z = pt.y * sx + z1 * cx;
       return { sx: cxp + x * R, sy: cyp + y * R, z };
     };
-    const drawEdge = (a, b, rel, hot) => {
+    edgeList.forEach(([a, b, rel]) => {
       if (!coord[a] || !coord[b]) return;
       const pa = proj(coord[a]), pb = proj(coord[b]);
       const vis = Math.min(pa.z, pb.z) > -0.1 || config.backNodes;
+      const hot = focusId === a || focusId === b || hoverId === a || hoverId === b;
       if (!vis && !hot) return;
       const ta = themeMap[nodesById[a].th];
       const col = (ta && ta.color) || "#94a3b8";
-      // great-circle sampling: the arc is a stable circle on the sphere, no kinks while rotating
+      // great-circle control point: the arc follows the sphere's curvature instead of bulging outward
       const ca = coord[a], cb = coord[b];
-      const om = Math.max(0.02, Math.acos(Math.min(1, Math.max(-1, ca.x * cb.x + ca.y * cb.y + ca.z * cb.z))));
-      const so = Math.sin(om);
-      const lift = hot ? 1.02 : 1.01;
+      const m3 = normalize3({ x: (ca.x + cb.x) / 2, y: (ca.y + cb.y) / 2, z: (ca.z + cb.z) / 2 });
+      const lift = hot ? 1.09 : 1.04;
+      const q = proj({ x: m3.x * lift, y: m3.y * lift, z: m3.z * lift });
       ctx.beginPath();
       ctx.moveTo(pa.sx, pa.sy);
-      const STEPS = 8;
-      for (let i = 1; i < STEPS; i++) {
-        const t = i / STEPS, s1 = Math.sin((1 - t) * om) / so, s2 = Math.sin(t * om) / so;
-        const p = proj({ x: (ca.x * s1 + cb.x * s2) * lift, y: (ca.y * s1 + cb.y * s2) * lift, z: (ca.z * s1 + cb.z * s2) * lift });
-        ctx.lineTo(p.sx, p.sy);
-      }
-      ctx.lineTo(pb.sx, pb.sy);
-      const base = Math.max(0.02, ((pa.z + pb.z) / 2 + 0.5) * config.linkAlpha * (hot ? 2.4 : 1));
+      ctx.quadraticCurveTo(q.sx, q.sy, pb.sx, pb.sy);
+      const base = Math.max(0.03, ((pa.z + pb.z) / 2 + 0.5) * config.linkAlpha * (hot ? 2.6 : 1));
       ctx.strokeStyle = col;
       ctx.globalAlpha = base;
-      ctx.lineWidth = hot ? 0.8 : 0.4;
+      ctx.lineWidth = hot ? 0.9 : 0.55;
       ctx.stroke();
       if (config.keywordLines && rel && hot) { // relation words stay secondary: only on the active edge
         ctx.font = "italic 9px 'Segoe UI', sans-serif";
         ctx.fillStyle = "#fff";
-        ctx.globalAlpha = 0.4 * Math.min(1, base * 2.2);
-        const s1 = Math.sin(om / 2) / so, s2 = Math.sin(om / 2) / so;
-        const pm = proj({ x: (ca.x * s1 + cb.x * s2) * lift, y: (ca.y * s1 + cb.y * s2) * lift, z: (ca.z * s1 + cb.z * s2) * lift });
-        ctx.fillText(rel, pm.sx - ctx.measureText(rel).width / 2, pm.sy - 3);
+        ctx.globalAlpha = 0.55 * Math.min(1, base * 2.2);
+        const amid = (pa.sx + 2 * q.sx + pb.sx) / 4, amidy = (pa.sy + 2 * q.sy + pb.sy) / 4;
+        ctx.fillText(rel, amid - ctx.measureText(rel).width / 2, amidy - 3);
       }
       ctx.globalAlpha = 1;
-    };
-    const edgeHot = ([a, b]) => focusId === a || focusId === b || hoverId === a || hoverId === b;
-    edgeList.forEach((e) => { if (!edgeHot(e)) drawEdge(e[0], e[1], e[2], false); }); // faint web first
-    edgeList.forEach((e) => { if (edgeHot(e)) drawEdge(e[0], e[1], e[2], true); });  // highlighted edges on top
-  }, [dims, rot, zoom, edgeList, coord, focusId, hoverId, nodesById, themeMap, config, centerLift]);
+    });
+  }, [dims, rot, zoom, edgeList, coord, focusId, hoverId, nodesById, themeMap, config]);
 
   const onPointerDown = (e) => {
     act();
@@ -506,8 +547,6 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
     dragRef.current = { x: e.clientX, y: e.clientY, t: performance.now() };
     lastMove.current = { dx: 0, dy: 0, t: performance.now() };
     target.current = null;
-    vel.current = { x: 0, y: 0 }; // grabbing the ball stops it dead
-    holdUntil.current = 0;
     if (wrapRef.current.setPointerCapture) { try { wrapRef.current.setPointerCapture(e.pointerId); } catch (err) {} }
   };
   const onPointerMove = (e) => {
@@ -540,10 +579,7 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
       if (performance.now() - m.t < 130 && (Math.abs(m.dx) > 0.4 || Math.abs(m.dy) > 0.4)) {
         vel.current.y = Math.max(-0.05, Math.min(0.05, m.dx * 0.0045));
         vel.current.x = Math.max(-0.03, Math.min(0.03, -m.dy * 0.003));
-      } else {
-        vel.current = { x: 0, y: 0 }; // released without a flick: the globe stays still
       }
-      holdUntil.current = Date.now() + 4000; // the idle spin stays paused a while after every touch
     }
     lastAct.current = Date.now();
   };
@@ -561,7 +597,7 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
       onWheel={onWheel}
     >
       <canvas ref={canvasRef} style={{ width: dims.w, height: dims.h }} className="pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute rounded-full border border-white/5" style={{ width: R * 2, height: R * 2, left: dims.w / 2 - R, top: dims.h / 2 - cs - R, boxShadow: "inset 0 0 140px rgba(120,180,150,0.16)" }} />
+      <div className="pointer-events-none absolute rounded-full border border-white/5" style={{ width: R * 2, height: R * 2, left: dims.w / 2 - R, top: dims.h / 2 - R, boxShadow: "inset 0 0 140px rgba(120,180,150,0.16)" }} />
       {nodes.map((n) => {
         const c = coord[n.id]; if (!c) return null;
         const x = c.x * cy + c.z * sy;
@@ -573,21 +609,19 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
         const hot = focusId === n.id || hoverId === n.id;
         const tipId = hoverId || (muted ? null : focusId); // exactly one description layer at a time
         const showTip = n.id === tipId;
-        const d = (3.6 + 5 * (z + 1) / 2) * config.nodeScale * (hot ? 1.35 : 1);
-        const tw = 2.6 + (d % 3.7); // per-node twinkle period, feels alive without distracting
+        const d = (4.5 + 6 * (z + 1) / 2) * config.nodeScale * (hot ? 1.6 : 1);
         return (
           <button
             key={n.id}
-            className="bi-node absolute left-0 top-0 rounded-full"
+            className="absolute left-0 top-0 rounded-full border transition-[box-shadow] duration-150"
             style={{
               width: d, height: d,
-              transform: "translate3d(" + (dims.w / 2 + x * R - d / 2) + "px," + (dims.h / 2 - cs + y * R - d / 2) + "px,0)",
+              transform: "translate3d(" + (dims.w / 2 + x * R - d / 2) + "px," + (dims.h / 2 + y * R - d / 2) + "px,0)",
               willChange: "transform",
               zIndex: Math.round(100 + z * 100),
-              background: "radial-gradient(circle at 38% 35%, #fff 0%, " + th.color + " 62%, " + th.color + "00 100%)",
-              opacity: 0.3 + 0.7 * (z + 0.15) / 1.15,
-              animation: hot ? "none" : "bi-twinkle " + tw + "s ease-in-out " + (-(d % 2.8)) + "s infinite alternate",
-              boxShadow: "0 0 " + (7 + z * 9) + "px " + th.color + (hot ? "ee" : "77") + (hot ? ", 0 0 0 3px " + th.color + "55, 0 0 30px " + th.color + "aa" : ""),
+              background: th.color, borderColor: hot ? "#fff" : th.color + "99",
+              opacity: 0.35 + 0.65 * (z + 0.15) / 1.15,
+              boxShadow: hot ? "0 0 0 3px " + th.color + "55, 0 0 14px " + th.color : "none",
             }}
             onMouseEnter={() => { lastAct.current = Date.now(); setHover(n.id); }}
             onMouseLeave={() => setHover(null)}
@@ -624,76 +658,34 @@ function Ball({ dataset, config, focusId, hoverId, setHover, setFocus, apiRef, m
 }
 /* ---------- Detail panel ---------- */
 
-/* live page thumbnail: self-sufficient ladder —
-   1) WordPress mshots capture (re-asks quietly while the shot is being generated),
-   2) thum.io capture,
-   3) direct iframe render of the page itself (GitHub Pages allows framing).
-   No key, no configuration, always shows something. */
-function Thumb({ url, title }) {
-  const [stage, setStage] = useState("mshots");
-  const [attempt, setAttempt] = useState(0);
-  const retryRef = useRef(0);
-  useEffect(() => { setStage("mshots"); setAttempt(0); retryRef.current = 0; }, [url]);
-  const bump = () => { setStage("mshots"); setAttempt(0); retryRef.current = 0; };
-  const thumio = "https://image.thum.io/get/width/640/crop/460/noanimate/" + url;
-  const shot = "https://s0.wp.com/mshots/v1/" + encodeURIComponent(url) + "?w=640&h=420&vpw=1280&vph=780" + (attempt ? "&r=" + attempt : "");
-  const onErr = () => {
-    if (stage === "mshots") { setStage("thumio"); }
-    else if (stage === "thumio") { setStage("iframe"); }
-  };
-  const onLoaded = (e) => {
-    // mshots serves a grey placeholder (400x300) while the real capture is generated: re-request, then move on
-    if (stage === "mshots" && (e.target.naturalWidth || 0) < 640) {
-      if (retryRef.current < 3) {
-        retryRef.current += 1;
-        const my = retryRef.current;
-        setTimeout(() => { if (retryRef.current === my) setAttempt((a) => a + 1); }, 2200 * my);
-      } else {
-        setStage("thumio"); // three greys in a row: the provider is stuck, try the next one
-      }
-    }
-  };
-  // watchdog: capture providers sometimes never answer (queued render), so never hang on one stage
-  useEffect(() => {
-    if (stage !== "mshots" && stage !== "thumio") return;
-    const t = setTimeout(() => {
-      if (stage === "mshots") setAttempt((a) => a + 1);
-      else setStage("iframe");
-    }, stage === "mshots" ? 14000 : 9000);
-    return () => clearTimeout(t);
-  }, [stage, attempt]);
-  if (stage === "shotless" || (!url)) {
+/* live page thumbnail: WordPress mshots screenshot capture, iframe unfold as fallback */
+function Thumb({ url, title, nonce }) {
+  const [mode, setMode] = useState("shot");
+  const [broken, setBroken] = useState(false);
+  const shot = "https://s0.wp.com/mshots/v1/" + encodeURIComponent(url) + "?w=640&h=420&vpw=1280&vph=780" + (nonce ? "&r=" + nonce : "");
+  useEffect(() => { setMode("shot"); setBroken(false); }, [url]);
+  if (mode === "shot") {
     return (
-      <div className="flex h-40 w-full items-center justify-center rounded-lg border border-white/10 bg-black/40 text-[10px] text-white/40">no preview available — use “open live” above</div>
-    );
-  }
-  if (stage === "mshots" || stage === "thumio") {
-    return (
-      <div className="relative h-40 w-full overflow-hidden rounded-lg border border-white/10 bg-gradient-to-br from-[#0e1a14] to-[#0a0f14]">
-        <img
-          key={stage + "-" + attempt}
-          src={stage === "mshots" ? shot : thumio}
-          alt={title + " thumbnail"}
-          onLoad={onLoaded}
-          onError={onErr}
-          className="h-full w-full object-cover object-top"
-        />
-        <span className="pointer-events-none absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] text-white/50">{stage === "mshots" ? "capture" : "capture 2"} · click to unfold live</span>
-        <button onClick={() => setStage("iframe")} title="unfold the live page inside this frame" className="absolute inset-0 h-full w-full cursor-pointer opacity-0" aria-label="unfold live page" />
-      </div>
+      <button onClick={() => setMode("iframe")} title="screenshot capture — click to unfold the live page"
+        className="relative block h-40 w-full overflow-hidden rounded-lg border border-white/10 bg-gradient-to-br from-[#0e1a14] to-[#0a0f14] text-left">
+        {!broken && <img src={shot} alt={title + " thumbnail"} onLoad={(e) => { if ((e.target.naturalWidth || 0) <= 32) setBroken(true); }} onError={() => setBroken(true)} className="h-full w-full object-cover object-top" />}
+        {broken && (
+          <span className="flex h-full w-full items-center justify-center text-[10px] text-white/40">capture warming up… click to unfold the live page</span>
+        )}
+      </button>
     );
   }
   return (
     <div className="relative h-40 w-full overflow-hidden rounded-lg border border-white/10 bg-black/50">
       <iframe src={url} title={title + " preview"} sandbox="allow-scripts allow-same-origin" className="pointer-events-none absolute left-0 top-0 origin-top-left border-0" style={{ width: 960, height: 720, transform: "scale(0.4)" }} />
-      <span className="pointer-events-none absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[9px] text-white/50">live frame · capture unavailable</span>
-      <button onClick={bump} className="absolute right-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white" title="try the capture providers again">⟳ capture</button>
+      <button onClick={() => setMode("shot")} className="absolute right-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-[9px] text-white/70 hover:text-white">⟳ shot</button>
     </div>
   );
 }
 
 function Detail({ node, dataset, nodesById, pinned, setFocus }) {
-  const themeMap = {}; (dataset.themes || []).forEach((t) => themeMap[t.id] = t);
+  const [nonce, setNonce] = useState(0);
+  const themeMap = {}; dataset.themes.forEach((t) => themeMap[t.id] = t);
   if (!node) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center text-white/40">
@@ -704,7 +696,7 @@ function Detail({ node, dataset, nodesById, pinned, setFocus }) {
   }
   const th = themeMap[node.th] || { color: "#94a3b8", name: "?" };
   const repo = node.repo ? `${GH}/${node.repo}${node.path ? "/blob/main/" + node.path : ""}` : null;
-  const connections = (dataset.edges || []).filter((e) => Array.isArray(e) && (e[0] === node.id || e[1] === node.id)).map(([a, b, rel, why]) => ({ other: a === node.id ? b : a, rel, why }));
+  const connections = dataset.edges.filter((e) => Array.isArray(e) && (e[0] === node.id || e[1] === node.id)).map(([a, b, rel, why]) => ({ other: a === node.id ? b : a, rel, why }));
   return (
     <div className="flex h-full flex-col overflow-y-auto p-4 text-white">
       <div className="mb-3 flex items-center gap-2">
@@ -733,10 +725,11 @@ function Detail({ node, dataset, nodesById, pinned, setFocus }) {
           <div className="mb-1 flex items-center justify-between">
             <p className="text-[10px] uppercase tracking-wider text-white/40">Page thumbnail (live capture)</p>
             <span className="flex items-center gap-2">
+              <button onClick={() => setNonce((k) => k + 1)} className="text-[10px] text-white/50 hover:text-white" title="recapture the screenshot">⟳ recapture</button>
               <a href={node.p} target="_blank" rel="noreferrer" className="text-[10px] text-sky-300/80 hover:text-sky-200">open live ↗</a>
             </span>
           </div>
-          <Thumb url={node.p} title={node.t} />
+          <Thumb url={node.p} title={node.t} nonce={nonce} />
         </div>
       )}
       {node.f && node.f.length > 0 && (
@@ -790,7 +783,7 @@ function ASection({ open, onToggle, dataset, config, onSendToHook }) {
   return (
     <div className="relative border-t border-white/10 bg-black/30 p-2">
       {open && (
-        <div className="bi-fade absolute bottom-9 left-2 right-2 z-[220] max-h-[70%] overflow-y-auto rounded-xl border border-white/20 bg-[#0d1117]/97 p-3 shadow-2xl backdrop-blur">
+        <div className="bi-fade absolute bottom-9 left-2 right-2 z-40 max-h-[70%] overflow-y-auto rounded-xl border border-white/20 bg-[#0d1117]/97 p-3 shadow-2xl backdrop-blur">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-white/60">A_ data hook — unified description form</p>
           <p className="mt-1 text-[10px] text-white/60">Every idea node carries {`{ id · theme · kind · title · summary · objective · key files · tags · links · confidence }`}, edges interconnect them, config travels with the dataset. Commit this JSON into any repo (e.g. /mindmap/dataset.json) and the ball can load it from there — no keys, no authentication.</p>
           <textarea readOnly value={json} className="mt-2 h-40 w-full rounded-lg border border-white/10 bg-black/50 p-2 font-mono text-[10px] text-white/75" onFocus={(e) => e.target.select()} />
@@ -815,36 +808,15 @@ function ASection({ open, onToggle, dataset, config, onSendToHook }) {
 
 /* ---------- online hooks (published endpoints, no authentication) ---------- */
 
-const EDGE_STOP = new Set("this that with from have will your when what where which their there these those then than them they been were also into about above after again under over only just each other more most some such because while during before between through both fewer few very can could should would might must shall using used uses make made makes take takes given page site link view read show shown like also into".split(" "));
-
 function keywordEdges(nodes, min, cap) {
-  // weighted token overlap: title words count double, stopwords never join, strongest links first and a degree cap per node
-  const nodesL = nodes || [];
-  const toks = nodesL.map((n) => {
-    const m = {};
-    const add = (txt, w) => String(txt || "").toLowerCase().match(/[a-z0-9][a-z0-9-]{3,}/g)?.forEach((k) => { if (!EDGE_STOP.has(k)) m[k] = (m[k] || 0) + w; });
-    add(n.t, 2); add(n.s, 1); add((n.tags || []).join(" "), 2);
-    return m;
-  });
-  const scored = [];
-  for (let i = 0; i < nodesL.length; i++) for (let j = i + 1; j < nodesL.length; j++) {
-    let wgt = 0, shared = 0;
-    for (const k in toks[i]) { const tv = toks[j][k]; if (tv) { wgt += Math.min(tv, toks[i][k]); shared++; } }
-    if (shared >= min) {
-      const best = Object.keys(toks[i]).filter((k) => toks[j][k]).sort((a, b) => (toks[j][b] + toks[i][b]) - (toks[j][a] + toks[i][a]))[0];
-      scored.push({ a: nodesL[i].id, b: nodesL[j].id, rel: best || "shares", w: wgt * (shared / (1 + 0.3 * shared)) });
-    }
+  const edges = [];
+  const words = (nodes || []).map((n) => new Set((((n.s || "") + " " + (n.t || "")).toLowerCase().match(/[a-z0-9-]{4,}/g) || [])));
+  for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+    let o = 0, shared = "";
+    words[i].forEach((w) => { if (words[j].has(w)) { o++; shared = shared || w; } });
+    if (o >= min) edges.push([nodes[i].id, nodes[j].id, "shares", shared]);
   }
-  scored.sort((a, b) => b.w - a.w);
-  const deg = {};
-  const out = [];
-  for (const e of scored) {
-    if ((deg[e.a] || 0) >= 6 || (deg[e.b] || 0) >= 6) continue;
-    deg[e.a] = (deg[e.a] || 0) + 1; deg[e.b] = (deg[e.b] || 0) + 1;
-    out.push([e.a, e.b, e.rel, "shared context: " + e.rel]);
-    if (out.length >= (cap || 60)) break;
-  }
-  return out;
+  return edges.slice(0, cap || 60);
 }
 
 function makeMeta(title, source) {
@@ -883,7 +855,7 @@ async function hookWikipedia(term, log) {
   return { meta: makeMeta("Wikipedia context map — " + term, "https://en.wikipedia.org"), themes, nodes, edges };
 }
 
-async function hookJsonPlaceholder(arg, log) {
+async function hookJsonPlaceholder(log) {
   log("loading jsonplaceholder users + posts…");
   const [users, posts] = await Promise.all([
     fetch("https://jsonplaceholder.typicode.com/users").then((r) => r.json()),
@@ -896,7 +868,7 @@ async function hookJsonPlaceholder(arg, log) {
   return { meta: makeMeta("JSONPlaceholder live context map", "https://jsonplaceholder.typicode.com"), themes, nodes, edges: edges.concat(keywordEdges(nodes, 3)) };
 }
 
-async function hookPokeapi(arg, log) {
+async function hookPokeapi(log) {
   log("loading PokéAPI types + samples…");
   const types = await fetch("https://pokeapi.co/api/v2/type/?limit=6").then((r) => r.json());
   const palette = ["#ef4444", "#3b82f6", "#10b981", "#a3e635", "#f59e0b", "#ec4899"];
@@ -951,11 +923,7 @@ function HookCard({ hook, onLoaded }) {
       const built = await hook.run(arg, log);
       setDs(built); onLoaded(built);
       setStatus({ s: "ok", line: built.nodes.length + " nodes · " + built.edges.filter((e) => Array.isArray(e)).length + " links — loaded on the ball" });
-    } catch (e) {
-      let msg = String(e.message || e).slice(0, 120);
-      if (e.name === "TypeError") msg = "network unreachable from this preview — every source is public and CORS-open; try again from the deployed page";
-      setStatus({ s: "err", line: msg });
-    }
+    } catch (e) { setStatus({ s: "err", line: String(e.message || e).slice(0, 120) }); }
   };
   const [showPrompt, setShowPrompt] = useState(false);
   const [aiPrompt, setAiPrompt] = useState(DEFAULT_AI_PROMPT);
@@ -1133,23 +1101,17 @@ function datasetFromText(title, url, text) {
     themes.push({ id: tid, name: p.t || "section " + (i + 1), color: palette[i % palette.length] });
     nodes.push({ id: "n_" + i, th: tid, kind: "section", t: p.t || "section " + (i + 1), s: p.body.replace(/\s+/g, " ").slice(0, 180), g: url });
   });
-  const seq = [];
-  for (let i = 1; i < nodes.length; i++) seq.push([nodes[i - 1].id, nodes[i].id, "follows", "next section in the source"]);
-  return { meta: makeMeta(title, url), themes, nodes, edges: nodes.slice(1).map((n) => ["src", n.id, "expands", "from the source"]).concat(seq, keywordEdges(nodes, 2, 40)) };
+  return { meta: makeMeta(title, url), themes, nodes, edges: nodes.slice(1).map((n) => ["src", n.id, "expands", "from the source"]).concat(keywordEdges(nodes, 2, 40)) };
 }
 
 function datasetFromResults(query, hits) {
   const focus = { id: "q", th: "tq", kind: "query", t: query, s: "internet search focus: " + hits.length + " sources found", tags: ["search"] };
-  const nodes = [focus].concat(hits.map((h, i) => ({ id: "res_" + i, th: "tres", kind: "source", t: h.title, s: h.snippet, g: h.url, tags: [(h.url || "").replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "") || "web"] })));
+  const nodes = [focus].concat(hits.map((h, i) => ({ id: "res_" + i, th: "tres", kind: "source", t: h.title, s: h.snippet, g: h.url, tags: ["web"] })));
   const themes = [
     { id: "tq", name: "search focus", color: "#f59e0b" },
     { id: "tres", name: "results", color: "#34d399" },
   ];
-  const sameSite = [];
-  const host = (u) => (u || "").replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "");
-  for (let i = 0; i < hits.length; i++) for (let j = i + 1; j < hits.length; j++)
-    if (host(hits[i].url) && host(hits[i].url) === host(hits[j].url)) sameSite.push(["res_" + i, "res_" + j, "same site", "both from " + host(hits[i].url)]);
-  return { meta: makeMeta("Internet search — " + query, "web search"), themes, nodes, edges: hits.map((h, i) => ["q", "res_" + i, "found", "search hit"]).concat(sameSite, keywordEdges(nodes, 2, 30)) };
+  return { meta: makeMeta("Internet search — " + query, "web search"), themes, nodes, edges: hits.map((h, i) => ["q", "res_" + i, "found", "search hit"]).concat(keywordEdges(nodes, 2, 30)) };
 }
 
 function WebSearchHook({ onLoaded }) {
@@ -1307,259 +1269,15 @@ function EaseGhHook({ onLoaded }) {
   );
 }
 
-/* ---------- "?" documentation overlay: full functionality, data format, extraction logic, embedding ---------- */
+/* ---------- Screen ---------- */
 
-const DOC_FORMAT = `{
-  "meta": { "title": "My context map", "subtitle": "one-line description",
-            "source": "https://where-it-came-from", "schema": "idea-sphere/v1",
-            "generated": "2026-11-21", "verified": "optional live-test record, shown green" },
-  "themes": [                                  // mandatory groups (“continents”)
-    { "id": "ai", "name": "AI & Agents", "color": "#8b5cf6" }
-  ],
-  "nodes": [
-    { "id": "unique-stable-id",  // required; seeds its fixed star position; used in edges
-      "th": "ai",               // required; theme id
-      "kind": "repo",           // free badge label (repo / section / source / person …)
-      "t": "Node title",        // required, shown on the sphere
-      "s": "One summary sentence (panel + hover tooltip).",
-      "o": "Objective sentence (fillable by the AI pass).",
-      "repo": "repo-name", "path": "optional subfolder",   // GitHub: builds “open in repo”
-      "p": "https://…GitHub-Pages-url…",  // enables live page thumbnail + “open live”
-      "h": "https://…any-other-url…",     // secondary “site” link
-      "f": ["key/file.js", "README.md"],  // key files or sources
-      "tags": ["keyword", "context"],     // drawn as chips, weighted in link building
-      "g": "https://…generic-url…", "conf": "high | med | unread-page-live" }
-  ],
-  "edges": [
-    [ "id-a", "id-b", "relation word", "why this relation exists" ]  // why shows on the active line
-  ]
-}`;
-
-const DOC_EMBED_STATIC = `<!-- 1 · the mount point, anywhere on any page -->
-<div id="ideas-sphere" style="height:100vh;width:100%"></div>
-
-<!-- 2 · React runtime + JSX compiler (no build step) -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
-
-<!-- 3 · save the whole component file as ideas-sphere.jsx and append at its end:
-       ReactDOM.createRoot(document.getElementById("ideas-sphere")).render(React.createElement(App));
-     then include it: -->
-<script src="ideas-sphere.jsx" type="text/babel" data-presets="react"></script>`;
-
-const DOC_EMBED_REACT = `import App from "./ideas-sphere";
-import myData from "./my-map.json";
-
-// bare embed (GitHub sphere only, hooks on the “+” tab):
-root.render(<App />);
-
-// embed with one or more of your own datasets preloaded as tabs:
-root.render(<App datasets={[myData]} />);`;
-
-const DOC_EMBED_DATA = `// your own source needs no widget changes — build the dataset anywhere
-// (script, CI job, server) and load it at runtime:
-fetch("https://example.com/my-map.json")
-  .then((r) => r.json())
-  .then((ds) => root.render(React.createElement(App, { datasets: [ds] })));
-
-// or paste the same JSON at runtime: “+” tab → “paste raw dataset JSON”.
-// export any state of the ball from the A_ hook (JSON: dataset + config).`;
-
-function DocsPanel({ open, onClose }) {
-  if (!open) return null;
-  const H = ({ children }) => <h3 className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-emerald-300/80">{children}</h3>;
-  const Pre = ({ children }) => <pre className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-black/60 p-2.5 font-mono text-[10px] leading-snug text-white/75">{children}</pre>;
-  return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/75 p-2 backdrop-blur-sm sm:p-6" onClick={onClose}>
-      <div className="flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-emerald-300/25 bg-[#0b1210]/97 shadow-2xl backdrop-blur" onClick={(e) => e.stopPropagation()}>
-        <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-4 py-2">
-          <span className="bi-tabfont min-w-0 flex-1 truncate text-[12px] text-white/70">Ideas Sphere — reference documentation</span>
-          <button onClick={onClose} className="text-[12px] text-white/40 hover:text-white" title="close the documentation">✕</button>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 text-[11px] leading-relaxed text-white/70">
-          <H>What this is</H>
-          <p className="mt-1">An interactive 3D sphere mind-map of interconnected ideas, rendered as dispersing stars with great-circle relation lines. One self-contained React component, no build step, no authentication: every data request goes to public endpoints with cross-origin allowed. Embeddable on any page by script or as a React component.</p>
-
-          <H>Interaction</H>
-          <ul className="mt-1 list-disc space-y-0.5 pl-5">
-            <li>Drag the sphere to rotate; a quick flick leaves it spinning with inertia; grabbing it stops it dead; it resumes a slow idle spin a few seconds after you let go.</li>
-            <li>Mouse wheel or pinch zooms (0.45–2.4). Two fingers or click-drag never scroll the host page.</li>
-            <li>The frontmost idea is always expanded in the floating panel; hover any star for a tooltip; clicking a star pins it until you click elsewhere.</li>
-            <li>With the panel docked, the sphere rides higher in its area, so stars and panel overlap minimally; the legend sits in the ball area's top-left corner and lists every group with its live star count.</li>
-            <li>The floating panel drags by its handle bar, resizes from the corner, minimizes to a strip, and glides (never jumps) out of the way of the focused node about once a second; the dance pauses while your pointer is on the panel.</li>
-            <li>Theme chips: click spins the sphere to a group, shift-click hides or shows it. Search belongs to the active tab (clears on switch) and filters stars live; Enter spins to the first match. ⚙ opens size, line faintness, spin, inertia, labels switches.</li>
-            <li>Tabs: the fixed “GitHub sphere” tab holds the curated map. “+” opens a fresh tab with all data hooks; loaded tabs close with ✕; other loaded tabs appear as faint breathing ghost balls at the edge — one tap refocuses them.</li>
-            <li>The A_ hook under the sphere exports the current dataset and configuration as JSON (copy, download, or spawn as a new map tab).</li>
-          </ul>
-
-          <H>Data extraction logic</H>
-          <ul className="mt-1 list-disc space-y-0.5 pl-5">
-            <li>GitHub hook: lists a public profile's repos (api.github.com, no token, 60 req/h), one idea node per repo with its description, one theme per language; GitHub Pages sites are detected and get live thumbnails. Wikipedia/HN hooks: search APIs return top hits that radiate from a query node; each falls through a chain of fallback mirrors when a direct call is blocked.</li>
-            <li>URL reader: any address is fetched through r.jina.ai (reader proxy) or an HTML-stripping mirror; Markdown headings split the page into section nodes (plain pages fall back to paragraph pairs). Edges: “expands” from the source, “follows” along reading order.</li>
-            <li>Search-result maps additionally group hits from the same hostname with “same site” edges.</li>
-            <li>Relation builder (all hooks): tokens of 4+ characters, stop-words excluded, title and tag words weighted 2, summary 1; pairs score by weighted overlap, ranked strongest-first, each node capped at 6 links; the relation word shown on the line is the most significant shared term.</li>
-            <li>Layout: themes sit as continents on a Fibonacci-sphere lattice; each theme's nodes fill a golden-angle sunflower disc on its continent; 110 iterations of force relaxation keep stars at least one rest-length apart, pull linked stars together and hold groups cohesive, re-projecting every point back onto the sphere surface. A per-id hash jitters each star's radius and angle, so every map loads identically but never looks like a lattice.</li>
-            <li>AI pass (optional, free Pollinations helper): writes one objective sentence per node on top of any loaded dataset; an editable prompt ships along.</li>
-          </ul>
-
-          <H>Data format — idea-sphere/v1</H>
-          <p className="mt-1">Hand-write it, generate it, or export it from A_. Edges may exist before any auto-relation is built; both merge. Unlinked files, unknown fields and missing optionals are tolerated.</p>
-          <Pre>{DOC_FORMAT}</Pre>
-          <p className="mt-2">Loading routes: paste the JSON under “+” (paste raw dataset); fetch it from your own server with the snippet below; or edit the HUB constant at the top of the file to re-curator the default sphere.</p>
-
-          <H>Embedding — any static page, no build</H>
-          <Pre>{DOC_EMBED_STATIC}</Pre>
-
-          <H>Embedding — inside an existing React app</H>
-          <Pre>{DOC_EMBED_REACT}</Pre>
-
-          <H>Embedding — your own data source</H>
-          <Pre>{DOC_EMBED_DATA}</Pre>
-          <p className="mt-2">For a hook that builds datasets in the browser, write one async function <span className="font-mono text-white/85">run(arg, log)</span> that returns a complete idea-sphere/v1 object and register it in the HOOKS list — it gets a card with an input, a generate button, an AI pass and its own logged status line.</p>
-          <p className="mb-2 mt-4 text-[10px] text-white/35">No keys, no tracking: all requests go to api.github.com, wikipedia.org, hn.algolia.com, r.jina.ai, s0.wp.com, image.thum.io and text.pollinations.ai over plain public CORS-open endpoints.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-/* ---------- floating description panel: drag, resize, minimize, scroll, and a slow "royal dance" that glides it out of the focused node's way ---------- */
-
-function FloatPanel({ title, onClose, children, ballApi, focusId, defaultW, onMini }) {
-  const ref = useRef(null);
-  const [shift, setShift] = useState({ x: 0, y: 0 });
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [size, setSize] = useState({ w: defaultW || 340, h: 420 });
-  const [mini, setMini] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const pausedRef = useRef(false);
-  const dragR = useRef(null);
-
-  /* dock into the corner on first mount: cap the panel to the host so it hugs the lower screen */
-  useEffect(() => {
-    const el = ref.current; if (!el || !el.offsetParent) return;
-    const host = el.offsetParent;
-    setSize((s) => ({ w: Math.max(210, Math.min(s.w, host.clientWidth - 28)), h: Math.max(150, Math.min(s.h, host.clientHeight - 60)) }));
-  }, []);
-  useEffect(() => { if (onMini) onMini(mini); }, [mini, onMini]);
-
-  const hadFocus = useRef(false);
-  // re-home only when focus is first acquired, not on every frontmost-node change while spinning
-  useEffect(() => {
-    if (focusId && !hadFocus.current) { pausedRef.current = false; setShift({ x: 0, y: 0 }); setOffset({ x: 0, y: 0 }); }
-    hadFocus.current = !!focusId;
-  }, [focusId]);
-  const focusRefP = useRef(null); focusRefP.current = focusId;
-  useEffect(() => {
-    const iv = setInterval(() => {
-      const fid = focusRefP.current;
-      if (pausedRef.current || mini || !fid || !ballApi || !ballApi.current || !ballApi.current.nodeScreenPos) return;
-      const el = ref.current; if (!el || !el.offsetParent) return;
-      const host = el.offsetParent;
-      const r = el.getBoundingClientRect(), hr = host.getBoundingClientRect();
-      const px = r.left - hr.left, py = r.top - hr.top, pw = r.width, ph = r.height;
-      const p = ballApi.current.nodeScreenPos(fid);
-      if (!p) return;
-      const pad = 26, nr = 66;
-      const hit = (x, y) => p.x + nr > x - pad && p.x - nr < x + pw + pad && p.y + nr > y - pad && p.y - nr < y + ph + pad;
-      if (!hit(px, py)) { setShift((s) => (s.x || s.y) ? { x: 0, y: 0 } : s); return; }
-      const cands = [];
-      for (let k = 1; k <= 5; k++) [[-k, 0], [k, 0], [0, -k], [0, k], [-k, k], [k, k], [-k, -k], [k, -k]].forEach(([a, b]) => cands.push({ x: a * 44, y: b * 38 }));
-      cands.sort((a, b) => (a.x * a.x + a.y * a.y) - (b.x * b.x + b.y * b.y));
-      for (const c of cands) {
-        const nx = px + c.x, ny = py + c.y;
-        if (nx < 6 || ny < 40 || nx + pw > host.clientWidth - 6 || ny + ph > host.clientHeight - 6) continue;
-        if (!hit(nx, ny)) { setShift((s) => (s.x === c.x && s.y === c.y) ? s : { x: c.x, y: c.y }); return; }
-      }
-    }, 1100);
-    return () => clearInterval(iv);
-  }, [mini, ballApi]);
-
-  const onDragStart = (e) => {
-    if (e.target.closest("button")) return;
-    dragR.current = { sx: e.clientX, sy: e.clientY, ox: offset.x, oy: offset.y };
-    pausedRef.current = true; setDragging(true);
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
-  };
-  const onDragMove = (e) => {
-    if (!dragR.current) return;
-    const el = ref.current, host = el && el.offsetParent;
-    if (!host) return;
-    const r = el.getBoundingClientRect(), hr = host.getBoundingClientRect();
-    const baseL = r.left - hr.left - shift.x - offset.x; // anchor point without any offsets
-    const baseT = r.top - hr.top - shift.y - offset.y;
-    const dx = e.clientX - dragR.current.sx, dy = e.clientY - dragR.current.sy;
-    const nl = Math.max(-(baseL + r.width - 90), Math.min(baseL + dx, host.clientWidth - 90)) - baseL;
-    const nt = Math.max(-(baseT + r.height - 44), Math.min(baseT + dy, host.clientHeight - 44)) - baseT;
-    setOffset({ x: nl, y: nt });
-  };
-  const endDrag = () => { dragR.current = null; setDragging(false); pausedRef.current = false; };
-  const onResizeStart = (e) => {
-    e.stopPropagation();
-    dragR.current = { sx: e.clientX, sy: e.clientY, w: size.w, h: size.h };
-    pausedRef.current = true; setDragging(true);
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
-  };
-  const onResizeMove = (e) => {
-    if (!dragR.current || dragR.current.w === undefined) return;
-    const host = ref.current && ref.current.offsetParent;
-    const maxW = host ? host.clientWidth - 24 : 560, maxH = host ? host.clientHeight - 60 : 640;
-    setSize({
-      w: Math.max(210, Math.min(maxW, dragR.current.w + (e.clientX - dragR.current.sx))),
-      h: Math.max(120, Math.min(maxH, dragR.current.h + (e.clientY - dragR.current.sy))),
-    });
-  };
-
-  return (
-    <div
-      ref={ref}
-      onMouseEnter={() => { pausedRef.current = true; }}
-      onMouseLeave={() => { if (!dragR.current) pausedRef.current = false; }}
-      onPointerDown={() => { pausedRef.current = true; }}
-      onPointerUp={() => { if (!dragR.current) pausedRef.current = false; }}
-      onPointerCancel={() => { if (!dragR.current) pausedRef.current = false; }}
-      className="absolute bottom-3 right-3 z-[210] flex flex-col overflow-hidden rounded-xl border border-emerald-300/30 bg-[#0b1210]/95 shadow-2xl backdrop-blur-md"
-      style={{
-        width: Math.min(size.w, 380), height: mini ? 40 : size.h,
-        maxHeight: "calc(100% - 12px)", maxWidth: "88vw",
-        transform: `translate(${shift.x + offset.x}px, ${shift.y + offset.y}px)`,
-        transition: dragging ? "none" : "transform 1.5s cubic-bezier(0.32, 0, 0.18, 1), width 0.4s ease, height 0.4s ease",
-      }}>
-      <div onPointerDown={onDragStart} onPointerMove={onDragMove} onPointerUp={endDrag} onPointerCancel={endDrag}
-        className="flex shrink-0 cursor-grab items-center gap-2 border-b border-white/10 px-3 py-1.5 active:cursor-grabbing" title="drag to move the panel">
-        <span className="text-[10px] text-white/30">⠿</span>
-        <span className="min-w-0 flex-1 truncate text-[11px] text-white/60">{title || ""}</span>
-        <button onClick={() => setMini((m) => !m)} className="text-[11px] text-white/40 hover:text-white" title={mini ? "expand the panel" : "minimize the panel"}>{mini ? "□" : "–"}</button>
-        <button onClick={onClose} className="text-[11px] text-white/40 hover:text-white" title="hide the description panel">✕</button>
-      </div>
-      <div className="min-h-0 flex-1 overflow-y-auto" style={mini ? { display: "none" } : null}>
-        {children}
-      </div>
-      {!mini && (
-        <div onPointerDown={onResizeStart} onPointerMove={onResizeMove} onPointerUp={endDrag} onPointerCancel={endDrag}
-          className="absolute bottom-0 right-0 h-5 w-5 cursor-nwse-resize"
-          title="drag to resize" style={{ touchAction: "none" }}>
-          <div className="absolute bottom-1 right-1 h-2.5 w-2.5 border-b border-r border-white/25" />
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Screen({ dataset, chrome, hookControls, aSection, config, setConfig, tabs, activeTab, onSelectTab, onCloseTab, onRequestNewTab }) {
+function Screen({ dataset, chrome, hookControls, aSection, config, setConfig, tabs, activeTab, onSelectTab, onCloseTab, onRequestNewTab, hubTools }) {
   const [focusId, setFocusIdRaw] = useState(null);
   const [autoMode, setAutoMode] = useState(true);
   const [hoverId, setHoverId] = useState(null);
   const [query, setQuery] = useState("");
   const [showCfg, setShowCfg] = useState(false);
-  const [showDocs, setShowDocs] = useState(false);
   const [hiddenThemes, setHiddenThemes] = useState({});
-  const [panelOpen, setPanelOpen] = useState(true);
-  const [panelMini, setPanelMini] = useState(false);
-  const handleMini = useCallback((m) => setPanelMini(m), []);
   const [visible, setVisible] = useState({ nodes: [], edges: [], themes: [] });
   const ballApi = useRef(null);
 
@@ -1575,106 +1293,80 @@ function Screen({ dataset, chrome, hookControls, aSection, config, setConfig, ta
     });
   }, [dataset, query, hiddenThemes]);
 
-  useEffect(() => { setFocusIdRaw(null); setAutoMode(true); }, [dataset]);
-  /* search and hidden groups belong to the tab they were made on: switching tabs starts clean */
-  useEffect(() => { setQuery(""); setHiddenThemes({}); }, [activeTab, dataset]);
-  const searchJump = () => {
-    const first = visible.nodes[0];
-    if (first && ballApi.current) { setFocus(first.id, false); ballApi.current.rotateTo(first.id); }
-  };
+  useEffect(() => setFocusIdRaw(null), [dataset]);
 
   const setFocus = useCallback((id, isAuto) => { setFocusIdRaw(id); setAutoMode(!!isAuto); }, []);
   useEffect(() => { if (focusId && ballApi.current && !autoMode) ballApi.current.rotateTo(focusId); }, [focusId, autoMode]);
 
   const nodesById = useMemo(() => { const m = {}; (dataset ? dataset.nodes : []).forEach((n) => m[n.id] = n); return m; }, [dataset]);
-  const themeCounts = useMemo(() => { const m = {}; (visible.nodes || []).forEach((n) => { m[n.th] = (m[n.th] || 0) + 1; }); return m; }, [visible.nodes]);
   const focusNode = focusId && nodesById[focusId] ? nodesById[focusId] : null;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-emerald-200/20 bg-[#0b1210]/70 shadow-[0_10px_40px_rgba(0,80,50,0.35)]">
-      <div className="bi-serif flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 py-2">
-        {(tabs || []).map((tb) => (
-          <span key={tb.id} className={"flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 transition " + (tb.id === activeTab ? "bg-white/10" : "hover:bg-white/5")}>
-            {tb.waiting ? (
-              <button onClick={() => { if (tb.id === activeTab) onRequestNewTab && onRequestNewTab(tb.id); else onSelectTab(tb.id); }} title={(tb.hint || tb.label) + (tb.id === activeTab ? " · click again to open another new tab" : "")} className="flex items-baseline gap-1.5">
-                <span className="text-[19px] font-light leading-none text-white/30 transition hover:text-white/60" style={{ textShadow: "0 1px 1px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.12)" }}>+</span>
-                <span className="bi-tabfont hidden whitespace-nowrap text-[13px] text-white/25 transition hover:text-white/50 sm:inline">{tb.sub || "new mindmap"}</span>
-              </button>
-            ) : (
-              <button onClick={() => onSelectTab(tb.id)} title={tb.hint || tb.label}>
-                <span className={"bi-tabfont whitespace-nowrap text-[15px] transition " + (tb.id === activeTab ? "text-white" : "text-white/45 hover:text-white/80")}>{tb.label}</span>
-              </button>
-            )}
-            {(!tb.fixed && !tb.waiting) && (
-              <button onClick={(e) => { e.stopPropagation(); onCloseTab && onCloseTab(tb.id); }} className="text-[11px] text-white/25 hover:text-white/80" title="close this tab">✕</button>
-            )}
-          </span>
-        ))}
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 pl-2">
-          <button onClick={() => setPanelOpen((o) => !o)} className={"rounded-lg border px-2.5 py-1 text-xs transition " + (panelOpen ? "border-emerald-300/60 text-white" : "border-white/25 bg-black/40 text-white/70 hover:text-white")} title="show / hide the floating description panel">◧</button>
-          <button onClick={() => setShowCfg((s) => !s)} className={"rounded-lg border px-2.5 py-1 text-xs transition " + (showCfg ? "border-emerald-300/60 text-white" : "border-white/25 bg-black/40 text-white/70 hover:text-white")} title="ball configuration">⚙</button>
-          <button onClick={() => setShowDocs(true)} className="rounded-lg border border-white/25 bg-black/40 px-2.5 py-1 text-xs text-white/70 transition hover:text-white" title="what this is · how it works · data format · how to embed it">?</button>
-          <DocsPanel open={showDocs} onClose={() => setShowDocs(false)} />
+    <div className="relative flex h-full w-full flex-col gap-3 lg:flex-row">
+      <div className="relative flex min-h-[320px] sm:min-h-[430px] flex-1 flex-col overflow-hidden rounded-2xl border border-emerald-200/20 bg-[#0b1210]/70 shadow-[0_10px_40px_rgba(0,80,50,0.35)]">
+        <div className="bi-serif flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 py-2">
+          {(tabs || []).map((tb) => (
+            <span key={tb.id} className={"flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 transition " + (tb.id === activeTab ? "bg-white/10" : "hover:bg-white/5")}>
+              {tb.waiting ? (
+                <button onClick={() => { if (tb.id === activeTab) onRequestNewTab && onRequestNewTab(tb.id); else onSelectTab(tb.id); }} title={(tb.hint || tb.label) + (tb.id === activeTab ? " · click again to open another new tab" : "")} className="flex items-baseline gap-1.5">
+                  <span className="text-[19px] font-light leading-none text-white/30 transition hover:text-white/60" style={{ textShadow: "0 1px 1px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.12)" }}>+</span>
+                  <span className="bi-tabfont whitespace-nowrap text-[13px] text-white/25 transition hover:text-white/50">{tb.sub || "new mindmap"}</span>
+                </button>
+              ) : (
+                <button onClick={() => onSelectTab(tb.id)} title={tb.hint || tb.label}>
+                  <span className={"bi-tabfont whitespace-nowrap text-[15px] transition " + (tb.id === activeTab ? "text-white" : "text-white/45 hover:text-white/80")}>{tb.label}</span>
+                </button>
+              )}
+              {(!tb.fixed && !tb.waiting) && (
+                <button onClick={(e) => { e.stopPropagation(); onCloseTab && onCloseTab(tb.id); }} className="text-[11px] text-white/25 hover:text-white/80" title="close this tab">✕</button>
+              )}
+            </span>
+          ))}
+          <div className="ml-auto flex items-center gap-2 pl-2">
+            {hubTools}
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="search ideas…" className="w-40 rounded-lg border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/85 placeholder-white/30 outline-none focus:border-white/40 sm:w-44" />
+            <button onClick={() => setShowCfg((s) => !s)} className={"rounded-lg border px-2.5 py-1 text-xs transition " + (showCfg ? "border-emerald-300/60 text-white" : "border-white/25 bg-black/40 text-white/70 hover:text-white")} title="ball configuration">⚙</button>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2 border-b border-white/5 px-3 py-1.5">
-        <span className="text-[10px] text-white/35">⌕</span>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") searchJump(); }}
-          placeholder={"search ideas in “" + ((dataset && dataset.meta && dataset.meta.title) || "this map").slice(0, 28) + "” · Enter jumps to the best match"}
-          className="min-w-0 flex-1 rounded-lg border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/85 placeholder-white/30 outline-none focus:border-white/40" />
-        {query && <button onClick={searchJump} className="shrink-0 rounded-lg border border-white/20 bg-black/40 px-2 py-0.5 text-[10px] text-white/60 hover:text-white" title="spin to the first match">→ {visible.nodes.length}</button>}
-      </div>
-      <div className="relative min-h-[300px] flex-1 sm:min-h-[430px]">
-        <Ball dataset={visible} config={config} focusId={focusId} hoverId={hoverId} setHover={setHoverId} setFocus={setFocus} apiRef={ballApi} muted={showCfg} pinned={!autoMode} centerLift={panelOpen && !panelMini || showCfg ? 0.14 : 0} />
-        {dataset && dataset.themes && dataset.themes.length > 0 && themeCounts && (
-          <div className="pointer-events-auto absolute left-2 top-2 z-[5] max-h-[56%] max-w-[60%] overflow-y-auto rounded-xl border border-white/10 bg-black/40 p-1.5 backdrop-blur-sm sm:max-w-[44%]" title="legend of the sphere's groups">
+        {dataset && dataset.themes && dataset.themes.length > 0 && (
+          <div className="flex max-h-[76px] flex-wrap gap-1.5 overflow-y-auto px-4 py-2">
             {dataset.themes.map((t) => {
               const off = !!hiddenThemes[t.id];
               return (
                 <button key={t.id} title="click: spin to this group · shift-click: hide/show"
                   onClick={(e) => { if (e.shiftKey) { setHiddenThemes((h) => ({ ...h, [t.id]: !h[t.id] })); } else if (!off && ballApi.current) { setFocusIdRaw(null); ballApi.current.rotateToTheme(t.id); } }}
-                  className="flex w-full items-center justify-between gap-2 rounded-full px-2 py-0.5 text-[10px] transition hover:bg-white/5"
-                  style={{ borderColor: t.color + (off ? "22" : "88"), color: off ? "rgba(255,255,255,.3)" : t.color, border: "1px solid " + t.color + (off ? "22" : "66"), background: off ? "transparent" : t.color + "10" }}>
-                  <span className="flex min-w-0 items-center gap-1.5"><span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: t.color, opacity: off ? 0.3 : 1 }} /><span className="truncate">{t.name}</span></span>
-                  <span className="shrink-0 font-mono text-white/35">{themeCounts[t.id] || 0}</span>
+                  className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] transition"
+                  style={{ borderColor: t.color + (off ? "22" : "88"), color: off ? "rgba(255,255,255,.3)" : t.color, background: off ? "transparent" : t.color + "14" }}>
+                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: t.color, opacity: off ? 0.3 : 1 }} />{t.name}
                 </button>
               );
             })}
+            {query && <span className="self-center text-[10px] text-white/40">{visible.nodes.length} matches</span>}
           </div>
         )}
-        {showCfg && (
-          <div className="absolute bottom-3 left-3 z-[220] w-64 max-w-[78vw]"><ConfigPanel config={config} setConfig={setConfig} /></div>
-        )}
-        {panelOpen && (
-          <FloatPanel title={(dataset && dataset.meta && dataset.meta.title) || ""} onClose={() => setPanelOpen(false)} ballApi={ballApi} focusId={focusId} defaultW={340} onMini={handleMini}>
-            {dataset && dataset.meta && dataset.meta.verified && (
-              <p className="bi-tabfont border-b border-emerald-300/10 px-4 py-1.5 text-[9px] leading-snug text-emerald-200/45" title="live test record for this dataset">{dataset.meta.verified}</p>
-            )}
-            {chrome}
-            {hookControls}
-            <Detail node={focusNode} dataset={dataset || visible} nodesById={dataset ? nodesById : {}} pinned={!autoMode} setFocus={setFocus} />
-          </FloatPanel>
-        )}
-        {(tabs || []).filter((t) => t.id !== activeTab && !t.waiting && t.dataset).map((tb, i) => (
-          <button key={tb.id} onClick={() => onSelectTab(tb.id)} title={tb.hint || tb.label + " — tap to bring this sphere into focus"}
-            className="pointer-events-auto absolute z-[3] hidden items-center justify-center rounded-full border border-white/15 bg-white/[0.03] text-center shadow-[0_0_20px_rgba(255,255,255,0.04)] transition hover:border-white/40 hover:bg-white/[0.07] sm:flex"
-            style={{
-              width: 54 + (i % 3) * 14, height: 54 + (i % 3) * 14,
-              left: 14 + (i % 4) * 21 + "%", top: 16 + ((i * 27) % 55) + "%",
-              opacity: 0.22, transitionProperty: "opacity, border-color, background",
-              animation: "bi-ghost " + (4.5 + (i % 5) * 1.3) + "s ease-in-out infinite",
-              animationDelay: (i * 0.8) + "s",
-            }}>
-            <span className="text-[10px] leading-tight text-white/70">{tb.label.slice(0, 12)}</span>
-          </button>
-        ))}
-      </div>
-      {aSection && (
-        <div className="border-t border-white/5 px-4 pt-0.5">
-          {aSection}
+        <div className="relative min-h-0 flex-1">
+          <Ball dataset={visible} config={config} focusId={focusId} hoverId={hoverId} setHover={setHoverId} setFocus={setFocus} apiRef={ballApi} muted={showCfg} />
+          {showCfg && (
+            <div className="absolute bottom-3 left-3 z-40 w-64 max-w-[78vw]"><ConfigPanel config={config} setConfig={setConfig} /></div>
+          )}
         </div>
-      )}
-      <p className="hidden px-4 pb-3 text-center text-[10px] text-white/40 sm:block">drag / flick the sphere · ? explains everything, including embedding</p>
+        {aSection && (
+          <div className="border-t border-white/5 px-4 pt-0.5">
+            {aSection}
+          </div>
+        )}
+        <p className="hidden px-4 pb-3 text-center sm:block text-[10px] text-white/40">drag &amp; release to spin with inertia · wheel / pinch to zoom · hover one idea (only the highlighted one shows its data) · idle {Math.round(config.idleMs / 100) / 10} s → frontmost expands</p>
+      </div>
+      <div className="h-[46vh] w-full overflow-hidden lg:h-auto lg:w-[380px] lg:overflow-visible">
+        <div className="h-full overflow-y-auto rounded-2xl border border-emerald-200/20 bg-[#0b1210]/70 shadow-[0_10px_40px_rgba(0,80,50,0.3)]">
+          {dataset && dataset.meta && dataset.meta.verified && (
+            <p className="bi-tabfont border-b border-emerald-300/10 px-4 py-1.5 text-[9px] leading-snug text-emerald-200/45" title="live test record for this dataset">{dataset.meta.verified}</p>
+          )}
+          {chrome}
+          {hookControls}
+          <Detail node={focusNode} dataset={dataset || visible} nodesById={dataset ? nodesById : {}} pinned={!autoMode} setFocus={setFocus} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -1683,16 +1375,12 @@ function Screen({ dataset, chrome, hookControls, aSection, config, setConfig, ta
 
 const EMPTY_DS = { meta: { title: "New mindmap — waiting for a data source", source: "", schema: "idea-sphere/v1" }, themes: [], nodes: [], edges: [] };
 
-/* datasets: optional array of idea-sphere/v1 datasets preloaded as extra tabs when embedding */
-export default function App({ datasets }) {
-  const preloaded = (datasets || []).filter((d) => d && d.meta && d.nodes).map((d, i) => ({
-    id: "pre-" + i + "-" + String(d.meta.title || "map").replace(/[^a-z0-9]+/gi, "-").slice(0, 24),
-    label: String(d.meta.title || "map " + (i + 1)).slice(0, 26),
-    kind: "loaded", dataset: d, hint: d.meta.subtitle || "",
-  }));
+export default function App() {
   const [tabs, setTabs] = useState([
-    { id: "hub", label: "GitHub sphere", fixed: true, dataset: HUB, kind: "github" },
-    ...preloaded,
+    { id: "hub", label: "GitHub context map", fixed: true, dataset: HUB, kind: "github" },
+    { id: "t-wiki", label: "Wikipedia net", dataset: TEST_WIKI, kind: "loaded", hint: TEST_WIKI.meta.subtitle },
+    { id: "t-hn", label: "Hacker News", dataset: TEST_HN, kind: "loaded", hint: TEST_HN.meta.subtitle },
+    { id: "t-page", label: "Pionex Grid page", dataset: TEST_PAGE, kind: "loaded", hint: TEST_PAGE.meta.subtitle },
     { id: "plus0", label: "+", kind: "plus", waiting: true, hint: "new mindmap — pick a data source" },
   ]);
   const [activeTab, setActiveTab] = useState("hub");
@@ -1741,14 +1429,27 @@ export default function App({ datasets }) {
     setActiveTab(uid);
   }, []);
 
+  useEffect(() => {
+    try { document.title = (dataset && dataset.meta && dataset.meta.title) ? dataset.meta.title : "Context Map — Data Hook"; } catch (e) {}
+  }, [dataset]);
+
   const aSection = (
     <ASection open={aOpen} onToggle={() => setAOpen((o) => !o)} dataset={HUB} config={config}
       onSendToHook={() => { applyDataset(HUB); setAOpen(false); }} />
   );
 
   return (
-    <div className="relative flex h-screen w-full flex-col text-white" style={{ background: "#0a100e" }}>
+    <div className="relative flex h-screen w-full flex-col p-2 text-white sm:p-3" style={{ background: "linear-gradient(to bottom, rgba(6,30,21,1) 0%, rgba(16,62,44,0.92) 12%, #0a100e 42%, #0a100e 58%, rgba(16,62,44,0.92) 88%, rgba(6,30,21,1) 100%)" }}>
       <style>{BI_CSS}</style>
+      <div className="bi-fade mb-1 flex items-baseline gap-3 px-1">
+        <span className="bi-title text-2xl sm:text-3xl">shekhrd&apos;s context maps</span>
+        <span className="hidden text-[11px] italic text-emerald-100/50 sm:block">every project is a bridge to tomorrow — mapped on one ball</span>
+      </div>
+      <div className="mb-3 flex items-center gap-2">
+        <span className={"truncate text-xs " + (tab.waiting ? "italic text-white/25" : "text-white/45")}>{dataset && dataset.meta ? (tab.waiting ? "untitled mindmap — " + dataset.meta.title : dataset.meta.title) : ""}</span>
+        <span className="ml-auto hidden shrink-0 rounded sm:inline-block bg-white/10 px-2 py-0.5 text-[10px] text-white/50">no authentication · public sources · idea-sphere/v1</span>
+      </div>
+
       <div className="min-h-0 flex-1">
         <Screen
           dataset={dataset}
@@ -1762,6 +1463,12 @@ export default function App({ datasets }) {
             </div>
           ) : null}
           aSection={tab.id === "hub" ? aSection : null}
+          hubTools={tab.id === "hub" ? (
+            <div className="hidden items-center gap-1 sm:flex">
+              <button onClick={() => applyDataset(HUB)} className="whitespace-nowrap rounded-lg border border-emerald-300/40 bg-emerald-500/15 px-2.5 py-1 text-[11px] text-emerald-100 hover:bg-emerald-500/25" title="keep the GitHub map and prepare the next data-hook tab">use as new map</button>
+              <button onClick={() => { const w = tabs.find((x) => x.waiting); setActiveTab(w ? w.id : (tabs[tabs.length - 1] || { id: "hub" }).id); }} className="whitespace-nowrap rounded-lg border border-white/20 bg-black/40 px-2.5 py-1 text-[11px] text-white/70 hover:text-white" title="jump to the newest data-hook tab">data hooks →</button>
+            </div>
+          ) : null}
           hookControls={tab.id === "hub" ? null : <HookControls dataset={dataset} onApply={(d) => applyDataset(d)} onPullHub={() => applyDataset(HUB)} />}
         />
       </div>
